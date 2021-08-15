@@ -1,0 +1,8 @@
+name: "http"
+description: "Blink HTTP plugin"
+tags:
+  - http
+  - network
+  - blink
+
+provider: "blink"
