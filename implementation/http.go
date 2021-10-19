@@ -109,20 +109,20 @@ func sendRequest(method string, urlAsString string, timeout string, headers map[
 }
 
 func getHeaders(contentType string, headers string) map[string]string {
-	headerMap := parseStringToMap(headers)
+	headerMap := parseStringToMap(headers, ":")
 	headerMap["Content-Type"] = contentType
 
 	return headerMap
 }
 
-func parseStringToMap(value string) map[string]string {
+func parseStringToMap(value string, delimiter string) map[string]string {
 	stringMap := make(map[string]string)
 
 	split := strings.Split(value, "\n")
 	for _, currentParameter := range split {
-		if strings.Contains(currentParameter, "=") {
-			currentHeaderSplit := strings.Split(currentParameter, "=")
-			parameterKey, parameterValue := currentHeaderSplit[0], currentHeaderSplit[1]
+		if strings.Contains(currentParameter, delimiter) {
+			currentHeaderSplit := strings.Split(currentParameter, delimiter)
+			parameterKey, parameterValue := currentHeaderSplit[0], strings.TrimSpace(currentHeaderSplit[1])
 
 			stringMap[parameterKey] = parameterValue
 		}
@@ -177,7 +177,7 @@ func executeCoreHTTPAction(method string, _ *plugin.ActionContext, request *plug
 	}
 
 	headerMap := getHeaders(contentType, headers)
-	cookieMap := parseStringToMap(cookies)
+	cookieMap := parseStringToMap(cookies, "=")
 
 	return sendRequest(method, providedUrl, timeout, headerMap, cookieMap, []byte(body))
 }

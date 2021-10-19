@@ -9,12 +9,12 @@ parameters:
     required: true
   headers:
     type: "code:map"
-    description: "Request Headers should be Name=Value"
+    description: "Request Headers should be Name: Value (Accept: application/json)"
     default: ""
     required: false
   cookies:
     type: "code:map"
-    description: "Request Cookies should be Name=Value"
+    description: "Request Cookies should be Name=Value (jwt=TOKEN)"
     default: ""
     required: false
   body:
@@ -81,6 +81,6 @@ parameters:
       - "application/vnd.mozilla.xul+xml"
   timeout:
     type: "int"
-    description: "Timeout for http request"
+    description: "Timeout in seconds for http request"
     default: 60
     required: false
