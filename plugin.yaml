@@ -6,3 +6,8 @@ tags:
   - blink
 
 provider: "blink"
+connection_types:
+  basic-auth:
+    reference: basic-auth
+  bearer-token:
+    reference: bearer-token

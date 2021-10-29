@@ -2,6 +2,7 @@ package implementation
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/blinkops/blink-sdk/plugin"
@@ -24,6 +25,41 @@ const (
 	cookiesKey     = "cookies"
 	bodyKey        = "body"
 )
+
+func handleBasicAuth(ctx *plugin.ActionContext, req *http.Request) error {
+	credentials, _ := ctx.GetCredentials("basic-auth")
+	if credentials == nil {
+		return nil
+	}
+	uname, ok := credentials["username"]
+	if !ok {
+		return errors.New("basic-auth connection does not contain a username attribute")
+	}
+	password, ok := credentials["password"]
+	if !ok {
+		return errors.New("basic-auth connection does not contain a password attribute")
+	}
+	req.Header.Add("Authorization", "Basic "+basicAuth(uname.(string), password.(string)))
+	return nil
+}
+
+func handleBearerToken(ctx *plugin.ActionContext, req *http.Request) error {
+	credentials, _ := ctx.GetCredentials("bearer-token")
+	if credentials == nil {
+		return nil
+	}
+	token, ok := credentials["token"]
+	if !ok {
+		return errors.New("bearer-token connection does not contain a token attribute")
+	}
+	req.Header.Add("Authorization", "Bearer "+token.(string))
+	return nil
+}
+
+func basicAuth(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
 
 func readBody(responseBody io.ReadCloser) ([]byte, error) {
 	defer func(Body io.ReadCloser) {
@@ -61,7 +97,7 @@ func createResponse(response *http.Response, err error) ([]byte, error) {
 	return body, nil
 }
 
-func sendRequest(method string, urlAsString string, timeout string, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func sendRequest(ctx *plugin.ActionContext, method string, urlAsString string, timeout string, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	timeoutAsNumber, err := strconv.ParseInt(timeout, 10, 64)
@@ -103,6 +139,13 @@ func sendRequest(method string, urlAsString string, timeout string, headers map[
 		request.Header.Set(name, value)
 	}
 
+	if err := handleBasicAuth(ctx, request); err != nil {
+		return nil, err
+	}
+
+	if err := handleBearerToken(ctx, request); err != nil {
+		return nil, err
+	}
 	response, err := client.Do(request)
 
 	return createResponse(response, err)
@@ -131,21 +174,21 @@ func parseStringToMap(value string, delimiter string) map[string]string {
 }
 
 func executeHTTPGetAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(http.MethodGet, ctx, request)
+	return executeCoreHTTPAction(ctx, http.MethodGet, request)
 }
 
 func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(http.MethodPost, ctx, request)
+	return executeCoreHTTPAction(ctx, http.MethodPost, request)
 }
 
 func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(http.MethodPut, ctx, request)
+	return executeCoreHTTPAction(ctx, http.MethodPut, request)
 }
 func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(http.MethodDelete, ctx, request)
+	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
 }
 
-func executeCoreHTTPAction(method string, _ *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	providedUrl, ok := request.Parameters[urlKey]
 	if !ok {
 		return nil, errors.New("no url provided for execution")
@@ -158,7 +201,7 @@ func executeCoreHTTPAction(method string, _ *plugin.ActionContext, request *plug
 
 	contentType, ok := request.Parameters[contentTypeKey]
 	if !ok {
-		return nil, errors.New("no content-type provided for execution")
+		contentType = "application/x-www-form-urlencoded"
 	}
 
 	headers, ok := request.Parameters[headersKey]
@@ -179,5 +222,5 @@ func executeCoreHTTPAction(method string, _ *plugin.ActionContext, request *plug
 	headerMap := getHeaders(contentType, headers)
 	cookieMap := parseStringToMap(cookies, "=")
 
-	return sendRequest(method, providedUrl, timeout, headerMap, cookieMap, []byte(body))
+	return sendRequest(ctx, method, providedUrl, timeout, headerMap, cookieMap, []byte(body))
 }
