@@ -188,6 +188,10 @@ func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteA
 	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
 }
 
+func executeHTTPPatchAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodPatch, request)
+}
+
 func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	providedUrl, ok := request.Parameters[urlKey]
 	if !ok {
