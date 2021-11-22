@@ -184,8 +184,13 @@ func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteAct
 func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	return executeCoreHTTPAction(ctx, http.MethodPut, request)
 }
+
 func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
+}
+
+func executeHTTPPatchAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodPatch, request)
 }
 
 func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
