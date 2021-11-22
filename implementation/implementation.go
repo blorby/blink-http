@@ -95,6 +95,7 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 		"post":   executeHTTPPostAction,
 		"put":    executeHTTPPutAction,
 		"delete": executeHTTPDeleteAction,
+		"patch":  executeHTTPPatchAction,
 	}
 
 	return &HttpPlugin{
