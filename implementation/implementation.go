@@ -61,7 +61,7 @@ func (p *HttpPlugin) ExecuteAction(ctx *plugin.ActionContext, request *plugin.Ex
 	}, nil
 }
 
-func (p *HttpPlugin) TestCredentials(_ map[string]connections.ConnectionInstance) (*plugin.CredentialsValidationResponse, error) {
+func (p *HttpPlugin) TestCredentials(_ map[string]*connections.ConnectionInstance) (*plugin.CredentialsValidationResponse, error) {
 	return &plugin.CredentialsValidationResponse{
 		AreCredentialsValid:   true,
 		RawValidationResponse: []byte("credentials validation is not supported on this plugin :("),
