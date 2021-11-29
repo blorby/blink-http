@@ -25,7 +25,7 @@ parameters:
   contentType:
     type: "dropdown"
     description: "Representation of the Content-Type request's header"
-    default: []
+    default: "text/plain"
     required: false
     is_multi: true
     options:
