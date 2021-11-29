@@ -25,8 +25,9 @@ parameters:
   contentType:
     type: "dropdown"
     description: "Representation of the Content-Type request's header"
-    default: "text/plain"
+    default: []
     required: false
+    is_multi: true
     options:
       - "application/java-archive"
       - "application/EDI-X12"
