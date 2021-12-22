@@ -3,26 +3,26 @@ name: "post"
 description: "Executes post request on provided url"
 enabled: true
 parameters:
-  url:
+  URL:
     type: "string"
     description: "The url to communicate with"
     required: true
-  headers:
+  Headers:
     type: "code:map"
     description: "Request Headers should be Name: Value (Accept: application/json)"
     default: ""
     required: false
-  cookies:
+  Cookies:
     type: "code:map"
     description: "Request Cookies should be Name=Value (jwt=TOKEN)"
     default: ""
     required: false
-  body:
+  Body:
     type: "code:json"
     description: "Request Body"
     default: ""
     required: false
-  contentType:
+  Content type:
     type: "dropdown"
     description: "Representation of the Content-Type request's header"
     default: "text/plain"
@@ -79,8 +79,4 @@ parameters:
       - "application/msword"
       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       - "application/vnd.mozilla.xul+xml"
-  timeout:
-    type: "int"
-    description: "Timeout in seconds for http request"
-    default: 60
-    required: false
+
