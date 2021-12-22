@@ -2,13 +2,14 @@ package implementation
 
 import (
 	"errors"
+	"path"
+
 	"github.com/blinkops/blink-sdk/plugin"
 	"github.com/blinkops/blink-sdk/plugin/actions"
 	"github.com/blinkops/blink-sdk/plugin/config"
 	"github.com/blinkops/blink-sdk/plugin/connections"
 	description2 "github.com/blinkops/blink-sdk/plugin/description"
 	log "github.com/sirupsen/logrus"
-	"path"
 )
 
 type ActionHandler func(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error)
@@ -69,7 +70,6 @@ func (p *HttpPlugin) TestCredentials(_ map[string]*connections.ConnectionInstanc
 }
 
 func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
-
 	pluginConfig := config.GetConfig()
 
 	description, err := description2.LoadPluginDescriptionFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))

@@ -5,8 +5,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/blinkops/blink-sdk/plugin"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,6 +12,9 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/blinkops/blink-sdk/plugin"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -75,20 +76,12 @@ func handleApiKeyAuth(ctx *plugin.ActionContext, req *http.Request) error {
 	if err := validateURL(credentials, req.URL); err != nil {
 		return err
 	}
-	h1, ok1 := credentials["Header 1"].(string)
-	v1, ok2 := credentials["Value 1"].(string)
-	if ok1 && ok2 {
-		req.Header.Add(h1, v1)
-	}
-	h2, ok1 := credentials["Header 2"].(string)
-	v2, ok2 := credentials["Value 2"].(string)
-	if ok1 && ok2 {
-		req.Header.Add(h2, v2)
-	}
-	h3, ok1 := credentials["Header 3"].(string)
-	v3, ok2 := credentials["Value 3"].(string)
-	if ok1 && ok2 {
-		req.Header.Add(h3, v3)
+	for i := 1; i <= 3; i++ {
+		h, ok1 := credentials["Header "+fmt.Sprint(i)].(string)
+		v, ok2 := credentials["Value "+fmt.Sprint(i)].(string)
+		if ok1 && ok2 {
+			req.Header.Add(h, v)
+		}
 	}
 	return nil
 }
@@ -167,10 +160,6 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 		return nil, err
 	}
 
-	if err = fixURL(request.URL); err != nil {
-		return nil, err
-	}
-
 	for name, value := range headers {
 		request.Header.Set(name, value)
 	}
@@ -199,29 +188,14 @@ func validateURL(connection map[string]interface{}, requestedURL *url.URL) error
 	if err != nil {
 		return err
 	}
-	err = fixURL(apiAddress)
-	if err != nil {
-		return err
-	}
 	requestedURL, err = url.Parse(strings.Replace(requestedURL.String(), "www.", "", 1))
 	if err != nil {
 		return err
 	}
 	if !strings.HasPrefix(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
-		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths")
+		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
 	}
 	return nil
-}
-
-// fixURL adds https if the user forgot to include the scheme and trims unnecessary trailing slashes
-func fixURL(u *url.URL) error {
-	if u.Scheme == "" {
-		u.Scheme = "https"
-	}
-	val, err := url.Parse(strings.TrimSuffix(u.String(), "/"))
-	u = val
-
-	return err
 }
 
 func getHeaders(contentType string, headers string) map[string]string {

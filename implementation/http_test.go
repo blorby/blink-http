@@ -1,9 +1,10 @@
 package implementation
 
 import (
-	"github.com/stretchr/testify/suite"
 	"net/url"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type HttpTestSuite struct {
@@ -87,8 +88,6 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	} {
 		u, err := url.Parse(goodScenario.requestedURL)
 		suite.Nil(err)
-		err = fixURL(u) // validateURL is supposed to get fixed urls
-		suite.Nil(err)
 		err = validateURL(goodScenario.connection, u)
 		suite.Nil(err)
 	}
@@ -116,21 +115,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	} {
 		u, err := url.Parse(badScenario.requestedURL)
 		suite.Nil(err)
-		err = fixURL(u)
-		suite.Nil(err)
 		err = validateURL(badScenario.connection, u)
 		suite.NotNil(err)
-	}
-}
-
-func (suite *HttpTestSuite) TestFixURL() {
-	for _, u := range []string{
-		"www.host.com",
-		"host.com",
-		"https://host.com",
-	} {
-		up, _ := url.Parse(u)
-		fixURL(up)
-		suite.Equal("https", up.Scheme)
 	}
 }
