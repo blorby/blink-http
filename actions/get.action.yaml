@@ -3,26 +3,26 @@ name: "get"
 description: "Executes get request on provided url"
 enabled: true
 parameters:
-  URL:
+  url:
     type: "string"
     description: "The url to communicate with"
     required: true
-  Headers:
+  headers:
     type: "code:map"
     description: "Request Headers should be Name: Value (Accept: application/json)"
     default: ""
     required: false
-  Cookies:
+  cookies:
     type: "code:map"
     description: "Request Cookies should be Name=Value (jwt=TOKEN)"
     default: ""
     required: false
-  Body:
+  body:
     type: "code:json"
     description: "Request Body"
     default: ""
     required: false
-  Content type:
+  contentType:
     type: "dropdown"
     description: "Representation of the Content-Type request's header"
     default: "text/plain"
