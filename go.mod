@@ -5,4 +5,5 @@ go 1.16
 require (
 	github.com/blinkops/blink-sdk v1.0.64
 	github.com/sirupsen/logrus v1.8.1
+	github.com/stretchr/testify v1.5.1
 )

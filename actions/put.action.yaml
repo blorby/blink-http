@@ -79,8 +79,3 @@ parameters:
       - "application/msword"
       - "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       - "application/vnd.mozilla.xul+xml"
-  timeout:
-    type: "int"
-    description: "Timeout in seconds for http request"
-    default: 60
-    required: false
