@@ -1,16 +1,16 @@
 package main
 
 import (
+	"os"
+	"path"
+
 	"github.com/blinkops/blink-http/implementation"
 	blinkSdk "github.com/blinkops/blink-sdk"
 	"github.com/blinkops/blink-sdk/plugin/config"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"path"
 )
 
 func main() {
-
 	log.SetLevel(log.DebugLevel)
 
 	// Get the current directory.

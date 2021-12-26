@@ -5,54 +5,84 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/blinkops/blink-sdk/plugin"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/blinkops/blink-sdk/plugin"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
-	urlKey         = "url"
-	timeoutKey     = "timeout"
-	contentTypeKey = "contentType"
-	headersKey     = "headers"
-	cookiesKey     = "cookies"
-	bodyKey        = "body"
+	urlKey         = "URL"
+	contentTypeKey = "Content type"
+	headersKey     = "Headers"
+	cookiesKey     = "Cookies"
+	bodyKey        = "Body"
+	usernameKey    = "username"
+	passwordKey    = "password"
+	tokenKey       = "token"
+	apiAddressKey  = "API Address"
+	basicAuthKey   = "basic-auth"
+	bearerAuthKey  = "bearer-token"
+	apiTokenKey    = "apikey-auth"
 )
 
 func handleBasicAuth(ctx *plugin.ActionContext, req *http.Request) error {
-	credentials, _ := ctx.GetCredentials("basic-auth")
+	credentials, _ := ctx.GetCredentials(basicAuthKey)
 	if credentials == nil {
 		return nil
 	}
-	uname, ok := credentials["username"]
-	if !ok {
-		return errors.New("basic-auth connection does not contain a username attribute")
+	if err := validateURL(credentials, req.URL); err != nil {
+		return err
 	}
-	password, ok := credentials["password"]
+	uname, ok := credentials[usernameKey].(string)
 	if !ok {
-		return errors.New("basic-auth connection does not contain a password attribute")
+		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
 	}
-	req.Header.Add("Authorization", "Basic "+basicAuth(uname.(string), password.(string)))
+	password, ok := credentials[passwordKey].(string)
+	if !ok {
+		return errors.New("basic-auth connection does not contain a password attribute or the password is not a string")
+	}
+	req.Header.Add("Authorization", "Basic "+basicAuth(uname, password))
 	return nil
 }
 
 func handleBearerToken(ctx *plugin.ActionContext, req *http.Request) error {
-	credentials, _ := ctx.GetCredentials("bearer-token")
+	credentials, _ := ctx.GetCredentials(bearerAuthKey)
 	if credentials == nil {
 		return nil
 	}
-	token, ok := credentials["token"]
-	if !ok {
-		return errors.New("bearer-token connection does not contain a token attribute")
+	if err := validateURL(credentials, req.URL); err != nil {
+		return err
 	}
-	req.Header.Add("Authorization", "Bearer "+token.(string))
+	token, ok := credentials[tokenKey].(string)
+	if !ok {
+		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
+	}
+	req.Header.Add("Authorization", "Bearer "+token)
+	return nil
+}
+
+func handleApiKeyAuth(ctx *plugin.ActionContext, req *http.Request) error {
+	credentials, _ := ctx.GetCredentials(apiTokenKey)
+	if credentials == nil {
+		return nil
+	}
+	if err := validateURL(credentials, req.URL); err != nil {
+		return err
+	}
+	for i := 1; i <= 3; i++ {
+		h, ok1 := credentials["Header "+fmt.Sprint(i)].(string)
+		v, ok2 := credentials["Value "+fmt.Sprint(i)].(string)
+		if ok1 && ok2 {
+			req.Header.Add(h, v)
+		}
+	}
 	return nil
 }
 
@@ -97,13 +127,8 @@ func createResponse(response *http.Response, err error) ([]byte, error) {
 	return body, nil
 }
 
-func sendRequest(ctx *plugin.ActionContext, method string, urlAsString string, timeout string, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func sendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
-
-	timeoutAsNumber, err := strconv.ParseInt(timeout, 10, 64)
-	if err != nil {
-		return nil, err
-	}
 
 	cookieJar, err := cookiejar.New(nil)
 	if err != nil {
@@ -118,7 +143,7 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlAsString string, t
 		})
 	}
 
-	parsedUrl, err := url.Parse(urlAsString)
+	parsedUrl, err := url.Parse(urlString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse request url, error: %v", err)
 	}
@@ -127,10 +152,10 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlAsString string, t
 	// Create new http client with predefined options
 	client := &http.Client{
 		Jar:     cookieJar,
-		Timeout: time.Second * time.Duration(timeoutAsNumber),
+		Timeout: time.Second * time.Duration(timeout),
 	}
 
-	request, err := http.NewRequest(method, urlAsString, requestBody)
+	request, err := http.NewRequest(method, urlString, requestBody)
 	if err != nil {
 		return nil, err
 	}
@@ -139,16 +164,38 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlAsString string, t
 		request.Header.Set(name, value)
 	}
 
-	if err := handleBasicAuth(ctx, request); err != nil {
+	if err = handleBasicAuth(ctx, request); err != nil {
 		return nil, err
 	}
-
-	if err := handleBearerToken(ctx, request); err != nil {
+	if err = handleBearerToken(ctx, request); err != nil {
+		return nil, err
+	}
+	if err = handleApiKeyAuth(ctx, request); err != nil {
 		return nil, err
 	}
 	response, err := client.Do(request)
 
 	return createResponse(response, err)
+}
+
+func validateURL(connection map[string]interface{}, requestedURL *url.URL) error {
+	apiAddressString, ok := connection[apiAddressKey].(string)
+	if !ok {
+		return errors.New("connection does not contain a api address attribute or the api address is not convertable to string")
+	}
+	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
+	apiAddress, err := url.Parse(apiAddressString)
+	if err != nil {
+		return err
+	}
+	requestedURL, err = url.Parse(strings.Replace(requestedURL.String(), "www.", "", 1))
+	if err != nil {
+		return err
+	}
+	if !strings.HasPrefix(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
+		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
+	}
+	return nil
 }
 
 func getHeaders(contentType string, headers string) map[string]string {
@@ -184,6 +231,7 @@ func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteAct
 func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	return executeCoreHTTPAction(ctx, http.MethodPut, request)
 }
+
 func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
 }
@@ -196,11 +244,6 @@ func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *pl
 	providedUrl, ok := request.Parameters[urlKey]
 	if !ok {
 		return nil, errors.New("no url provided for execution")
-	}
-
-	timeout, ok := request.Parameters[timeoutKey]
-	if !ok {
-		timeout = "60"
 	}
 
 	contentType, ok := request.Parameters[contentTypeKey]
@@ -226,5 +269,5 @@ func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *pl
 	headerMap := getHeaders(contentType, headers)
 	cookieMap := parseStringToMap(cookies, "=")
 
-	return sendRequest(ctx, method, providedUrl, timeout, headerMap, cookieMap, []byte(body))
+	return sendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
 }
