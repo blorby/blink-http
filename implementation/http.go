@@ -18,18 +18,19 @@ import (
 )
 
 const (
-	urlKey         = "URL"
-	contentTypeKey = "Content type"
-	headersKey     = "Headers"
-	cookiesKey     = "Cookies"
-	bodyKey        = "Body"
-	usernameKey    = "username"
-	passwordKey    = "password"
-	tokenKey       = "token"
-	apiAddressKey  = "API Address"
-	basicAuthKey   = "basic-auth"
-	bearerAuthKey  = "bearer-token"
-	apiTokenKey    = "apikey-auth"
+	urlKey         = "url"
+	contentTypeKey = "contentType"
+	headersKey     = "headers"
+	cookiesKey     = "cookies"
+	bodyKey        = "body"
+
+	usernameKey   = "username"
+	passwordKey   = "password"
+	tokenKey      = "token"
+	apiAddressKey = "API Address"
+	basicAuthKey  = "basic-auth"
+	bearerAuthKey = "bearer-token"
+	apiTokenKey   = "apikey-auth"
 )
 
 func handleBasicAuth(ctx *plugin.ActionContext, req *http.Request) error {
