@@ -20,70 +20,31 @@ func (suite *HttpTestSuite) TestValidateURL() {
 		connection   map[string]interface{}
 		requestedURL string
 	}
+	prefixes := []string{"", "www.", "https://", "https://www."}
+	host := "host.com"
+	// check all possible prefix combinations work
+	for _, prefix := range prefixes {
+		for _, prefix2 := range prefixes {
+			connection := map[string]interface{}{apiAddressKey: prefix + host}
+			requestedUrl := prefix2 + host
+			u, err := url.Parse(requestedUrl)
+			suite.Nil(err)
+			err = validateURL(connection, u)
+			suite.Nil(err)
+		}
+	}
 	for _, goodScenario := range []testCase{
 		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
-			requestedURL: "host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
-			requestedURL: "www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com/path"},
-			requestedURL: "https://host.com/path/path2",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
-			requestedURL: "https://www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "host.com"},
-			requestedURL: "host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "host.com/path"},
-			requestedURL: "www.host.com/path",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "host.com"},
+			connection:   map[string]interface{}{},
 			requestedURL: "https://host.com",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: "host.com"},
-			requestedURL: "https://www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://www.host.com/path"},
-			requestedURL: "host.com/path/path2",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://www.host.com"},
-			requestedURL: "www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://www.host.com"},
+			connection:   map[string]interface{}{apiAddressKey: ""},
 			requestedURL: "https://host.com",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: "https://www.host.com"},
-			requestedURL: "https://www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://host.com"},
+			connection:   map[string]interface{}{"bad key": "www.host.com"},
 			requestedURL: "host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://host.com"},
-			requestedURL: "www.host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://host.com"},
-			requestedURL: "https://host.com",
-		},
-		{
-			connection:   map[string]interface{}{apiAddressKey: "https://host.com"},
-			requestedURL: "https://www.host.com",
 		},
 	} {
 		u, err := url.Parse(goodScenario.requestedURL)
@@ -92,10 +53,6 @@ func (suite *HttpTestSuite) TestValidateURL() {
 		suite.Nil(err)
 	}
 	for _, badScenario := range []testCase{
-		{
-			connection:   map[string]interface{}{"bad key": "www.host.com"},
-			requestedURL: "host.com",
-		},
 		{
 			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
 			requestedURL: "bad-address.com",
