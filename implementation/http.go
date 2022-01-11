@@ -182,12 +182,12 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 func validateURL(connection map[string]interface{}, requestedURL *url.URL) error {
 	apiAddressInter, ok := connection[apiAddressKey]
 	// if there's no api address defined, any url will be allowed
-	if !ok {
+	if !ok || apiAddressInter == nil {
 		return nil
 	}
 	apiAddressString, ok := apiAddressInter.(string)
 	if !ok {
-		return errors.New("the api address is not convertable to a string")
+		return errors.New("the api address is not convertible to a string")
 	}
 	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
 	apiAddress, err := url.Parse(apiAddressString)
