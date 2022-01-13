@@ -1,6 +1,6 @@
 # Describes the action and it's parameters
-name: "post"
-description: "Executes post request on provided url"
+name: "graphQL"
+description: "Executes graphql query on provided url"
 enabled: true
 parameters:
   url:
