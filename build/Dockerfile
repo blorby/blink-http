@@ -15,7 +15,7 @@ FROM alpine:3.14.0 AS plugin
 WORKDIR /blink-http
 COPY --from=builder /go/bin/blink-http .
 COPY config.yaml plugin.yaml ./
-COPY actions actions/
+COPY actions ./actions
 
 
 # Expose the gRPC port.

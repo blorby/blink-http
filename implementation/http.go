@@ -2,7 +2,6 @@ package implementation
 
 import (
 	"bytes"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -33,64 +32,6 @@ const (
 	apiTokenKey   = "apikey-auth"
 )
 
-func handleBasicAuth(ctx *plugin.ActionContext, req *http.Request) error {
-	credentials, _ := ctx.GetCredentials(basicAuthKey)
-	if credentials == nil {
-		return nil
-	}
-	if err := validateURL(credentials, req.URL); err != nil {
-		return err
-	}
-	uname, ok := credentials[usernameKey].(string)
-	if !ok {
-		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
-	}
-	password, ok := credentials[passwordKey].(string)
-	if !ok {
-		return errors.New("basic-auth connection does not contain a password attribute or the password is not a string")
-	}
-	req.Header.Add("Authorization", "Basic "+basicAuth(uname, password))
-	return nil
-}
-
-func handleBearerToken(ctx *plugin.ActionContext, req *http.Request) error {
-	credentials, _ := ctx.GetCredentials(bearerAuthKey)
-	if credentials == nil {
-		return nil
-	}
-	if err := validateURL(credentials, req.URL); err != nil {
-		return err
-	}
-	token, ok := credentials[tokenKey].(string)
-	if !ok {
-		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
-	}
-	req.Header.Add("Authorization", "Bearer "+token)
-	return nil
-}
-
-func handleApiKeyAuth(ctx *plugin.ActionContext, req *http.Request) error {
-	credentials, _ := ctx.GetCredentials(apiTokenKey)
-	if credentials == nil {
-		return nil
-	}
-	if err := validateURL(credentials, req.URL); err != nil {
-		return err
-	}
-	for i := 1; i <= 3; i++ {
-		h, ok1 := credentials["Header "+fmt.Sprint(i)].(string)
-		v, ok2 := credentials["Value "+fmt.Sprint(i)].(string)
-		if ok1 && ok2 {
-			req.Header.Add(h, v)
-		}
-	}
-	return nil
-}
-
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
-}
 
 func readBody(responseBody io.ReadCloser) ([]byte, error) {
 	defer func(Body io.ReadCloser) {
@@ -165,44 +106,15 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 		request.Header.Set(name, value)
 	}
 
-	if err = handleBasicAuth(ctx, request); err != nil {
+	if err = handleAuthentication(ctx, request); err != nil {
 		return nil, err
 	}
-	if err = handleBearerToken(ctx, request); err != nil {
-		return nil, err
-	}
-	if err = handleApiKeyAuth(ctx, request); err != nil {
-		return nil, err
-	}
+
 	response, err := client.Do(request)
 
 	return createResponse(response, err)
 }
 
-func validateURL(connection map[string]interface{}, requestedURL *url.URL) error {
-	apiAddressInter, ok := connection[apiAddressKey]
-	// if there's no api address defined, any url will be allowed
-	if !ok || apiAddressInter == nil {
-		return nil
-	}
-	apiAddressString, ok := apiAddressInter.(string)
-	if !ok {
-		return errors.New("the api address is not convertible to a string")
-	}
-	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
-	apiAddress, err := url.Parse(apiAddressString)
-	if err != nil {
-		return err
-	}
-	requestedURL, err = url.Parse(strings.Replace(requestedURL.String(), "www.", "", 1))
-	if err != nil {
-		return err
-	}
-	if !strings.HasPrefix(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
-		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
-	}
-	return nil
-}
 
 func getHeaders(contentType string, headers string) map[string]string {
 	headerMap := parseStringToMap(headers, ":")
