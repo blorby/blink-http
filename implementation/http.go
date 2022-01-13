@@ -128,7 +128,7 @@ func createResponse(response *http.Response, err error) ([]byte, error) {
 	return body, nil
 }
 
-func sendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func SendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	cookieJar, err := cookiejar.New(nil)
@@ -226,27 +226,7 @@ func parseStringToMap(value string, delimiter string) map[string]string {
 	return stringMap
 }
 
-func executeHTTPGetAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodGet, request)
-}
-
-func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPost, request)
-}
-
-func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPut, request)
-}
-
-func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
-}
-
-func executeHTTPPatchAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPatch, request)
-}
-
-func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
+func ExecuteCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
 	providedUrl, ok := request.Parameters[urlKey]
 	if !ok {
 		return nil, errors.New("no url provided for execution")
@@ -275,5 +255,5 @@ func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *pl
 	headerMap := getHeaders(contentType, headers)
 	cookieMap := parseStringToMap(cookies, "=")
 
-	return sendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
+	return SendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
 }

@@ -69,7 +69,7 @@ func (p *HttpPlugin) TestCredentials(_ map[string]*connections.ConnectionInstanc
 	}, nil
 }
 
-func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
+func NewHTTPPlugin(rootPluginDirectory string, supportedActions map[string]ActionHandler) (*HttpPlugin, error) {
 	pluginConfig := config.GetConfig()
 
 	description, err := description2.LoadPluginDescriptionFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))
@@ -90,13 +90,6 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 		return nil, err
 	}
 
-	supportedActions := map[string]ActionHandler{
-		"get":    executeHTTPGetAction,
-		"post":   executeHTTPPostAction,
-		"put":    executeHTTPPutAction,
-		"delete": executeHTTPDeleteAction,
-		"patch":  executeHTTPPatchAction,
-	}
 
 	return &HttpPlugin{
 		description:      *description,
