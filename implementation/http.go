@@ -3,6 +3,7 @@ package implementation
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -19,6 +20,7 @@ import (
 
 const (
 	urlKey         = "url"
+	queryKey      = "query"
 	contentTypeKey = "contentType"
 	headersKey     = "headers"
 	cookiesKey     = "cookies"
@@ -276,4 +278,25 @@ func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *pl
 	cookieMap := parseStringToMap(cookies, "=")
 
 	return sendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
+}
+
+func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	providedUrl, ok := request.Parameters[urlKey]
+	if !ok {
+		return nil, errors.New("no url provided for execution")
+	}
+
+	query, ok := request.Parameters[queryKey]
+	if !ok {
+		query = ""
+	}
+
+	body, err := json.Marshal(map[string]string{"query": query})
+	if err != nil {
+		return nil, err
+	}
+
+	headerMap := map[string]string{"Content-Type": "application/json"}
+
+	return sendRequest(ctx, http.MethodPost, providedUrl, request.Timeout, headerMap, nil, body)
 }
