@@ -1,0 +1,14 @@
+# Describes the action and it's parameters
+name: "graphQL"
+description: "Executes graphql query on provided url"
+enabled: true
+parameters:
+  url:
+    type: "string"
+    description: "The url to communicate with"
+    required: true
+  query:
+    type: "code:json"
+    description: "GraphQL query"
+    default: ""
+    required: true
