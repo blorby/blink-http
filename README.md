@@ -17,3 +17,6 @@ The `POST` method submits an entity to the specified resource, often causing a c
 
 ## PUT
 The `PUT` method replaces all current representations of the target resource with the request payload.
+
+## GraphQL
+The `GraphQL` action executes a graphql query on the provided endpoint. 
