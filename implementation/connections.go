@@ -27,15 +27,15 @@ type (
 	uniqueConnectionHandler func(connection map[string]interface{}, request *http.Request) error
 )
 
-var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler {
-	"gcp": handleGCPConnection,
-	"azure": handleAzureConnection,
+var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler{
+	"gcp":          handleGCPConnection,
+	"azure":        handleAzureConnection,
 	"azure-devops": handleAzureDevopsConnection,
-	"bitbucket": handleBitbucketConnection,
-	"pagerduty": handlePagerdutyConnection,
-	basicAuthKey: handleBasicAuth,
-	bearerAuthKey: handleBearerToken,
-	apiTokenKey: handleApiKeyAuth,
+	"bitbucket":    handleBitbucketConnection,
+	"pagerduty":    handlePagerdutyConnection,
+	basicAuthKey:   handleBasicAuth,
+	bearerAuthKey:  handleBearerToken,
+	apiTokenKey:    handleApiKeyAuth,
 }
 
 var genericConnectionsOptsMap = map[string]genericConnectionOpts{
@@ -90,8 +90,6 @@ func handleAuthentication(ctx *plugin.ActionContext, req *http.Request) error {
 			err = handler(secret, req)
 		} else if connectionOpts, ok := genericConnectionsOptsMap[connName]; ok {
 			err = handleGenericConnection(secret, req, connectionOpts.headerValuePrefixes, connectionOpts.headerAlias)
-		} else {
-			return errors.Errorf("connection type %s is currently not supported by the http integration", connName)
 		}
 		if err != nil {
 			return errors.Errorf("failed to set auth headers for connection %s: %v", connName, err)
@@ -288,7 +286,6 @@ func handleServiceAccountAuth(connection map[string]interface{}, request *http.R
 }
 
 func generateJWTToken(credentials string) (string, error) {
-
 	var credentialsJson struct {
 		PrivateKey  string `json:"private_key"`
 		ClientEmail string `json:"client_email"`
@@ -359,7 +356,6 @@ func extractAccessToken(res *http.Response) (string, error) {
 }
 
 func handleAzureConnection(connection map[string]interface{}, request *http.Request) error {
-
 	// handle oauth
 	if token, ok := connection["Token"]; ok {
 		if tokenString, ok := token.(string); ok {
