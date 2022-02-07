@@ -410,6 +410,9 @@ func handleGenericConnection(connection map[string]interface{}, request *http.Re
 	headers := make(map[string]string)
 	for header, headerValue := range connection {
 		if headerValueString, ok := headerValue.(string); ok {
+			if header == consts.RequestUrlKey {
+				continue
+			}
 			header = strings.ToUpper(header)
 			// if the header is in our alias map replace it with the value in the map
 			// TOKEN -> AUTHORIZATION
