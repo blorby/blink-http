@@ -88,8 +88,6 @@ func handleAuthentication(ctx *plugin.ActionContext, req *http.Request) error {
 			err = handler(secret, req)
 		} else if connectionOpts, ok := genericConnectionsOptsMap[connName]; ok {
 			err = handleGenericConnection(secret, req, connectionOpts.headerValuePrefixes, connectionOpts.headerAlias)
-		} else {
-			return errors.Errorf("connection type %s is currently not supported by the http integration", connName)
 		}
 		if err != nil {
 			return errors.Errorf("failed to set auth headers for connection %s: %v", connName, err)
@@ -261,7 +259,6 @@ func handleServiceAccountAuth(connection map[string]string, request *http.Reques
 }
 
 func generateJWTToken(credentials string) (string, error) {
-
 	var credentialsJson struct {
 		PrivateKey  string `json:"private_key"`
 		ClientEmail string `json:"client_email"`
@@ -332,7 +329,6 @@ func extractAccessToken(res *http.Response) (string, error) {
 }
 
 func handleAzureConnection(connection map[string]string, request *http.Request) error {
-
 	// handle oauth
 	if token, ok := connection["Token"]; ok {
 		request.Header.Set("AUTHORIZATION", "Bearer "+token)
@@ -382,6 +378,10 @@ func handleAzureConnection(connection map[string]string, request *http.Request) 
 func handleGenericConnection(connection map[string]string, request *http.Request, prefixes headerValuePrefixes, headerAlias headerAlias) error {
 	headers := make(map[string]string)
 	for header, headerValue := range connection {
+
+		if header == consts.RequestUrlKey {
+			continue
+		}
 		header = strings.ToUpper(header)
 		// if the header is in our alias map replace it with the value in the map
 		// TOKEN -> AUTHORIZATION
