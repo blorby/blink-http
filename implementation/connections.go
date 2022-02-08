@@ -24,7 +24,7 @@ type (
 	}
 	headerValuePrefixes     map[string]string
 	headerAlias             map[string]string
-	uniqueConnectionHandler func(connection map[string]interface{}, request *http.Request) error
+	uniqueConnectionHandler func(connection map[string]string, request *http.Request) error
 )
 
 var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler{
@@ -82,10 +82,8 @@ var genericConnectionsOptsMap = map[string]genericConnectionOpts{
 
 func handleAuthentication(ctx *plugin.ActionContext, req *http.Request) error {
 	for connName, connInstance := range ctx.GetAllConnections() {
-		secret, err := connInstance.ResolveCredentials()
-		if err != nil {
-			return errors.Errorf("failed to resolve credentials for %s: %v", connName, err)
-		}
+		secret := connInstance.Data
+		var err error
 		if handler, ok := uniqueConnectionHandlersMap[connName]; ok {
 			err = handler(secret, req)
 		} else if connectionOpts, ok := genericConnectionsOptsMap[connName]; ok {
@@ -98,15 +96,15 @@ func handleAuthentication(ctx *plugin.ActionContext, req *http.Request) error {
 	return nil
 }
 
-func handleBasicAuth(connection map[string]interface{}, req *http.Request) error {
+func handleBasicAuth(connection map[string]string, req *http.Request) error {
 	if err := validateURL(connection, req.URL); err != nil {
 		return err
 	}
-	uname, ok := connection[usernameKey].(string)
+	uname, ok := connection[usernameKey]
 	if !ok {
 		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
 	}
-	password, ok := connection[passwordKey].(string)
+	password, ok := connection[passwordKey]
 	if !ok {
 		return errors.New("basic-auth connection does not contain a password attribute or the password is not a string")
 	}
@@ -114,11 +112,11 @@ func handleBasicAuth(connection map[string]interface{}, req *http.Request) error
 	return nil
 }
 
-func handleBearerToken(connection map[string]interface{}, req *http.Request) error {
+func handleBearerToken(connection map[string]string, req *http.Request) error {
 	if err := validateURL(connection, req.URL); err != nil {
 		return err
 	}
-	token, ok := connection[tokenKey].(string)
+	token, ok := connection[tokenKey]
 	if !ok {
 		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
 	}
@@ -126,13 +124,13 @@ func handleBearerToken(connection map[string]interface{}, req *http.Request) err
 	return nil
 }
 
-func handleApiKeyAuth(connection map[string]interface{}, req *http.Request) error {
+func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
 	if err := validateURL(connection, req.URL); err != nil {
 		return err
 	}
 	for i := 1; i <= 3; i++ {
-		h, ok1 := connection["Header "+fmt.Sprint(i)].(string)
-		v, ok2 := connection["Value "+fmt.Sprint(i)].(string)
+		h, ok1 := connection["Header "+fmt.Sprint(i)]
+		v, ok2 := connection["Value "+fmt.Sprint(i)]
 		if ok1 && ok2 {
 			req.Header.Add(h, v)
 		}
@@ -140,15 +138,11 @@ func handleApiKeyAuth(connection map[string]interface{}, req *http.Request) erro
 	return nil
 }
 
-func validateURL(connection map[string]interface{}, requestedURL *url.URL) error {
-	apiAddressInter, ok := connection[apiAddressKey]
+func validateURL(connection map[string]string, requestedURL *url.URL) error {
+	apiAddressString, ok := connection[apiAddressKey]
 	// if there's no api address defined, any url will be allowed
-	if !ok || apiAddressInter == nil {
-		return nil
-	}
-	apiAddressString, ok := apiAddressInter.(string)
 	if !ok {
-		return errors.New("the api address is not convertible to a string")
+		return nil
 	}
 	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
 	apiAddress, err := url.Parse(apiAddressString)
@@ -170,13 +164,10 @@ func basicAuth(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-func handleBitbucketConnection(connection map[string]interface{}, request *http.Request) error {
+func handleBitbucketConnection(connection map[string]string, request *http.Request) error {
 	// OAuth
 	if val, ok := connection["Token"]; ok {
-		if valString, ok := val.(string); ok {
-			request.Header.Set("AUTHORIZATION", consts.BearerAuth+valString)
-			return nil
-		}
+		request.Header.Set("AUTHORIZATION", consts.BearerAuth+val)
 	}
 	// Api key
 	username, userExists := connection["USERNAME"]
@@ -185,45 +176,33 @@ func handleBitbucketConnection(connection map[string]interface{}, request *http.
 		log.Info("failed to set authentication headers")
 		return fmt.Errorf("failed to set authentication headers")
 	}
-	if userString, ok := username.(string); ok {
-		if passString, ok := password.(string); ok {
-			data := []byte(fmt.Sprintf("%s:%s", userString, passString))
-			hashed := base64.StdEncoding.EncodeToString(data)
-			request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
-			return nil
-		}
-	}
-	log.Info("failed to set authentication headers")
-	return fmt.Errorf("failed to set authentication headers")
+	data := []byte(fmt.Sprintf("%s:%s", username, password))
+	hashed := base64.StdEncoding.EncodeToString(data)
+	request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
+	return nil
 }
 
-func handlePagerdutyConnection(connection map[string]interface{}, request *http.Request) error {
+func handlePagerdutyConnection(connection map[string]string, request *http.Request) error {
 	// Api key
 	if val, ok := connection["api_key"]; ok {
-		if valString, ok := val.(string); ok {
-			request.Header.Set("AUTHORIZATION", "Token token="+valString)
-			return nil
-		}
+		request.Header.Set("AUTHORIZATION", "Token token="+val)
+		return nil
 	}
 	// OAuth
 	if val, ok := connection["Token"]; ok {
-		if valString, ok := val.(string); ok {
-			request.Header.Set("AUTHORIZATION", "Bearer "+valString)
-			request.Header.Set("Accept", "application/vnd.pagerduty+json;version=2")
-			return nil
-		}
+		request.Header.Set("AUTHORIZATION", "Bearer "+val)
+		request.Header.Set("Accept", "application/vnd.pagerduty+json;version=2")
+		return nil
 	}
 	log.Info("failed to set authentication headers")
 	return fmt.Errorf("failed to set authentication headers")
 }
 
-func handleAzureDevopsConnection(connection map[string]interface{}, request *http.Request) error {
+func handleAzureDevopsConnection(connection map[string]string, request *http.Request) error {
 	// OAuth
 	if val, ok := connection["Token"]; ok {
-		if valString, ok := val.(string); ok {
-			request.Header.Set("AUTHORIZATION", consts.BearerAuth+valString)
-			return nil
-		}
+		request.Header.Set("AUTHORIZATION", consts.BearerAuth+val)
+		return nil
 	}
 	// Basic Authentication
 	username, userExists := connection["Username"]
@@ -232,20 +211,14 @@ func handleAzureDevopsConnection(connection map[string]interface{}, request *htt
 		log.Info("failed to set authentication headers")
 		return fmt.Errorf("failed to set authentication headers")
 	}
-	if userString, ok := username.(string); ok {
-		if passString, ok := password.(string); ok {
-			data := []byte(fmt.Sprintf("%s:%s", userString, passString))
-			hashed := base64.StdEncoding.EncodeToString(data)
-			request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
-			return nil
-		}
-	}
-	log.Info("failed to set authentication headers")
-	return fmt.Errorf("failed to set authentication headers")
+	data := []byte(fmt.Sprintf("%s:%s", username, password))
+	hashed := base64.StdEncoding.EncodeToString(data)
+	request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
+	return nil
 }
 
-func handleGCPConnection(connection map[string]interface{}, request *http.Request) error {
-	if token, ok := connection["Token"].(string); ok {
+func handleGCPConnection(connection map[string]string, request *http.Request) error {
+	if token, ok := connection["Token"]; ok {
 		request.Header.Set("AUTHORIZATION", consts.BearerAuth+token)
 		return nil
 	}
@@ -253,8 +226,8 @@ func handleGCPConnection(connection map[string]interface{}, request *http.Reques
 	return handleServiceAccountAuth(connection, request)
 }
 
-func handleServiceAccountAuth(connection map[string]interface{}, request *http.Request) error {
-	credentialsString, ok := connection["credentials"].(string)
+func handleServiceAccountAuth(connection map[string]string, request *http.Request) error {
+	credentialsString, ok := connection["credentials"]
 	if !ok {
 		return errors.New("credentials are invalid - could not convert to string")
 	}
@@ -271,7 +244,7 @@ func handleServiceAccountAuth(connection map[string]interface{}, request *http.R
 
 	client := &http.Client{}
 	res, err := client.Do(req)
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	if err != nil {
 		return errors.Errorf("could not execute the http request: %v", err)
 	}
@@ -355,21 +328,17 @@ func extractAccessToken(res *http.Response) (string, error) {
 	return responseBody.AccessToken, nil
 }
 
-func handleAzureConnection(connection map[string]interface{}, request *http.Request) error {
+func handleAzureConnection(connection map[string]string, request *http.Request) error {
 	// handle oauth
 	if token, ok := connection["Token"]; ok {
-		if tokenString, ok := token.(string); ok {
-			request.Header.Set("AUTHORIZATION", "Bearer "+tokenString)
-		} else {
-			return fmt.Errorf("unable to convert OAuth token to string")
-		}
+		request.Header.Set("AUTHORIZATION", "Bearer "+token)
 		return nil
 	}
 
 	queryParams := url.Values{
 		"grant_type":    {"client_credentials"},
-		"client_id":     {connection["app_id"].(string)},
-		"client_secret": {connection["client_secret"].(string)},
+		"client_id":     {connection["app_id"]},
+		"client_secret": {connection["client_secret"]},
 		"resource":      {"https://management.core.windows.net/"},
 	}
 
@@ -387,7 +356,7 @@ func handleAzureConnection(connection map[string]interface{}, request *http.Requ
 		return err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -406,42 +375,42 @@ func handleAzureConnection(connection map[string]interface{}, request *http.Requ
 	return nil
 }
 
-func handleGenericConnection(connection map[string]interface{}, request *http.Request, prefixes headerValuePrefixes, headerAlias headerAlias) error {
+func handleGenericConnection(connection map[string]string, request *http.Request, prefixes headerValuePrefixes, headerAlias headerAlias) error {
 	headers := make(map[string]string)
 	for header, headerValue := range connection {
-		if headerValueString, ok := headerValue.(string); ok {
-			if header == consts.RequestUrlKey {
-				continue
-			}
-			header = strings.ToUpper(header)
-			// if the header is in our alias map replace it with the value in the map
-			// TOKEN -> AUTHORIZATION
-			if val, ok := headerAlias[header]; ok {
-				header = strings.ToUpper(val)
-			}
 
-			// we want to help the user by adding prefixes he might have missed
-			// for example:   Bearer <TOKEN>
-			if val, ok := prefixes[header]; ok {
-				if !strings.HasPrefix(headerValueString, val) { // check what prefix the user doesn't have
-					// add the prefix
-					headerValueString = val + headerValueString
-				}
-			}
-
-			// If the user supplied BOTH username and password
-			// Username:Password pair should be base64 encoded
-			// and sent as "Authorization: base64(user:pass)"
-			headers[header] = headerValueString
-			if username, ok := headers[consts.BasicAuthUsername]; ok {
-				if password, ok := headers[consts.BasicAuthPassword]; ok {
-					header, headerValueString = "Authorization", constructBasicAuthHeader(username, password)
-					cleanRedundantHeaders(&request.Header)
-				}
-			}
-			request.Header.Set(header, headerValueString)
+		if header == consts.RequestUrlKey {
+			continue
 		}
+		header = strings.ToUpper(header)
+		// if the header is in our alias map replace it with the value in the map
+		// TOKEN -> AUTHORIZATION
+		if val, ok := headerAlias[header]; ok {
+			header = strings.ToUpper(val)
+		}
+
+		// we want to help the user by adding prefixes he might have missed
+		// for example:   Bearer <TOKEN>
+		if val, ok := prefixes[header]; ok {
+			if !strings.HasPrefix(headerValue, val) { // check what prefix the user doesn't have
+				// add the prefix
+				headerValue = val + headerValue
+			}
+		}
+
+		// If the user supplied BOTH username and password
+		// Username:Password pair should be base64 encoded
+		// and sent as "Authorization: base64(user:pass)"
+		headers[header] = headerValue
+		if username, ok := headers[consts.BasicAuthUsername]; ok {
+			if password, ok := headers[consts.BasicAuthPassword]; ok {
+				header, headerValue = "Authorization", constructBasicAuthHeader(username, password)
+				cleanRedundantHeaders(&request.Header)
+			}
+		}
+		request.Header.Set(header, headerValue)
 	}
+
 	return nil
 }
 
