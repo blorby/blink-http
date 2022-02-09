@@ -25,7 +25,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	// check all possible prefix combinations work
 	for _, prefix := range prefixes {
 		for _, prefix2 := range prefixes {
-			connection := map[string]interface{}{apiAddressKey: prefix + host}
+			connection := map[string]interface{}{ApiAddressKey: prefix + host}
 			requestedUrl := prefix2 + host
 			u, err := url.Parse(requestedUrl)
 			suite.Nil(err)
@@ -39,7 +39,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 			requestedURL: "https://host.com",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: ""},
+			connection:   map[string]interface{}{ApiAddressKey: ""},
 			requestedURL: "https://host.com",
 		},
 		{
@@ -54,19 +54,19 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	}
 	for _, badScenario := range []testCase{
 		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
+			connection:   map[string]interface{}{ApiAddressKey: "www.host.com"},
 			requestedURL: "bad-address.com",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com/good-path"},
+			connection:   map[string]interface{}{ApiAddressKey: "www.host.com/good-path"},
 			requestedURL: "host.com/bad-path",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: "https://www.host.com"},
+			connection:   map[string]interface{}{ApiAddressKey: "https://www.host.com"},
 			requestedURL: "subdomain.host.com",
 		},
 		{
-			connection:   map[string]interface{}{apiAddressKey: "www.host.com"},
+			connection:   map[string]interface{}{ApiAddressKey: "www.host.com"},
 			requestedURL: "fhost.com",
 		},
 	} {

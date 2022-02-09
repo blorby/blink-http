@@ -4,10 +4,11 @@ import (
 	"errors"
 	"path"
 
+	http_conn "github.com/blinkops/blink-http/implementation/connections"
 	"github.com/blinkops/blink-sdk/plugin"
 	"github.com/blinkops/blink-sdk/plugin/actions"
 	"github.com/blinkops/blink-sdk/plugin/config"
-	"github.com/blinkops/blink-sdk/plugin/connections"
+	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	description2 "github.com/blinkops/blink-sdk/plugin/description"
 	log "github.com/sirupsen/logrus"
 )
@@ -62,10 +63,11 @@ func (p *HttpPlugin) ExecuteAction(ctx *plugin.ActionContext, request *plugin.Ex
 	}, nil
 }
 
-func (p *HttpPlugin) TestCredentials(_ map[string]*connections.ConnectionInstance) (*plugin.CredentialsValidationResponse, error) {
+func (p *HttpPlugin) TestCredentials(connections map[string]*blink_conn.ConnectionInstance) (*plugin.CredentialsValidationResponse, error) {
+	value, err := http_conn.TestConnection(connections)
 	return &plugin.CredentialsValidationResponse{
-		AreCredentialsValid:   true,
-		RawValidationResponse: []byte("credentials validation is not supported on this plugin :("),
+		AreCredentialsValid:   value,
+		RawValidationResponse: err,
 	}, nil
 }
 
@@ -77,7 +79,7 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 		return nil, err
 	}
 
-	loadedConnections, err := connections.LoadConnectionsFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))
+	loadedConnections, err := blink_conn.LoadConnectionsFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))
 	if err != nil {
 		return nil, err
 	}

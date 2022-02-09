@@ -2,9 +2,10 @@ package implementation
 
 import (
 	"bytes"
-	"errors"
 	"encoding/json"
+	"errors"
 	"fmt"
+	conn "github.com/blinkops/blink-http/implementation/connections"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -25,17 +26,11 @@ const (
 	cookiesKey     = "cookies"
 	bodyKey        = "body"
 
-	usernameKey   = "username"
-	passwordKey   = "password"
-	tokenKey      = "token"
-	apiAddressKey = "API Address"
-	basicAuthKey  = "basic-auth"
-	bearerAuthKey = "bearer-token"
-	apiTokenKey   = "apikey-auth"
+	ApiAddressKey = "API Address"
 )
 
 
-func readBody(responseBody io.ReadCloser) ([]byte, error) {
+func ReadBody(responseBody io.ReadCloser) ([]byte, error) {
 	defer func(Body io.ReadCloser) {
 		if err := Body.Close(); err != nil {
 			log.Debugf("failed to close responseBody reader, error: %v", err)
@@ -59,7 +54,7 @@ func createResponse(response *http.Response, err error) ([]byte, error) {
 		return nil, errors.New("response has not been provided")
 	}
 
-	body, err := readBody(response.Body)
+	body, err := ReadBody(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +103,7 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 		request.Header.Set(name, value)
 	}
 
-	if err = handleAuthentication(ctx, request); err != nil {
+	if err = conn.HandleAuth(ctx, request); err != nil {
 		return nil, err
 	}
 

@@ -1,11 +1,13 @@
-package implementation
+package connections
 
 import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/blinkops/blink-http/implementation"
 	"github.com/blinkops/blink-openapi-sdk/consts"
 	"github.com/blinkops/blink-sdk/plugin"
+	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"github.com/golang-jwt/jwt"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +17,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
+)
+
+const (
+	usernameKey   = "username"
+	passwordKey   = "password"
+	tokenKey      = "token"
+	basicAuthKey  = "basic-auth"
+	bearerAuthKey = "bearer-token"
+	apiTokenKey   = "apikey-auth"
 )
 
 type (
@@ -80,18 +91,25 @@ var genericConnectionsOptsMap = map[string]genericConnectionOpts{
 	"okta":       {},
 }
 
-func handleAuthentication(ctx *plugin.ActionContext, req *http.Request) error {
-	for connName, connInstance := range ctx.GetAllConnections() {
-		secret := connInstance.Data
-		var err error
-		if handler, ok := uniqueConnectionHandlersMap[connName]; ok {
-			err = handler(secret, req)
-		} else if connectionOpts, ok := genericConnectionsOptsMap[connName]; ok {
-			err = handleGenericConnection(secret, req, connectionOpts.headerValuePrefixes, connectionOpts.headerAlias)
+func HandleAuth(ctx *plugin.ActionContext, req *http.Request) error {
+	for _, connInstance := range ctx.GetAllConnections() {
+		if err := HandleAuthSingleConnection(req, connInstance); err != nil {
+			return err
 		}
-		if err != nil {
-			return errors.Errorf("failed to set auth headers for connection %s: %v", connName, err)
-		}
+	}
+	return nil
+}
+
+func HandleAuthSingleConnection(req *http.Request, conn *blink_conn.ConnectionInstance) error {
+	secret := conn.Data
+	var err error
+	if handler, ok := uniqueConnectionHandlersMap[conn.Name]; ok {
+		err = handler(secret, req)
+	} else if connectionOpts, ok := genericConnectionsOptsMap[conn.Name]; ok {
+		err = handleGenericConnection(secret, req, connectionOpts.headerValuePrefixes, connectionOpts.headerAlias)
+	}
+	if err != nil {
+		return errors.Errorf("failed to set auth headers for connection %s: %v", conn.Name, err)
 	}
 	return nil
 }
@@ -139,7 +157,7 @@ func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
 }
 
 func validateURL(connection map[string]string, requestedURL *url.URL) error {
-	apiAddressString, ok := connection[apiAddressKey]
+	apiAddressString, ok := connection[implementation.ApiAddressKey]
 	// if there's no api address defined, any url will be allowed
 	if !ok {
 		return nil
