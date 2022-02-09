@@ -35,7 +35,7 @@ func testGrafanaConnection(connection *blink_conn.ConnectionInstance) (bool, []b
 	}
 	res, err := sendTestConnectionRequest(requestUrl+"/api/org", http.MethodGet, nil, connection)
 	if err != nil {
-		return false, []byte("Test connection failed. Got " + err.Error())
+		return false, []byte("Test connection failed. " + err.Error())
 	}
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
 		return false, []byte(fmt.Sprintf("Test connection failed. Got status code %v", res.StatusCode))
