@@ -2,10 +2,8 @@ package connections
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
-	"github.com/blinkops/blink-http/implementation/requests"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 	"time"
@@ -43,17 +41,7 @@ func testGrafanaConnection(connection *blink_conn.ConnectionInstance) (bool, []b
 		return false, []byte(fmt.Sprintf("Test connection failed. Got status code %v", res.StatusCode))
 	}
 
-	var grafanaErr struct {
-		Message string `json:"message"`
-	}
-
-	body, err := requests.ReadBody(res.Body)
-	err = json.Unmarshal(body, &grafanaErr)
-	if err == nil && grafanaErr.Message != "" {
-		return false, []byte(grafanaErr.Message)
-	}
-
-	return false, body
+	return true, nil
 }
 
 func sendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance) (*http.Response, error) {
