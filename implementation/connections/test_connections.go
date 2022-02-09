@@ -4,16 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/blinkops/blink-http/implementation"
+	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/implementation/requests"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 	"time"
 )
 
-const (
-	RequestUrl     = "REQUEST_URL"
-	DefaultTimeout = 30
-)
+
 
 type testConnectionFunc func(*blink_conn.ConnectionInstance) (bool, []byte)
 
@@ -33,7 +31,7 @@ func TestConnection(connections map[string]*blink_conn.ConnectionInstance) (bool
 }
 
 func testGrafanaConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	requestUrl, ok := connection.Data[RequestUrl]
+	requestUrl, ok := connection.Data[consts.RequestUrlKey]
 	if !ok {
 		return false, []byte("Test connection failed, API Address wasn't provided")
 	}
@@ -49,7 +47,7 @@ func testGrafanaConnection(connection *blink_conn.ConnectionInstance) (bool, []b
 		Message string `json:"message"`
 	}
 
-	body, err := implementation.ReadBody(res.Body)
+	body, err := requests.ReadBody(res.Body)
 	err = json.Unmarshal(body, &grafanaErr)
 	if err == nil && grafanaErr.Message != "" {
 		return false, []byte(grafanaErr.Message)
@@ -70,8 +68,7 @@ func sendTestConnectionRequest(url string, method string, data []byte, conn *bli
 	}
 
 	client := &http.Client{
-		Timeout: time.Second * time.Duration(DefaultTimeout),
+		Timeout: time.Second * time.Duration(consts.DefaultTimeout),
 	}
 	return client.Do(req)
-
 }

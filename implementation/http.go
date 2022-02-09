@@ -5,68 +5,90 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/blinkops/blink-http/consts"
 	conn "github.com/blinkops/blink-http/implementation/connections"
-	"io"
-	"io/ioutil"
+	"github.com/blinkops/blink-http/implementation/requests"
+	"github.com/blinkops/blink-sdk/plugin"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"strings"
 	"time"
-
-	"github.com/blinkops/blink-sdk/plugin"
-	log "github.com/sirupsen/logrus"
 )
 
-const (
-	urlKey         = "url"
-	queryKey      = "query"
-	contentTypeKey = "contentType"
-	headersKey     = "headers"
-	cookiesKey     = "cookies"
-	bodyKey        = "body"
-
-	ApiAddressKey = "API Address"
-)
-
-
-func ReadBody(responseBody io.ReadCloser) ([]byte, error) {
-	defer func(Body io.ReadCloser) {
-		if err := Body.Close(); err != nil {
-			log.Debugf("failed to close responseBody reader, error: %v", err)
-		}
-	}(responseBody)
-
-	body, err := ioutil.ReadAll(responseBody)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+func executeHTTPGetAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodGet, request)
 }
 
-func createResponse(response *http.Response, err error) ([]byte, error) {
-	if err != nil {
-		return nil, err
-	}
-
-	if response == nil {
-		return nil, errors.New("response has not been provided")
-	}
-
-	body, err := ReadBody(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusBadRequest {
-		return body, errors.New(fmt.Sprintf("status: %v", response.StatusCode))
-	}
-
-	return body, nil
+func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodPost, request)
 }
 
-func sendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodPut, request)
+}
+
+func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
+}
+
+func executeHTTPPatchAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	return executeCoreHTTPAction(ctx, http.MethodPatch, request)
+}
+
+func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	providedUrl, ok := request.Parameters[consts.UrlKey]
+	if !ok {
+		return nil, errors.New("no url provided for execution")
+	}
+
+	contentType, ok := request.Parameters[consts.ContentTypeKey]
+	if !ok {
+		contentType = "application/x-www-form-urlencoded"
+	}
+
+	headers, ok := request.Parameters[consts.HeadersKey]
+	if !ok {
+		headers = ""
+	}
+
+	cookies, ok := request.Parameters[consts.CookiesKey]
+	if !ok {
+		cookies = ""
+	}
+
+	body, ok := request.Parameters[consts.BodyKey]
+	if !ok {
+		body = ""
+	}
+
+	headerMap := requests.GetHeaders(contentType, headers)
+	cookieMap := requests.ParseStringToMap(cookies, "=")
+
+	return SendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
+}
+
+func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
+	providedUrl, ok := request.Parameters[consts.UrlKey]
+	if !ok {
+		return nil, errors.New("no url provided for execution")
+	}
+
+	query, ok := request.Parameters[consts.QueryKey]
+	if !ok {
+		query = ""
+	}
+
+	body, err := json.Marshal(map[string]string{"query": query})
+	if err != nil {
+		return nil, err
+	}
+
+	headerMap := map[string]string{"Content-Type": "application/json"}
+
+	return SendRequest(ctx, http.MethodPost, providedUrl, request.Timeout, headerMap, nil, body)
+}
+
+func SendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	cookieJar, err := cookiejar.New(nil)
@@ -109,101 +131,5 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 
 	response, err := client.Do(request)
 
-	return createResponse(response, err)
-}
-
-
-func getHeaders(contentType string, headers string) map[string]string {
-	headerMap := parseStringToMap(headers, ":")
-	headerMap["Content-Type"] = contentType
-
-	return headerMap
-}
-
-func parseStringToMap(value string, delimiter string) map[string]string {
-	stringMap := make(map[string]string)
-
-	split := strings.Split(value, "\n")
-	for _, currentParameter := range split {
-		if strings.Contains(currentParameter, delimiter) {
-			currentHeaderSplit := strings.Split(currentParameter, delimiter)
-			parameterKey, parameterValue := currentHeaderSplit[0], strings.TrimSpace(currentHeaderSplit[1])
-
-			stringMap[parameterKey] = parameterValue
-		}
-	}
-	return stringMap
-}
-
-func executeHTTPGetAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodGet, request)
-}
-
-func executeHTTPPostAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPost, request)
-}
-
-func executeHTTPPutAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPut, request)
-}
-
-func executeHTTPDeleteAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodDelete, request)
-}
-
-func executeHTTPPatchAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	return executeCoreHTTPAction(ctx, http.MethodPatch, request)
-}
-
-func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	providedUrl, ok := request.Parameters[urlKey]
-	if !ok {
-		return nil, errors.New("no url provided for execution")
-	}
-
-	contentType, ok := request.Parameters[contentTypeKey]
-	if !ok {
-		contentType = "application/x-www-form-urlencoded"
-	}
-
-	headers, ok := request.Parameters[headersKey]
-	if !ok {
-		headers = ""
-	}
-
-	cookies, ok := request.Parameters[cookiesKey]
-	if !ok {
-		cookies = ""
-	}
-
-	body, ok := request.Parameters[bodyKey]
-	if !ok {
-		body = ""
-	}
-
-	headerMap := getHeaders(contentType, headers)
-	cookieMap := parseStringToMap(cookies, "=")
-
-	return sendRequest(ctx, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
-}
-
-func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
-	providedUrl, ok := request.Parameters[urlKey]
-	if !ok {
-		return nil, errors.New("no url provided for execution")
-	}
-
-	query, ok := request.Parameters[queryKey]
-	if !ok {
-		query = ""
-	}
-
-	body, err := json.Marshal(map[string]string{"query": query})
-	if err != nil {
-		return nil, err
-	}
-
-	headerMap := map[string]string{"Content-Type": "application/json"}
-
-	return sendRequest(ctx, http.MethodPost, providedUrl, request.Timeout, headerMap, nil, body)
+	return requests.CreateResponse(response, err)
 }

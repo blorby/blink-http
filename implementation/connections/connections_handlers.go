@@ -4,8 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/blinkops/blink-http/implementation"
-	"github.com/blinkops/blink-openapi-sdk/consts"
+	"github.com/blinkops/blink-http/consts"
 	"github.com/blinkops/blink-sdk/plugin"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"github.com/golang-jwt/jwt"
@@ -19,15 +18,6 @@ import (
 	"time"
 )
 
-const (
-	usernameKey   = "username"
-	passwordKey   = "password"
-	tokenKey      = "token"
-	basicAuthKey  = "basic-auth"
-	bearerAuthKey = "bearer-token"
-	apiTokenKey   = "apikey-auth"
-)
-
 type (
 	genericConnectionOpts struct {
 		headerValuePrefixes
@@ -39,31 +29,31 @@ type (
 )
 
 var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler{
-	"gcp":          handleGCPConnection,
-	"azure":        handleAzureConnection,
-	"azure-devops": handleAzureDevopsConnection,
-	"bitbucket":    handleBitbucketConnection,
-	"pagerduty":    handlePagerdutyConnection,
-	basicAuthKey:   handleBasicAuth,
-	bearerAuthKey:  handleBearerToken,
-	apiTokenKey:    handleApiKeyAuth,
+	"gcp":                handleGCPConnection,
+	"azure":              handleAzureConnection,
+	"azure-devops":       handleAzureDevopsConnection,
+	"bitbucket":          handleBitbucketConnection,
+	"pagerduty":          handlePagerdutyConnection,
+	consts.BasicAuthKey:  handleBasicAuth,
+	consts.BearerAuthKey: handleBearerToken,
+	consts.ApiTokenKey:   handleApiKeyAuth,
 }
 
 var genericConnectionsOptsMap = map[string]genericConnectionOpts{
 	"github": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"gitlab": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"grafana": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"API_KEY": "AUTHORIZATION"},
 	},
 	"jira": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BasicAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"API TOKEN": "PASSWORD", "USER EMAIL": "USERNAME"},
 	},
 	"opsgenie": {
@@ -71,11 +61,11 @@ var genericConnectionsOptsMap = map[string]genericConnectionOpts{
 		headerAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"pingdom": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"slack": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuth},
+		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
 		headerAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"virus-total": {
@@ -115,14 +105,14 @@ func HandleAuthSingleConnection(req *http.Request, conn *blink_conn.ConnectionIn
 }
 
 func handleBasicAuth(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
+	if err := ValidateURL(connection, req.URL); err != nil {
 		return err
 	}
-	uname, ok := connection[usernameKey]
+	uname, ok := connection[consts.UsernameKey]
 	if !ok {
 		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
 	}
-	password, ok := connection[passwordKey]
+	password, ok := connection[consts.PasswordKey]
 	if !ok {
 		return errors.New("basic-auth connection does not contain a password attribute or the password is not a string")
 	}
@@ -131,10 +121,10 @@ func handleBasicAuth(connection map[string]string, req *http.Request) error {
 }
 
 func handleBearerToken(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
+	if err := ValidateURL(connection, req.URL); err != nil {
 		return err
 	}
-	token, ok := connection[tokenKey]
+	token, ok := connection[consts.TokenKey]
 	if !ok {
 		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
 	}
@@ -143,7 +133,7 @@ func handleBearerToken(connection map[string]string, req *http.Request) error {
 }
 
 func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
+	if err := ValidateURL(connection, req.URL); err != nil {
 		return err
 	}
 	for i := 1; i <= 3; i++ {
@@ -156,8 +146,8 @@ func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
 	return nil
 }
 
-func validateURL(connection map[string]string, requestedURL *url.URL) error {
-	apiAddressString, ok := connection[implementation.ApiAddressKey]
+func ValidateURL(connection map[string]string, requestedURL *url.URL) error {
+	apiAddressString, ok := connection[consts.ApiAddressKey]
 	// if there's no api address defined, any url will be allowed
 	if !ok {
 		return nil
@@ -185,7 +175,7 @@ func basicAuth(username, password string) string {
 func handleBitbucketConnection(connection map[string]string, request *http.Request) error {
 	// OAuth
 	if val, ok := connection["Token"]; ok {
-		request.Header.Set("AUTHORIZATION", consts.BearerAuth+val)
+		request.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix+val)
 	}
 	// Api key
 	username, userExists := connection["USERNAME"]
@@ -196,7 +186,7 @@ func handleBitbucketConnection(connection map[string]string, request *http.Reque
 	}
 	data := []byte(fmt.Sprintf("%s:%s", username, password))
 	hashed := base64.StdEncoding.EncodeToString(data)
-	request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
+	request.Header.Set("AUTHORIZATION", consts.BasicAuthPrefix+hashed)
 	return nil
 }
 
@@ -219,7 +209,7 @@ func handlePagerdutyConnection(connection map[string]string, request *http.Reque
 func handleAzureDevopsConnection(connection map[string]string, request *http.Request) error {
 	// OAuth
 	if val, ok := connection["Token"]; ok {
-		request.Header.Set("AUTHORIZATION", consts.BearerAuth+val)
+		request.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix+val)
 		return nil
 	}
 	// Basic Authentication
@@ -231,13 +221,13 @@ func handleAzureDevopsConnection(connection map[string]string, request *http.Req
 	}
 	data := []byte(fmt.Sprintf("%s:%s", username, password))
 	hashed := base64.StdEncoding.EncodeToString(data)
-	request.Header.Set("AUTHORIZATION", consts.BasicAuth+hashed)
+	request.Header.Set("AUTHORIZATION", consts.BasicAuthPrefix+hashed)
 	return nil
 }
 
 func handleGCPConnection(connection map[string]string, request *http.Request) error {
 	if token, ok := connection["Token"]; ok {
-		request.Header.Set("AUTHORIZATION", consts.BearerAuth+token)
+		request.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix+token)
 		return nil
 	}
 
@@ -271,7 +261,7 @@ func handleServiceAccountAuth(connection map[string]string, request *http.Reques
 	if err != nil {
 		return err
 	}
-	request.Header.Set("AUTHORIZATION", consts.BearerAuth+accessToken)
+	request.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix+accessToken)
 
 	return nil
 }
@@ -435,7 +425,7 @@ func handleGenericConnection(connection map[string]string, request *http.Request
 func constructBasicAuthHeader(username, password string) string {
 	data := []byte(fmt.Sprintf("%s:%s", username, password))
 	hashed := base64.StdEncoding.EncodeToString(data)
-	return fmt.Sprintf("%s%s", consts.BasicAuth, hashed)
+	return fmt.Sprintf("%s%s", consts.BasicAuthPrefix, hashed)
 }
 
 func cleanRedundantHeaders(requestHeaders *http.Header) {

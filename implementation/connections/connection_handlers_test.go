@@ -1,6 +1,7 @@
-package implementation
+package connections
 
 import (
+	"github.com/blinkops/blink-http/consts"
 	"net/url"
 	"testing"
 
@@ -17,7 +18,7 @@ func TestHttpTestSuite(t *testing.T) {
 
 func (suite *HttpTestSuite) TestValidateURL() {
 	type testCase struct {
-		connection   map[string]interface{}
+		connection   map[string]string
 		requestedURL string
 	}
 	prefixes := []string{"", "www.", "https://", "https://www."}
@@ -25,54 +26,54 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	// check all possible prefix combinations work
 	for _, prefix := range prefixes {
 		for _, prefix2 := range prefixes {
-			connection := map[string]interface{}{ApiAddressKey: prefix + host}
+			connection := map[string]string{consts.ApiAddressKey: prefix + host}
 			requestedUrl := prefix2 + host
 			u, err := url.Parse(requestedUrl)
 			suite.Nil(err)
-			err = validateURL(connection, u)
+			err = ValidateURL(connection, u)
 			suite.Nil(err)
 		}
 	}
 	for _, goodScenario := range []testCase{
 		{
-			connection:   map[string]interface{}{},
+			connection:   map[string]string{},
 			requestedURL: "https://host.com",
 		},
 		{
-			connection:   map[string]interface{}{ApiAddressKey: ""},
+			connection:   map[string]string{consts.ApiAddressKey: ""},
 			requestedURL: "https://host.com",
 		},
 		{
-			connection:   map[string]interface{}{"bad key": "www.host.com"},
+			connection:   map[string]string{"bad key": "www.host.com"},
 			requestedURL: "host.com",
 		},
 	} {
 		u, err := url.Parse(goodScenario.requestedURL)
 		suite.Nil(err)
-		err = validateURL(goodScenario.connection, u)
+		err = ValidateURL(goodScenario.connection, u)
 		suite.Nil(err)
 	}
 	for _, badScenario := range []testCase{
 		{
-			connection:   map[string]interface{}{ApiAddressKey: "www.host.com"},
+			connection:   map[string]string{consts.ApiAddressKey: "www.host.com"},
 			requestedURL: "bad-address.com",
 		},
 		{
-			connection:   map[string]interface{}{ApiAddressKey: "www.host.com/good-path"},
+			connection:   map[string]string{consts.ApiAddressKey: "www.host.com/good-path"},
 			requestedURL: "host.com/bad-path",
 		},
 		{
-			connection:   map[string]interface{}{ApiAddressKey: "https://www.host.com"},
+			connection:   map[string]string{consts.ApiAddressKey: "https://www.host.com"},
 			requestedURL: "subdomain.host.com",
 		},
 		{
-			connection:   map[string]interface{}{ApiAddressKey: "www.host.com"},
+			connection:   map[string]string{consts.ApiAddressKey: "www.host.com"},
 			requestedURL: "fhost.com",
 		},
 	} {
 		u, err := url.Parse(badScenario.requestedURL)
 		suite.Nil(err)
-		err = validateURL(badScenario.connection, u)
+		err = ValidateURL(badScenario.connection, u)
 		suite.NotNil(err)
 	}
 }
