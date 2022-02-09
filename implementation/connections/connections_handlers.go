@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/integrations/grafana"
 	"github.com/blinkops/blink-sdk/plugin"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"github.com/golang-jwt/jwt"
@@ -19,12 +20,12 @@ import (
 )
 
 type (
-	genericConnectionOpts struct {
-		headerValuePrefixes
-		headerAlias
+	GenericConnectionOpts struct {
+		HeaderValuePrefixes
+		HeaderAlias
 	}
-	headerValuePrefixes     map[string]string
-	headerAlias             map[string]string
+	HeaderValuePrefixes     map[string]string
+	HeaderAlias             map[string]string
 	uniqueConnectionHandler func(connection map[string]string, request *http.Request) error
 )
 
@@ -39,42 +40,39 @@ var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler{
 	consts.ApiTokenKey:   handleApiKeyAuth,
 }
 
-var genericConnectionsOptsMap = map[string]genericConnectionOpts{
+var genericConnectionsOptsMap = map[string]GenericConnectionOpts{
 	"github": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"TOKEN": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
+		HeaderAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"gitlab": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"TOKEN": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
+		HeaderAlias{"TOKEN": "AUTHORIZATION"},
 	},
-	"grafana": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"API_KEY": "AUTHORIZATION"},
-	},
+	"grafana": grafana.GetGrafanaConnectionOpts(),
 	"jira": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"API TOKEN": "PASSWORD", "USER EMAIL": "USERNAME"},
+		HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
+		HeaderAlias{"API TOKEN": "PASSWORD", "USER EMAIL": "USERNAME"},
 	},
 	"opsgenie": {
-		headerValuePrefixes{"AUTHORIZATION": "GenieKey "},
-		headerAlias{"TOKEN": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": "GenieKey "},
+		HeaderAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"pingdom": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"TOKEN": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
+		HeaderAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"slack": {
-		headerValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
-		headerAlias{"TOKEN": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix},
+		HeaderAlias{"TOKEN": "AUTHORIZATION"},
 	},
 	"virus-total": {
 		nil,
-		headerAlias{"API KEY": "x-apikey"},
+		HeaderAlias{"API KEY": "x-apikey"},
 	},
 	"elasticsearch": {
-		headerValuePrefixes{"AUTHORIZATION": "ApiKey "},
-		headerAlias{"API_KEY": "AUTHORIZATION"},
+		HeaderValuePrefixes{"AUTHORIZATION": "ApiKey "},
+		HeaderAlias{"API_KEY": "AUTHORIZATION"},
 	},
 	"prometheus": {},
 	"datadog":    {},
@@ -96,7 +94,7 @@ func HandleAuthSingleConnection(req *http.Request, conn *blink_conn.ConnectionIn
 	if handler, ok := uniqueConnectionHandlersMap[conn.Name]; ok {
 		err = handler(secret, req)
 	} else if connectionOpts, ok := genericConnectionsOptsMap[conn.Name]; ok {
-		err = handleGenericConnection(secret, req, connectionOpts.headerValuePrefixes, connectionOpts.headerAlias)
+		err = handleGenericConnection(secret, req, connectionOpts.HeaderValuePrefixes, connectionOpts.HeaderAlias)
 	}
 	if err != nil {
 		return errors.Errorf("failed to set auth headers for connection %s: %v", conn.Name, err)
@@ -383,7 +381,7 @@ func handleAzureConnection(connection map[string]string, request *http.Request) 
 	return nil
 }
 
-func handleGenericConnection(connection map[string]string, request *http.Request, prefixes headerValuePrefixes, headerAlias headerAlias) error {
+func handleGenericConnection(connection map[string]string, request *http.Request, prefixes HeaderValuePrefixes, headerAlias HeaderAlias) error {
 	headers := make(map[string]string)
 	for header, headerValue := range connection {
 

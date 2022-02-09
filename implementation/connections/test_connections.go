@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/integrations/grafana"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 	"time"
@@ -11,10 +12,10 @@ import (
 
 
 
-type testConnectionFunc func(*blink_conn.ConnectionInstance) (bool, []byte)
+type TestConnectionFunc func(*blink_conn.ConnectionInstance) (bool, []byte)
 
-var testConnectionHandlers = map[string]testConnectionFunc{
-	"grafana": testGrafanaConnection,
+var testConnectionHandlers = map[string]TestConnectionFunc{
+	"grafana": grafana.TestGrafanaConnection,
 }
 
 func TestConnection(connections map[string]*blink_conn.ConnectionInstance) (bool, []byte) {
@@ -28,23 +29,9 @@ func TestConnection(connections map[string]*blink_conn.ConnectionInstance) (bool
 	return false, []byte(fmt.Sprintf("Test connection failed. No connection to test was provided"))
 }
 
-func testGrafanaConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	requestUrl, ok := connection.Data[consts.RequestUrlKey]
-	if !ok {
-		return false, []byte("Test connection failed, API Address wasn't provided")
-	}
-	res, err := sendTestConnectionRequest(requestUrl+"/api/org", http.MethodGet, nil, connection)
-	if err != nil {
-		return false, []byte("Test connection failed. " + err.Error())
-	}
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		return false, []byte(fmt.Sprintf("Test connection failed. Got status code %v", res.StatusCode))
-	}
 
-	return true, nil
-}
 
-func sendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance) (*http.Response, error) {
+func SendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance) (*http.Response, error) {
 	requestBody := bytes.NewBuffer(data)
 	req, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
