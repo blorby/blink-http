@@ -11,3 +11,4 @@ connection_types:
     reference: basic-auth
   bearer-token:
     reference: bearer-token
+is_connection_optional: true

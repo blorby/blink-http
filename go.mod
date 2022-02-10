@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/blinkops/blink-openapi-sdk v1.0.115
-	github.com/blinkops/blink-sdk v1.0.75
+	github.com/blinkops/blink-sdk v1.0.77
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
