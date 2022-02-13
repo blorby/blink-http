@@ -91,11 +91,12 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 	}
 
 	supportedActions := map[string]ActionHandler{
-		"get":    executeHTTPGetAction,
-		"post":   executeHTTPPostAction,
-		"put":    executeHTTPPutAction,
-		"delete": executeHTTPDeleteAction,
-		"patch":  executeHTTPPatchAction,
+		"get":     executeHTTPGetAction,
+		"post":    executeHTTPPostAction,
+		"put":     executeHTTPPutAction,
+		"delete":  executeHTTPDeleteAction,
+		"patch":   executeHTTPPatchAction,
+		"graphQL": executeGraphQL,
 	}
 
 	return &HttpPlugin{
