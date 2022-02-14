@@ -33,6 +33,7 @@ var uniqueConnectionHandlersMap = map[string]uniqueConnectionHandler{
 	"azure-devops": handleAzureDevopsConnection,
 	"bitbucket":    handleBitbucketConnection,
 	"pagerduty":    handlePagerdutyConnection,
+	"wiz":          handleWizConnection,
 	basicAuthKey:   handleBasicAuth,
 	bearerAuthKey:  handleBearerToken,
 	apiTokenKey:    handleApiKeyAuth,
@@ -345,6 +346,47 @@ func handleAzureConnection(connection map[string]string, request *http.Request) 
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/token", connection["tenant_id"]), strings.NewReader(queryParams.Encode()))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer func() { _ = res.Body.Close() }()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	var responseBody struct {
+		AccessToken string `json:"access_token"`
+	}
+
+	err = json.Unmarshal(body, &responseBody)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("AUTHORIZATION", "Bearer "+responseBody.AccessToken)
+	return nil
+}
+
+func handleWizConnection(connection map[string]string, request *http.Request) error {
+	queryParams := url.Values{
+		"grant_type":    {"client_credentials"},
+		"client_id":     {connection["Client ID"]},
+		"client_secret": {connection["Client Secret"]},
+		"audience":      {"beyond-api"},
+	}
+
+	client := &http.Client{}
+
+	req, err := http.NewRequest(http.MethodPost, "https://auth.wiz.io/oauth/token", strings.NewReader(queryParams.Encode()))
 	if err != nil {
 		return err
 	}
