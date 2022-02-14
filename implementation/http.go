@@ -2,14 +2,15 @@ package implementation
 
 import (
 	"bytes"
-	"errors"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 
@@ -19,7 +20,8 @@ import (
 
 const (
 	urlKey         = "url"
-	queryKey      = "query"
+	queryKey       = "query"
+	variablesKey   = "variables"
 	contentTypeKey = "contentType"
 	headersKey     = "headers"
 	cookiesKey     = "cookies"
@@ -32,8 +34,10 @@ const (
 	basicAuthKey  = "basic-auth"
 	bearerAuthKey = "bearer-token"
 	apiTokenKey   = "apikey-auth"
-)
 
+	expressionPrefix = "{{"
+	expressionSuffix = "}}"
+)
 
 func readBody(responseBody io.ReadCloser) ([]byte, error) {
 	defer func(Body io.ReadCloser) {
@@ -117,7 +121,6 @@ func sendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 	return createResponse(response, err)
 }
 
-
 func getHeaders(contentType string, headers string) map[string]string {
 	headerMap := parseStringToMap(headers, ":")
 	headerMap["Content-Type"] = contentType
@@ -138,6 +141,48 @@ func parseStringToMap(value string, delimiter string) map[string]string {
 		}
 	}
 	return stringMap
+}
+
+func getGraphQLVariables(variables string) (map[string]interface{}, error) {
+	variableMap, err := parseStringToInterfaceMap(variables, ":")
+	if err != nil {
+		return nil, err
+	}
+
+	// replace empty vars with nil
+	for key, value := range variableMap {
+		if reflect.TypeOf(value) == reflect.TypeOf("") {
+			if strings.HasPrefix(value.(string), expressionPrefix) && strings.HasSuffix(value.(string), expressionSuffix) {
+				variableMap[key] = nil
+			}
+		}
+	}
+
+	return variableMap, nil
+}
+
+func parseStringToInterfaceMap(value string, delimiter string) (map[string]interface{}, error) {
+	interfaceMap := make(map[string]interface{})
+
+	split := strings.Split(value, "\n")
+	for _, currentParameter := range split {
+		if strings.Contains(currentParameter, delimiter) {
+			currentSplit := strings.Split(currentParameter, delimiter)
+			parameterKey, parameterValue := currentSplit[0], strings.TrimSpace(currentSplit[1])
+
+			var temp interface{}
+
+			if parameterValue != "" && parameterValue != "\"\"" {
+				err := json.Unmarshal([]byte(parameterValue), &temp)
+				if err != nil {
+					return nil, errors.New("unable to parse variables map")
+				}
+			}
+
+			interfaceMap[parameterKey] = temp
+		}
+	}
+	return interfaceMap, nil
 }
 
 func executeHTTPGetAction(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error) {
@@ -203,7 +248,17 @@ func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequ
 		query = ""
 	}
 
-	body, err := json.Marshal(map[string]string{"query": query})
+	variables, ok := request.Parameters[variablesKey]
+	if !ok {
+		variables = ""
+	}
+
+	variablesMap, err := getGraphQLVariables(variables)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := json.Marshal(map[string]interface{}{"query": query, "variables": variablesMap})
 	if err != nil {
 		return nil, err
 	}
