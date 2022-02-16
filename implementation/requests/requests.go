@@ -3,6 +3,7 @@ package requests
 import (
 	"errors"
 	"fmt"
+	"github.com/blinkops/blink-http/plugins"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func ReadBody(responseBody io.ReadCloser) ([]byte, error) {
 	return body, nil
 }
 
-func CreateResponse(response *http.Response, err error) ([]byte, error) {
+func CreateResponse(response *http.Response, err error, pluginName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +39,17 @@ func CreateResponse(response *http.Response, err error) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if plugin, ok := plugins.Plugins[pluginName]; ok {
+		if pluginWithValidation, ok := plugin.(plugins.PluginWithValidation); ok {
+			return pluginWithValidation.ValidateResponse(response.StatusCode, body)
+		}
+	}
+	return ValidateResponse(response.StatusCode, body)
+}
 
-	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusBadRequest {
-		return body, errors.New(fmt.Sprintf("status: %v", response.StatusCode))
+func ValidateResponse(statusCode int, body []byte) ([]byte, error) {
+	if statusCode < http.StatusOK || statusCode >= http.StatusBadRequest {
+		return body, errors.New(fmt.Sprintf("status: %v", statusCode))
 	}
 
 	return body, nil

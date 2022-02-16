@@ -2,16 +2,19 @@ package implementation
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
-	conn "github.com/blinkops/blink-http/implementation/connections"
 	"github.com/blinkops/blink-http/implementation/requests"
+	"github.com/blinkops/blink-http/plugins"
 	"github.com/blinkops/blink-sdk/plugin"
+	"github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -125,11 +128,107 @@ func SendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 		request.Header.Set(name, value)
 	}
 
-	if err = conn.HandleAuth(ctx, request); err != nil {
-		return nil, err
+	var pluginName string
+	for connName, connInstance := range ctx.GetAllConnections() {
+		if err = handleAuth(connName, connInstance, request); err != nil {
+			return nil, err
+		}
+		pluginName = connName
 	}
 
 	response, err := client.Do(request)
 
-	return requests.CreateResponse(response, err)
+	return requests.CreateResponse(response, err, pluginName)
+}
+
+func handleAuth(connName string, connInstance *connections.ConnectionInstance, req *http.Request) error {
+	switch connName {
+	case consts.BasicAuthKey:
+		if err := handleBasicAuth(connInstance.Data, req); err != nil {
+			return err
+		}
+	case consts.BearerAuthKey:
+		if err := handleBearerToken(connInstance.Data, req); err != nil {
+			return err
+		}
+	case consts.ApiTokenKey:
+		if err := handleApiKeyAuth(connInstance.Data, req); err != nil {
+			return err
+		}
+	default:
+		if integration, ok := plugins.Plugins[connName]; ok {
+			if err := integration.HandleAuth(req, connInstance.Data); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func handleBasicAuth(connection map[string]string, req *http.Request) error {
+	if err := validateURL(connection, req.URL); err != nil {
+		return err
+	}
+	uname, ok := connection[consts.UsernameKey]
+	if !ok {
+		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
+	}
+	password, ok := connection[consts.PasswordKey]
+	if !ok {
+		return errors.New("basic-auth connection does not contain a password attribute or the password is not a string")
+	}
+	req.Header.Add("Authorization", "Basic "+basicAuth(uname, password))
+	return nil
+}
+
+func handleBearerToken(connection map[string]string, req *http.Request) error {
+	if err := validateURL(connection, req.URL); err != nil {
+		return err
+	}
+	token, ok := connection[consts.TokenKey]
+	if !ok {
+		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
+	}
+	req.Header.Add("Authorization", "Bearer "+token)
+	return nil
+}
+
+func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
+	if err := validateURL(connection, req.URL); err != nil {
+		return err
+	}
+	for i := 1; i <= 3; i++ {
+		h, ok1 := connection["Header "+fmt.Sprint(i)]
+		v, ok2 := connection["Value "+fmt.Sprint(i)]
+		if ok1 && ok2 {
+			req.Header.Add(h, v)
+		}
+	}
+	return nil
+}
+
+func validateURL(connection map[string]string, requestedURL *url.URL) error {
+	apiAddressString, ok := connection[consts.ApiAddressKey]
+	// if there's no api address defined, any url will be allowed
+	if !ok {
+		return nil
+	}
+	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
+	apiAddress, err := url.Parse(apiAddressString)
+	if err != nil {
+		return err
+	}
+	requestedURL, err = url.Parse(strings.Replace(requestedURL.String(), "www.", "", 1))
+	if err != nil {
+		return err
+	}
+	if !strings.HasPrefix(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
+		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
+	}
+	return nil
+}
+
+func basicAuth(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
 }

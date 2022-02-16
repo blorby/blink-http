@@ -1,4 +1,4 @@
-package connections
+package implementation
 
 import (
 	"github.com/blinkops/blink-http/consts"
@@ -30,7 +30,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 			requestedUrl := prefix2 + host
 			u, err := url.Parse(requestedUrl)
 			suite.Nil(err)
-			err = ValidateURL(connection, u)
+			err = validateURL(connection, u)
 			suite.Nil(err)
 		}
 	}
@@ -50,7 +50,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	} {
 		u, err := url.Parse(goodScenario.requestedURL)
 		suite.Nil(err)
-		err = ValidateURL(goodScenario.connection, u)
+		err = validateURL(goodScenario.connection, u)
 		suite.Nil(err)
 	}
 	for _, badScenario := range []testCase{
@@ -73,7 +73,7 @@ func (suite *HttpTestSuite) TestValidateURL() {
 	} {
 		u, err := url.Parse(badScenario.requestedURL)
 		suite.Nil(err)
-		err = ValidateURL(badScenario.connection, u)
+		err = validateURL(badScenario.connection, u)
 		suite.NotNil(err)
 	}
 }
