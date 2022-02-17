@@ -124,11 +124,12 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 		if err != nil {
 			return nil, err
 		}
-		updatedSupportedActions, err := addSupportedActions(supportedActions, customPlugin.GetCustomActionHandlers())
+
+		err = addSupportedActions(supportedActions, customPlugin.GetCustomActionHandlers())
 		if err != nil {
 			return nil, err
 		}
-		supportedActions = updatedSupportedActions
+
 	}
 
 	return &HttpPlugin{
@@ -147,12 +148,12 @@ func addActionsFromPlugin(currentActions []plugin.Action,rootPluginDirectory str
 	return nil
 }
 
-func addSupportedActions(actions map[string]plugins.ActionHandler, newActions map[string]plugins.ActionHandler) (map[string]plugins.ActionHandler, error) {
+func addSupportedActions(actions map[string]plugins.ActionHandler, newActions map[string]plugins.ActionHandler) error {
 	for name, handler := range newActions {
 		if _, ok := actions[name]; ok {
-			return nil, errors.New(fmt.Sprintf("failed to init plugin, found duplicate action: %s", name))
+			return errors.New(fmt.Sprintf("failed to init plugin, found duplicate action: %s", name))
 		}
 		actions[name] = handler
 	}
-	return actions, nil
+	return nil
 }
