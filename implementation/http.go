@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"reflect"
 	"strings"
 	"time"
 
@@ -144,6 +143,7 @@ func parseStringToMap(value string, delimiter string) map[string]string {
 }
 
 func getGraphQLVariables(variables string) (map[string]interface{}, error) {
+	/*
 	variableMap, err := parseStringToInterfaceMap(variables, ":")
 	if err != nil {
 		return nil, err
@@ -159,6 +159,24 @@ func getGraphQLVariables(variables string) (map[string]interface{}, error) {
 	}
 
 	return variableMap, nil
+	 */
+	var variablesJson map[string]interface{}
+
+	/* asd, asdf, qwer
+	{"project id":"{{int(params.a)}}", "blabla":4}
+	 */
+	err := json.Unmarshal([]byte(variables), &variablesJson)
+	if err != nil {
+		return nil, errors.New("failed to marshal variables json")
+	}
+
+	for key, value := range variablesJson {
+		if value == "" || value == "\"\"" {
+			variablesJson[key] = nil
+		}
+	}
+
+	return variablesJson, nil
 }
 
 func parseStringToInterfaceMap(value string, delimiter string) (map[string]interface{}, error) {
