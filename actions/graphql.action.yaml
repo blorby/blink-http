@@ -15,7 +15,7 @@ parameters:
     required: true
     index: 2
   variables:
-    type: "code:map"
+    type: "code:json"
     description: "GraphQL query variables"
     required: false
     index: 3
