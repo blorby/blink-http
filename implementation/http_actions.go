@@ -76,13 +76,7 @@ func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequ
 		variables = ""
 	}
 
-	var unmarshalledVariables map[string]interface{}
-	err := json.Unmarshal([]byte(variables), &unmarshalledVariables)
-	if err != nil {
-		return nil, errors.New("failed to unmarshal variables")
-	}
-
-	body, err := json.Marshal(map[string]interface{}{"query": query, "variables": variables})
+	body, err := json.Marshal(map[string]string{"query": query, "variables": variables})
 	if err != nil {
 		return nil, err
 	}
