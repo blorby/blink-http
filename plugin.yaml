@@ -13,4 +13,40 @@ connection_types:
     reference: bearer-token
   apikey-auth:
     reference: apikey-auth
+  azure:
+    reference: azure
+  azure-devops:
+    reference: azure-devops
+  bitbucket:
+    reference: bitbucket
+  datadog:
+    reference: datadog
+  elasticsearch:
+    reference: elasticsearch
+  gcp:
+    reference: gcp
+  github:
+    reference: github
+  gitlab:
+    reference: gitlab
+  grafana:
+    reference: grafana
+  jira:
+    reference: jira
+  okta:
+    reference: okta
+  opsgenie:
+    reference: opsgenie
+  pagerduty:
+    reference: pagerduty
+  pingdom:
+    reference: pingdom
+  prometheus:
+    reference: prometheus
+  slack:
+    reference: slack
+  virus-total:
+    reference: virus-total
+  wiz:
+    reference: wiz
 is_connection_optional: true
