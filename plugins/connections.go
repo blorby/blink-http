@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/plugins/types"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 	"strings"
@@ -63,7 +64,7 @@ func cleanRedundantHeaders(requestHeaders *http.Header) {
 	requestHeaders.Del(consts.BasicAuthPassword)
 }
 
-func sendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance, authHandler AuthHandler) (*http.Response, error) {
+func sendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance, authHandler types.AuthHandler) (*http.Response, error) {
 	requestBody := bytes.NewBuffer(data)
 	req, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
