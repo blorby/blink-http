@@ -1,4 +1,4 @@
-package plugins
+package requests
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func SendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte, plugin types.Plugin) ([]byte, error) {
+func SendRequest(ctx *plugin.ActionContext, plugin types.Plugin, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	cookieJar, err := cookiejar.New(nil)
@@ -69,9 +69,7 @@ func SendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 
 func handleAuth(connName string, connInstance *connections.ConnectionInstance, req *http.Request, plugin types.Plugin) error {
 	if plugin != nil {
-		if err := plugin.HandleAuth(req, connInstance.Data); err != nil {
-			return err
-		}
+		return plugin.HandleAuth(req, connInstance.Data)
 	}
 	switch connName {
 	case consts.BasicAuthKey:

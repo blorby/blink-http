@@ -1,12 +1,11 @@
 package plugins
 
 import (
-	"github.com/blinkops/blink-sdk/plugin"
-	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
-	"net/http"
+	"github.com/blinkops/blink-http/plugins/types"
+	"github.com/blinkops/blink-http/plugins/wiz"
 )
 
-var Plugins = map[string]Plugin{
+var Plugins = map[string]types.Plugin{
 	"azure":         getNewAzurePlugin(),
 	"azure-devops":  getNewAzureDevopsPlugin(),
 	"bitbucket":     getNewBitbucketPlugin(),
@@ -24,24 +23,5 @@ var Plugins = map[string]Plugin{
 	"prometheus":    getNewPrometheusPlugin(),
 	"slack":         getNewSlackPlugin(),
 	"virus-total":   getNewVirusTotalPlugin(),
-	"wiz":           getNewWizPlugin(),
-}
-
-type ActionHandler func(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) ([]byte, error)
-type AuthHandler func(req *http.Request, conn map[string]string) error
-
-type Plugin interface {
-	TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte)
-	HandleAuth(req *http.Request, conn map[string]string) error
-}
-
-type CustomPlugin interface {
-	Plugin
-	GetCustomActionHandlers() map[string]ActionHandler
-	GetCustomActionsPath() string
-}
-
-type PluginWithValidation interface {
-	Plugin
-	ValidateResponse(statusCode int, body []byte) ([]byte, error)
+	"wiz":           wiz.GetNewWizPlugin(),
 }
