@@ -1,8 +1,9 @@
-package plugins
+package wiz
 
 import (
 	"encoding/json"
 	"errors"
+	"github.com/blinkops/blink-http/plugins/types"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"io/ioutil"
 	"net/http"
@@ -71,6 +72,17 @@ func (p WizPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bo
 	return true, nil
 }
 
-func getNewWizPlugin() WizPlugin {
+func (p WizPlugin) GetCustomActionHandlers() map[string] types.ActionHandler {
+	return map[string] types.ActionHandler{
+		"ListCloudConfigurationRules": listCloudConfigurationRules,
+		"ListControls":                listControls,
+	}
+}
+
+func (p WizPlugin) GetCustomActionsPath() string {
+	return "plugins/wiz/actions"
+}
+
+func GetNewWizPlugin() WizPlugin {
 	return WizPlugin{}
 }

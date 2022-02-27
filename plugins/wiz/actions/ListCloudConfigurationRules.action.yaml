@@ -1,0 +1,40 @@
+name: "ListCloudConfigurationRules"
+display_name: "List Cloud Configuration Rules"
+description: "List cloud configuration rules."
+enabled: true
+collection_name: "wiz"
+connection_types:
+  wiz:
+    name: wiz
+parameters:
+  ProjectName:
+    display_name: Project Name
+    type: string
+    required: true
+    description: "Project names to list configuration rules for, comma separated."
+    index: 1
+  Limit:
+    display_name: Limit
+    type: string
+    required: true
+    description: Number of records to fetch.
+    default: 10
+    index: 2
+  Offset:
+    display_name: Offset
+    type: string
+    required: false
+    description: Pagination cursor.
+    index: 3
+  FilterBy:
+    display_name: Filter By
+    type: code:json
+    required: false
+    description: Filter the results.
+    index: 4
+  OrderBy:
+    display_name: Order By
+    type: code:json
+    required: false
+    description: "Order the results. For example: {\"field\":\"FAILED_CHECK_COUNT\",\"direction\":\"DESC\"}"
+    index: 5
