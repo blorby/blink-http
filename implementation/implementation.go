@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/blinkops/blink-http/plugins"
+	"github.com/blinkops/blink-http/plugins/types"
 	"github.com/blinkops/blink-sdk/plugin"
 	"github.com/blinkops/blink-sdk/plugin/actions"
 	"github.com/blinkops/blink-sdk/plugin/config"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
-	description2 "github.com/blinkops/blink-sdk/plugin/description"
+	"github.com/blinkops/blink-sdk/plugin/description"
 	log "github.com/sirupsen/logrus"
 	"path"
 )
@@ -16,7 +17,7 @@ import (
 type HttpPlugin struct {
 	description      plugin.Description
 	actions          []plugin.Action
-	supportedActions map[string]plugins.ActionHandler
+	supportedActions map[string] types.ActionHandler
 }
 
 func (p *HttpPlugin) Describe() plugin.Description {
@@ -36,8 +37,12 @@ func (p *HttpPlugin) ExecuteAction(ctx *plugin.ActionContext, request *plugin.Ex
 	if !ok {
 		return nil, errors.New("action is not supported: " + request.Name)
 	}
+	var integration types.Plugin
+	for connName := range ctx.GetAllConnections() {
+		integration = plugins.Plugins[connName]
+	}
 
-	resultBytes, err := actionHandler(ctx, request)
+	resultBytes, err := actionHandler(ctx, request, integration)
 	if err != nil {
 		if resultBytes == nil {
 			log.Error("Failed executing action, err: ", err)
@@ -88,7 +93,7 @@ func (p *HttpPlugin) TestCredentials(connections map[string]*blink_conn.Connecti
 func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 	pluginConfig := config.GetConfig()
 
-	description, err := description2.LoadPluginDescriptionFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))
+	desc, err := description.LoadPluginDescriptionFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.PluginDescriptionFilePath))
 	if err != nil {
 		return nil, err
 	}
@@ -99,14 +104,14 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 	}
 
 	log.Infof("Loaded %d connections from disk", len(loadedConnections))
-	description.Connections = loadedConnections
+	desc.Connections = loadedConnections
 
 	actionsFromDisk, err := actions.LoadActionsFromDisk(path.Join(rootPluginDirectory, pluginConfig.Plugin.ActionsFolderPath))
 	if err != nil {
 		return nil, err
 	}
 
-	supportedActions := map[string]plugins.ActionHandler{
+	supportedActions := map[string] types.ActionHandler{
 		"get":     executeHTTPGetAction,
 		"post":    executeHTTPPostAction,
 		"put":     executeHTTPPutAction,
@@ -116,11 +121,11 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 	}
 
 	for _, integration := range plugins.Plugins {
-		customPlugin, ok := integration.(plugins.CustomPlugin)
+		customPlugin, ok := integration.(types.CustomPlugin)
 		if !ok {
 			continue
 		}
-		err = addActionsFromPlugin(actionsFromDisk, rootPluginDirectory, customPlugin.GetCustomActionsPath())
+		actionsFromDisk, err = addActionsFromPlugin(actionsFromDisk, rootPluginDirectory, customPlugin.GetCustomActionsPath())
 		if err != nil {
 			return nil, err
 		}
@@ -133,22 +138,21 @@ func NewHTTPPlugin(rootPluginDirectory string) (*HttpPlugin, error) {
 	}
 
 	return &HttpPlugin{
-		description:      *description,
+		description:      *desc,
 		actions:          actionsFromDisk,
 		supportedActions: supportedActions,
 	}, nil
 }
 
-func addActionsFromPlugin(currentActions []plugin.Action,rootPluginDirectory string, actionsPath string) error {
+func addActionsFromPlugin(currentActions []plugin.Action,rootPluginDirectory string, actionsPath string) ([]plugin.Action, error) {
 	newActionsFromDisk, err := actions.LoadActionsFromDisk(path.Join(rootPluginDirectory, actionsPath))
 	if err != nil {
-		return err
+		return nil, err
 	}
-	currentActions = append(currentActions, newActionsFromDisk...)
-	return nil
+	return append(currentActions, newActionsFromDisk...), nil
 }
 
-func addSupportedActions(actions map[string]plugins.ActionHandler, newActions map[string]plugins.ActionHandler) error {
+func addSupportedActions(actions map[string] types.ActionHandler, newActions map[string] types.ActionHandler) error {
 	for name, handler := range newActions {
 		if _, ok := actions[name]; ok {
 			return errors.New(fmt.Sprintf("failed to init plugin, found duplicate action: %s", name))
