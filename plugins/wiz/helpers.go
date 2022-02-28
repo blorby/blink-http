@@ -3,6 +3,7 @@ package wiz
 import (
 	"encoding/json"
 	"errors"
+	"github.com/blinkops/blink-http/consts"
 	"github.com/blinkops/blink-http/implementation/requests"
 	"github.com/blinkops/blink-http/plugins/types"
 	"github.com/blinkops/blink-sdk/plugin"
@@ -31,7 +32,7 @@ func getRequestUrl(ctx *plugin.ActionContext) (string, error) {
 		return "", err
 	}
 
-	requestUrl, ok := connection[requestUrlParam]
+	requestUrl, ok := connection[consts.RequestUrlKey]
 	if !ok {
 		return "", errors.New("no request url provided")
 	}
