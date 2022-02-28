@@ -9,25 +9,25 @@ import (
 )
 
 const (
-	projectNameParam                 = "ProjectName"
-	limitParam                       = "Limit"
-	offsetParam                      = "Offset"
-	filterByParam                    = "FilterBy"
-	orderByParam                     = "OrderBy"
+	projectNameParam = "ProjectName"
+	limitParam       = "Limit"
+	offsetParam      = "Offset"
+	filterByParam    = "FilterBy"
+	orderByParam     = "OrderBy"
 )
 
 type listCloudConfigurationRulesVariables struct {
-	ProjectIds []string `json:"projectId"`
-	Limit      int      `json:"first"`
-	Offset     string   `json:"after,omitempty"`
-	FilterBy   string   `json:"filterBy,omitempty"`
-	OrderBy    string   `json:"orderBy,omitempty"`
+	ProjectIds []string               `json:"projectId"`
+	Limit      int                    `json:"first"`
+	Offset     string                 `json:"after,omitempty"`
+	FilterBy   map[string]interface{} `json:"filterBy,omitempty"`
+	OrderBy    map[string]interface{} `json:"orderBy,omitempty"`
 }
 
 type listControlsVariables struct {
-	Limit                   int    `json:"first"`
-	Offset                  string `json:"after,omitempty"`
-	FilterBy                string `json:"filterBy,omitempty"`
+	Limit                   int                    `json:"first"`
+	Offset                  string                 `json:"after,omitempty"`
+	FilterBy                map[string]interface{} `json:"filterBy,omitempty"`
 	IssueAnalyticsSelection struct {
 		ProjectIds []string `json:"project"`
 	} `json:"issue_analytics_selection,omitempty"`
@@ -62,6 +62,21 @@ func listCloudConfigurationRules(ctx *plugin.ActionContext, request *plugin.Exec
 		return nil, errors.New("unable to covert limit to integer")
 	}
 
+	var filterByJson map[string]interface{}
+	var orderByJson map[string]interface{}
+	if filterBy != "" {
+		err := json.Unmarshal([]byte(filterBy), &filterByJson)
+		if err != nil {
+			return nil, errors.New("filter by param must be valid json")
+		}
+	}
+	if orderBy != "" {
+		err := json.Unmarshal([]byte(orderBy), &orderByJson)
+		if err != nil {
+			return nil, errors.New("order by param must be valid json")
+		}
+	}
+
 	projectId, err := getProjectIdByName(ctx, request, plugin, projectName)
 	if err != nil {
 		return nil, err
@@ -71,8 +86,8 @@ func listCloudConfigurationRules(ctx *plugin.ActionContext, request *plugin.Exec
 		ProjectIds: []string{projectId},
 		Limit:      limitInt,
 		Offset:     offset,
-		FilterBy:   filterBy,
-		OrderBy:    orderBy,
+		FilterBy:   filterByJson,
+		OrderBy:    orderByJson,
 	}
 	variables, err := json.Marshal(variablesStruct)
 	if err != nil {
@@ -106,10 +121,18 @@ func listControls(ctx *plugin.ActionContext, request *plugin.ExecuteActionReques
 		}
 	}
 
+	var filterByJson map[string]interface{}
+	if filterBy != "" {
+		err := json.Unmarshal([]byte(filterBy), &filterByJson)
+		if err != nil {
+			return nil, errors.New("filter by param must be valid json")
+		}
+	}
+
 	variablesStruct := listControlsVariables{
 		Limit:    limitInt,
 		Offset:   offset,
-		FilterBy: filterBy,
+		FilterBy: filterByJson,
 		IssueAnalyticsSelection: struct {
 			ProjectIds []string `json:"project"`
 		}{ProjectIds: []string{projectId}},
