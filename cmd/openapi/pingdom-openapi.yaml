@@ -1,0 +1,5327 @@
+openapi: 3.0.0
+info:
+  title: Pingdom Public API
+  version: '3.1'
+  description: Pingdom public API
+  x-logo:
+    url: 'https://tmp-new-api-doc.s3-eu-west-1.amazonaws.com/sw-pingdom-logo.svg'
+servers:
+  -
+    url: 'https://api.pingdom.com/api/3.1'
+paths:
+  /actions:
+    get:
+      tags:
+        - Actions
+      parameters:
+        -
+          name: from
+          description: Only include actions generated later than this timestamp. Format is UNIX time.
+          schema:
+            $ref: '#/components/schemas/actions_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: Only include actions generated prior to this timestamp. Format is UNIX time.
+          schema:
+            $ref: '#/components/schemas/actions_to'
+          in: query
+          required: false
+        -
+          name: limit
+          description: Limits the number of returned results to the specified quantity.
+          schema:
+            $ref: '#/components/schemas/actions_limit'
+          in: query
+          required: false
+        -
+          name: offset
+          description: Offset for listing.
+          schema:
+            $ref: '#/components/schemas/actions_offset'
+          in: query
+          required: false
+        -
+          name: checkids
+          description: >-
+            Comma-separated list of check identifiers. Limit results to actions generated from
+            these checks. Default: all checks.
+          schema:
+            $ref: '#/components/schemas/actions_checkids'
+          in: query
+          required: false
+        -
+          name: userids
+          description: >-
+            Comma-separated list of user identifiers. Limit results to actions sent to these
+            users. Default: all users.
+          schema:
+            $ref: '#/components/schemas/actions_userids'
+          in: query
+          required: false
+        -
+          name: status
+          description: >-
+            Comma-separated list of statuses. Limit results to actions with these statuses.
+            Default: all statuses.
+          schema:
+            $ref: '#/components/schemas/actions_status'
+          in: query
+          required: false
+        -
+          name: via
+          description: >-
+            Comma-separated list of via mediums. Limit results to actions with these mediums.
+            Default: all mediums.
+          schema:
+            $ref: '#/components/schemas/actions_via'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/actions_alerts_entry'
+          description: Successful HTTP Response
+      operationId: LIstAlertActions
+      summary: Returns a list of actions alerts.
+      description: Returns a list of actions (alerts) that have been generated for your account.
+      x-internal: false
+  '/analysis/{checkid}':
+    get:
+      tags:
+        - Analysis
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/analysis_checkid'
+          in: path
+          required: true
+        -
+          name: limit
+          description: Limits the number of returned results to the specified quantity.
+          schema:
+            $ref: '#/components/schemas/analysis_limit'
+          in: query
+          required: false
+        -
+          name: offset
+          description: Offset for listing. (Requires limit.)
+          schema:
+            $ref: '#/components/schemas/analysis_offset'
+          in: query
+          required: false
+        -
+          name: from
+          description: >-
+            Return only results with timestamp of first test greater or equal to this value.
+            Format is UNIX timestamp.
+          schema:
+            $ref: '#/components/schemas/analysis_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: >-
+            Return only results with timestamp of first test less or equal to this value. Format
+            is UNIX timestamp. Default: current timestamp
+          schema:
+            $ref: '#/components/schemas/analysis_to'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/analysis_resp_attrs'
+          description: Successful HTTP Response
+      operationId: GetRootCauseAnalysis
+      summary: Returns a list of the latest root cause analysis
+      description: Returns a list of the latest root cause analysis results for a specified check.
+  '/analysis/{checkid}/{analysisid}':
+    get:
+      tags:
+        - Analysis
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/analysis_checkid'
+          in: path
+          required: true
+        -
+          name: analysisid
+          schema:
+            $ref: '#/components/schemas/analysis_analysisid'
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successful HTTP Response
+      operationId: GetAnalysisResult
+      summary: Returns the raw result for a specified analysis.
+      description: >-
+        Returns the raw result for a specified error analysis. This data is primarily intended for
+        internal use, but you might be interested in it as well. However, there is no real
+        documentation for this data at the moment. In the future, we may add a new API method that
+        provides a more user-friendly format.
+  /checks:
+    get:
+      tags:
+        - Checks
+      parameters:
+        -
+          example: 3
+          name: limit
+          description: Limits the number of returned probes to the specified quantity. (Max value is 25000)
+          schema:
+            default: 25000
+            type: integer
+          in: query
+        -
+          example: 0
+          name: offset
+          description: Offset for listing. (Requires limit.)
+          schema:
+            default: 0
+            type: integer
+          in: query
+        -
+          example: false
+          name: showencryption
+          description: 'If set, show encryption setting for each check'
+          schema:
+            default: false
+            type: boolean
+          in: query
+        -
+          example: false
+          name: include_tags
+          description: >-
+            Include tag list for each check. Tags can be marked as "a" or "u", for auto tagged or
+            user tagged.
+          schema:
+            default: false
+            type: boolean
+          in: query
+        -
+          example: false
+          name: include_severity
+          description: Include severity level for each check.
+          schema:
+            default: false
+            type: boolean
+          in: query
+        -
+          example: 'nginx,apache,ssh'
+          name: tags
+          description: >-
+            Tag list separated by commas. As an example "nginx,apache" would filter out all
+            responses except those tagged nginx or apache
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checks'
+          description: Successful operation
+      operationId: ListChecks
+      description: Returns a list overview of all checks.
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paused:
+                  description: >-
+                    Use value: true to pause the check(s) and value: false to unpause
+                    it(them).
+                  type: boolean
+                resolution:
+                  enum:
+                    - 1
+                    - 5
+                    - 15
+                    - 30
+                    - 60
+                  type: integer
+                checkids:
+                  description: >
+                    Comma-separated list of identifiers for checks to be modified. Invalid
+                    check identifiers will be ignored. Default: all checks
+                  type: string
+            example:
+              paused: true
+              resolution: 1
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                paused:
+                  description: >-
+                    Use value: true to pause the check(s) and value: false to unpause
+                    it(them).
+                  type: boolean
+                resolution:
+                  enum:
+                    - 1
+                    - 5
+                    - 15
+                    - 30
+                    - 60
+                  type: integer
+                checkids:
+                  description: >
+                    Comma-separated list of identifiers for checks to be modified. Invalid
+                    check identifiers will be ignored. Default: all checks
+                  type: string
+            example:
+              paused: true
+              resolution: 1
+        required: true
+      tags:
+        - Checks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Modification of 4 checks was successful!
+          description: Successful operation
+      operationId: UpdateMultipleChecks
+      summary: Pause or change resolution for multiple checks.
+      description: Pause or change resolution for multiple checks in one bulk call.
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheck'
+            example:
+              name: check_google
+              host: www.google.com
+              type: http
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateCheck'
+            example:
+              name: check_google
+              host: www.google.com
+              type: http
+        required: true
+      tags:
+        - Checks
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  check:
+                    type: object
+                    properties:
+                      id:
+                        description: Created check ID.
+                        type: integer
+                        example: 138631
+                      name:
+                        description: Created check name.
+                        type: string
+                        example: My new HTTP check
+          description: Successful operation
+      operationId: CreateCheck
+      summary: Creates a new check.
+      description: Creates a new check with settings specified by provided parameters.
+    delete:
+      tags:
+        - Checks
+      parameters:
+        -
+          style: form
+          explode: false
+          example:
+            - 1
+            - 2
+            - 3
+          name: delcheckids
+          description: Comma-separated list of identifiers for checks to be deleted.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deletion of checks was successful!
+          description: Successful operation
+      operationId: DeleteMultipleChecks
+      summary: Deletes a list of checks.
+      description: >-
+        Deletes a list of checks. THIS METHOD IS IRREVERSIBLE! You will lose all collected data. Be
+        careful!
+  '/checks/{checkid}':
+    get:
+      tags:
+        - Checks
+      parameters:
+        -
+          name: checkid
+          description: Identifier of check to be retrieved
+          schema:
+            type: integer
+          in: path
+          required: true
+        -
+          name: include_teams
+          description: Include team connections for check.
+          schema:
+            default: false
+            type: boolean
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedCheck'
+          description: Successful operation
+      operationId: GetCheck
+      summary: Returns a detailed description of a check.
+      description: Returns a detailed description of a specified check.
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyCheckSettings'
+            example:
+              name: google_check
+              host: www.google.com
+              paused: false
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModifyCheckSettings'
+            example:
+              name: google_check
+              host: www.google.com
+              paused: false
+        required: true
+      tags:
+        - Checks
+      parameters:
+        -
+          name: checkid
+          description: Identifier of check to be updated
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Modification of check was successful!
+          description: Successful operation
+      operationId: UpdateCheck
+      summary: Modify settings for a check.
+      description: >-
+        Modify settings for a check. The provided settings will overwrite previous values. Settings
+        not provided will stay the same as before the update. To clear an existing value, provide an
+        empty value. Please note that you cannot change the type of a check once it has been created.
+    delete:
+      tags:
+        - Checks
+      parameters:
+        -
+          name: checkid
+          description: Identifier of check to be deleted
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deletion of check was successful!
+          description: Successful operation
+      operationId: DeleteCheck
+      summary: Deletes a check.
+      description: Deletes a check. THIS METHOD IS IRREVERSIBLE! You will lose all collected data. Be careful!
+  /credits:
+    get:
+      tags:
+        - Credits
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/credits_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListCredits
+      summary: Returns information about remaining credits
+      description: 'Returns information about remaining checks, SMS credits and SMS auto-refill status.'
+  /maintenance:
+    get:
+      tags:
+        - Maintenance
+      parameters:
+        -
+          name: limit
+          description: Count of items to list.
+          schema:
+            $ref: '#/components/schemas/maintenance_limit'
+          in: query
+          required: false
+        -
+          name: offset
+          description: Offset of the list.
+          schema:
+            $ref: '#/components/schemas/maintenance_offset'
+          in: query
+          required: false
+        -
+          name: orderby
+          description: Order by the specific property of the maintenance window.
+          schema:
+            $ref: '#/components/schemas/maintenance_orderby'
+          in: query
+          required: false
+        -
+          name: order
+          description: Order a-z for asc z-a for desc. Works only if orderby is specified.
+          schema:
+            $ref: '#/components/schemas/maintenance_order'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListMaintenanceWindows
+      description: Returns a list of user's maintenance windows.
+    post:
+      requestBody:
+        description: Description
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/maintenance_post'
+            example:
+              description: Some description of the maintenance window
+              from: 1569580215
+              to: 1569583815
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/maintenance_post'
+            example:
+              description: Some description of the maintenance window
+              from: 1569580215
+              to: 1569583815
+        required: true
+      tags:
+        - Maintenance
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_post_resp_attrs'
+          description: Successful HTTP Response
+      operationId: CreateMaintenanceWindow
+      description: Create new maintenance window.
+    delete:
+      tags:
+        - Maintenance
+      parameters:
+        -
+          style: form
+          explode: false
+          example:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          name: maintenanceids
+          description: Comma-separated list of identifiers of maintenance windows to be deleted.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_delete_resp_attrs'
+          description: Successful HTTP Response
+      operationId: DeleteMaintenanceWindows
+      summary: Delete multiple maintenance windows.
+      description: Delete multiple maintenance windows. Note that only future maintenance windows can be deleted.
+  '/maintenance/{id}':
+    get:
+      tags:
+        - Maintenance
+      parameters:
+        -
+          example: 3
+          name: id
+          description: id of maintenance window
+          schema:
+            $ref: '#/components/schemas/maintenance_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_id_resp_attrs'
+          description: Successful HTTP Response
+      operationId: GetMaintenanceWindow
+      description: Returns the maintenance window specified by its id.
+    put:
+      requestBody:
+        description: Description
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/maintenance_id_put'
+            example:
+              description: Modified maintenance window
+              from: 1569580215
+              to: 1569583815
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/maintenance_id_put'
+            example:
+              description: Modified maintenance window
+              from: 1569580215
+              to: 1569583815
+        required: true
+      tags:
+        - Maintenance
+      parameters:
+        -
+          example: 3
+          name: id
+          description: id of maintenance window
+          schema:
+            $ref: '#/components/schemas/maintenance_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_id_put_resp_attrs'
+          description: Successful HTTP Response
+      operationId: UpdateMaintenanceWindow
+      description: Modify the maintenance window.
+    delete:
+      tags:
+        - Maintenance
+      parameters:
+        -
+          example: 3
+          name: id
+          description: id of maintenance window
+          schema:
+            $ref: '#/components/schemas/maintenance_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance_id_delete_resp_attrs'
+          description: Successful HTTP Response
+      operationId: DeleteMaintenanceWindow
+      summary: Delete the maintenance window.
+      description: Delete the maintenance window. Note that only future maintenance window can be deleted.
+  '/maintenance.occurrences/{id}':
+    get:
+      tags:
+        - Maintenance occurrences
+      parameters:
+        -
+          name: id
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance.occurrences_id_resp_attrs'
+          description: Successful HTTP Response
+      operationId: GetMaintenanceOccurrenceDetails
+      summary: Gets a maintenance occurrence details
+      description: Gets a maintenance occurrence details specified by its identifier.
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/maintenance.occurrences_id_put'
+            example:
+              from: 1569580215
+              to: 1569583815
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/maintenance.occurrences_id_put'
+            example:
+              from: 1569580215
+              to: 1569583815
+        required: true
+      tags:
+        - Maintenance occurrences
+      parameters:
+        -
+          name: id
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance.occurrences_id_put_resp_attrs'
+          description: Successful HTTP Response
+      operationId: UpdateMaintenanceOccurrence
+      summary: Modifies a maintenance occurrence
+      description: Modifies a maintenance occurrence specified by its identifier.
+    delete:
+      tags:
+        - Maintenance occurrences
+      parameters:
+        -
+          name: id
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_id'
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance.occurrences_id_delete_resp_attrs'
+          description: Successful HTTP Response
+      operationId: RemoveMaintenanceOccurrence
+      summary: Deletes the maintenance occurrence
+      description: >-
+        Deletes the maintenance occurrence specified by its identifier. Note that only future
+        occurrences can be deleted.
+  /maintenance.occurrences:
+    get:
+      tags:
+        - Maintenance occurrences
+      parameters:
+        -
+          name: maintenanceid
+          description: >-
+            Maintenance window identifier. (List only occurrences of a specific maintenance
+            window.)
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_maintenanceid'
+          in: query
+          required: false
+        -
+          name: from
+          description: >-
+            Effective from (unix timestamp). (List occurrences which are effective from the
+            specified unix timestamp. If not specified, current timestamp is used.)
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: >-
+            Effective to (unix timestamp). (List occurrences which are effective to the specified
+            unix timestamp.)
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_to'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance.occurrences_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListMaintenanceOccurrence
+      summary: Returns a list of maintenance occurrences.
+      description: Returns a list of maintenance occurrences.
+    delete:
+      tags:
+        - Maintenance occurrences
+      parameters:
+        -
+          example:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          name: occurenceids
+          schema:
+            $ref: '#/components/schemas/maintenance.occurrences_delete'
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/maintenance.occurrences_delete_resp_attrs'
+          description: Successful HTTP Response
+      operationId: DeleteMultipleMaintenanceOccurrence
+      summary: Deletes multiple maintenance occurrences
+      description: >-
+        Deletes multiple maintenance occurrences specified by their identifiers. Note that only future
+        occurrences can be deleted.
+  /probes:
+    get:
+      tags:
+        - Probes
+      parameters:
+        -
+          example: 3
+          name: limit
+          description: Limits the number of returned probes to the specified quantity.
+          schema:
+            type: integer
+          in: query
+        -
+          example: 0
+          name: offset
+          description: Offset for listing. (Requires limit.)
+          schema:
+            default: 0
+            type: integer
+          in: query
+        -
+          example: false
+          name: onlyactive
+          description: Return only active probes.
+          schema:
+            default: false
+            type: boolean
+          in: query
+        -
+          example: false
+          name: includedeleted
+          description: Include old probes that are no longer in use.
+          schema:
+            default: false
+            type: boolean
+          in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Probes'
+          description: Successful operation
+      operationId: ListProbes
+      summary: Returns a list of Pingdom probe servers
+      description: Returns a list of all Pingdom probe servers for Uptime and Transaction checks.
+  /reference:
+    get:
+      tags:
+        - Reference
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
+          description: Successful operation
+      operationId: GetReferences
+      summary: 'Get regions, timezone and date/time/number references'
+      description: 'Get a reference of regions, timezones and date/time/number formats and their identifiers.'
+  '/results/{checkid}':
+    get:
+      tags:
+        - Results
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/results_checkid'
+          in: path
+          required: true
+        -
+          name: to
+          description: End of period. Format is UNIX timestamp. Default value is current timestamp.
+          schema:
+            $ref: '#/components/schemas/results_to'
+          in: query
+          required: false
+        -
+          name: from
+          description: Start of period. Format is UNIX timestamp. Default value is 1 day prior to `to`.
+          schema:
+            $ref: '#/components/schemas/results_from'
+          in: query
+          required: false
+        -
+          name: probes
+          description: >-
+            Filter to only show results from a list of probes. Format is a comma separated list of
+            probe identifiers
+          schema:
+            $ref: '#/components/schemas/results_probes'
+          in: query
+          required: false
+        -
+          name: status
+          description: >-
+            Filter to only show results with specified statuses. Format is a comma separated list
+            of (`down`, `up`, `unconfirmed`, `unknown`)
+          schema:
+            $ref: '#/components/schemas/results_status'
+          in: query
+          required: false
+        -
+          name: limit
+          description: >-
+            Number of results to show (Will be set to 1000 if the provided value is greater than
+            1000)
+          schema:
+            $ref: '#/components/schemas/results_limit'
+          in: query
+          required: false
+        -
+          name: offset
+          description: Number of results to skip (Max value is `43200`)
+          schema:
+            $ref: '#/components/schemas/results_offset'
+          in: query
+          required: false
+        -
+          name: includeanalysis
+          description: Attach available root cause analysis identifiers to corresponding results
+          schema:
+            $ref: '#/components/schemas/results_includeanalysis'
+          in: query
+          required: false
+        -
+          name: maxresponse
+          description: >-
+            Maximum response time (ms). If set, specified interval must not be larger than 31
+            days.
+          schema:
+            $ref: '#/components/schemas/results_maxresponse'
+          in: query
+          required: false
+        -
+          name: minresponse
+          description: >-
+            Minimum response time (ms). If set, specified interval must not be larger than 31
+            days.
+          schema:
+            $ref: '#/components/schemas/results_minresponse'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/results_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListRawTestResults
+      summary: Return a list of raw test results
+      description: Return a list of raw test results for a specified check
+  /single:
+    get:
+      tags:
+        - Single
+      parameters:
+        -
+          name: Query Parameters
+          description: Query Parameters to chose
+          schema:
+            oneOf:
+              -
+                $ref: '#/components/schemas/HTTP'
+              -
+                $ref: '#/components/schemas/HTTP-Custom'
+              -
+                $ref: '#/components/schemas/TCP'
+              -
+                $ref: '#/components/schemas/DNS'
+              -
+                $ref: '#/components/schemas/UDP'
+              -
+                $ref: '#/components/schemas/SMTP'
+              -
+                $ref: '#/components/schemas/POP3'
+              -
+                $ref: '#/components/schemas/IMAP'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/single_resp'
+          description: Successful operation
+      operationId: RunSingleTest
+      summary: Performs a single check.
+      description: >-
+        Performs a single test using a specified Pingdom probe against a specified target. Please note
+        that this method is meant to be used sparingly, not to set up your own monitoring solution.
+  '/summary.average/{checkid}':
+    get:
+      tags:
+        - Summary.average
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/summary.average_checkid'
+          in: path
+          required: true
+        -
+          name: from
+          description: Start time of period. Format is UNIX timestamp
+          schema:
+            $ref: '#/components/schemas/summary.average_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: End time of period. Format is UNIX timestamp. Default is the current time
+          schema:
+            $ref: '#/components/schemas/summary.average_to'
+          in: query
+          required: false
+        -
+          name: probes
+          description: >-
+            Filter to only use results from a list of probes. Format is a comma separated list of
+            probe identifiers. By default result from all probes are shown.
+          schema:
+            $ref: '#/components/schemas/summary.average_probes'
+          in: query
+          required: false
+        -
+          name: includeuptime
+          description: Include uptime information
+          schema:
+            $ref: '#/components/schemas/summary.average_includeuptime'
+          in: query
+          required: false
+        -
+          name: bycountry
+          description: Split response times into country groups
+          schema:
+            $ref: '#/components/schemas/summary.average_bycountry'
+          in: query
+          required: false
+        -
+          name: byprobe
+          description: Split response times into probe groups
+          schema:
+            $ref: '#/components/schemas/summary.average_byprobe'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary_resp_attrs'
+          description: Successful HTTP Response
+      operationId: GetAverageUptime
+      summary: Get the average time/uptime value for a specified
+      description: Get the average time / uptime value for a specified check and time period.
+  '/summary.hoursofday/{checkid}':
+    get:
+      tags:
+        - Summary.hoursofday
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/summary.hoursofday_checkid'
+          in: path
+          required: true
+        -
+          name: from
+          description: >-
+            Start time of period. Format is UNIX timestamp. Default value is one week eariler than
+            `to`.
+          schema:
+            $ref: '#/components/schemas/summary.hoursofday_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: End time of period. Format is UNIX timestamp. Default value is current time.
+          schema:
+            $ref: '#/components/schemas/summary.hoursofday_to'
+          in: query
+          required: false
+        -
+          name: probes
+          description: >-
+            Filter to only use results from a list of probes. Format is a comma separated list of
+            probe identifiers. By default all probes results are returned.
+          schema:
+            $ref: '#/components/schemas/summary.hoursofday_probes'
+          in: query
+          required: false
+        -
+          name: uselocaltime
+          description: >-
+            If true, use the user's local time zone for results (from and to parameters should
+            still be specified in UTC). If false, use UTC for results.
+          schema:
+            $ref: '#/components/schemas/summary.hoursofday_uselocaltime'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary.hoursofday_resp_attrs'
+          description: Successful HTTP Response
+      operationId: GetAverageResponseTime
+      summary: Returns the average response time for each hour.
+      description: >-
+        Returns the average response time for each hour of the day (0-23) for a specific check over a
+        selected time period. I.e. it shows you what an average day looks like during that time
+        period.
+  '/summary.outage/{checkid}':
+    get:
+      tags:
+        - Summary.outage
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/summary.outage_checkid'
+          in: path
+          required: true
+        -
+          name: from
+          description: >-
+            Start time of period. Format is UNIX timestamp. Default value is one week earlier than
+            `to`.
+          schema:
+            $ref: '#/components/schemas/summary.outage_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: End time of period. Format is UNIX timestamp. Default value is the current time.
+          schema:
+            $ref: '#/components/schemas/summary.outage_to'
+          in: query
+          required: false
+        -
+          name: order
+          description: Sorting order of outages. Ascending or descending.
+          schema:
+            $ref: '#/components/schemas/summary.outage_order'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary.outage_resp_attrs'
+          description: Successful HTTP Response
+      operationId: listStatusChanges
+      summary: Get a list of status changes for a specified check
+      description: >-
+        Get a list of status changes for a specified check and time period. If order is speficied to
+        descending, the list is ordered by newest first. (Default is ordered by oldest first.)
+  '/summary.performance/{checkid}':
+    get:
+      tags:
+        - Summary.performance
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/summary.performance_checkid'
+          in: path
+          required: true
+        -
+          name: from
+          description: >-
+            Start time of period. Format is UNIX timestamp. Default value is 10 intervals earlier
+            than `to`.
+          schema:
+            $ref: '#/components/schemas/summary.performance_from'
+          in: query
+          required: false
+        -
+          name: to
+          description: End time of period. Format is UNIX timestamp. Default value is the current time.
+          schema:
+            $ref: '#/components/schemas/summary.performance_to'
+          in: query
+          required: false
+        -
+          name: resolution
+          description: Interval size
+          schema:
+            $ref: '#/components/schemas/summary.performance_resolution'
+          in: query
+          required: false
+        -
+          name: includeuptime
+          description: Include uptime information.
+          schema:
+            $ref: '#/components/schemas/summary.performance_includeuptime'
+          in: query
+          required: false
+        -
+          name: probes
+          description: >-
+            Filter to only use results from a list of probes. Format is a comma separated list of
+            probe identifiers. Can not be used if includeuptime is set to true. Also note that
+            this can cause intervals to be omitted, since there may be no results from the desired
+            probes in them. By deafult results from all probes are returned.
+          schema:
+            $ref: '#/components/schemas/summary.performance_probes'
+          in: query
+          required: false
+        -
+          name: order
+          description: Sorting order of sub intervals. Ascending or descending.
+          schema:
+            $ref: '#/components/schemas/summary.performance_order'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary.performance_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListSubintervals
+      summary: For a given interval return a list of subintervals
+      description: >-
+        For a given interval in time, return a list of sub intervals with the given resolution. Useful
+        for generating graphs. A sub interval may be a week, a day or an hour depending on the choosen
+        resolution.
+  '/summary.probes/{checkid}':
+    get:
+      tags:
+        - Summary.probes
+      parameters:
+        -
+          name: checkid
+          schema:
+            $ref: '#/components/schemas/summary.probes_checkid'
+          in: path
+          required: true
+        -
+          name: from
+          description: Start time of period. Format is UNIX timestamp
+          schema:
+            $ref: '#/components/schemas/summary.probes_from'
+          in: query
+          required: true
+        -
+          name: to
+          description: End time of period. Format is UNIX timestamp. The defualt value is current time.
+          schema:
+            $ref: '#/components/schemas/summary.probes_to'
+          in: query
+          required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary.probes_resp_attrs'
+          description: Successful HTTP Response
+      operationId: ListTestProbes
+      summary: Get a list of probes that performed tests
+      description: Get a list of probes that performed tests for a specified check during a specified period.
+  /alerting/teams:
+    get:
+      tags:
+        - Teams
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Teams'
+          description: Successful operation
+      operationId: ListTeams
+      summary: Returns a list of all teams and their members
+      description: Returns a list of all teams and their members
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeam'
+        required: true
+      tags:
+        - Teams
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  team:
+                    type: object
+                    properties:
+                      id:
+                        description: ID of the created team
+                        type: string
+                        example: 12345678
+          description: Successful operation
+      operationId: CreateTeam
+      summary: Creates a new team
+      description: Creates a new team with or without members
+  '/alerting/teams/{teamid}':
+    get:
+      tags:
+        - Teams
+      parameters:
+        -
+          name: teamid
+          description: ID of the team to be retrieved
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team_ID'
+          description: Successful operation
+      operationId: GetTeam
+      description: Returns a team with its members
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeam'
+        required: true
+      tags:
+        - Teams
+      parameters:
+        -
+          name: teamid
+          description: ID of the team to be retrieved
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team_ID'
+          description: Successful operation
+      operationId: UpdateTeam
+      description: Updates a team
+    delete:
+      tags:
+        - Teams
+      parameters:
+        -
+          name: teamid
+          description: ID of the team to be deleted
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deletion of team 12345 was successful
+          description: Message indicating a successful deletion
+      operationId: DeleteTeam
+      description: Deletes a team
+  /alerting/contacts:
+    get:
+      tags:
+        - Contacts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactsList'
+          description: Successful operation
+      operationId: ListContacts
+      summary: Returns a list of all contacts
+      description: Returns a list of all contacts with their contact methods (notification targets)
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContact'
+        required: true
+      tags:
+        - Contacts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contact:
+                    type: object
+                    properties:
+                      id:
+                        description: ID of the created contact
+                        type: string
+                        example: 12345678
+          description: Successful operation
+      operationId: CreateContact
+      summary: Creates a new contact
+      description: Creates a new contact with at least one contact method (notification target)
+  '/alerting/contacts/{contactid}':
+    get:
+      tags:
+        - Contacts
+      parameters:
+        -
+          name: contactid
+          description: ID of contact to be retrieved
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: Successful operation
+      operationId: GetContact
+      summary: Returns a contact with its contact methods
+      description: Returns a contact with its contact methods (notification targets)
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContact'
+        required: true
+      tags:
+        - Contacts
+      parameters:
+        -
+          name: contactid
+          description: ID of contact to be updated
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+          description: Successful operation
+      operationId: UpdateContact
+      summary: Update a contact
+      description: Update a contact with at least one contact method (notification target)
+    delete:
+      tags:
+        - Contacts
+      parameters:
+        -
+          name: contactid
+          description: ID of contact to be deleted
+          schema:
+            type: integer
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deletion of contact 12345 was successful
+          description: Successful operation
+      operationId: DeleteContact
+      summary: Deletes a contact with its contact methods
+      description: Deletes a contact with its contact methods (notification targets)
+  /traceroute:
+    get:
+      tags:
+        - Traceroute
+      parameters:
+        -
+          example: pingdom.com
+          name: host
+          description: Target host.
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          example: 23
+          name: probeid
+          description: Probe identifier.
+          schema:
+            type: integer
+          in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Traceroute'
+          description: Successful operation
+      operationId: Traceroute
+      summary: Perform a traceroute
+      description: Perform a traceroute to a specified target from a specified Pingdom probe.
+  /tms/check:
+    get:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: extended_tags
+          description: >-
+            Specifies whether to return an extended tags representation in the response (with type
+            and count).
+          schema:
+            type: boolean
+          in: query
+          required: false
+        -
+          style: form
+          explode: false
+          example:
+            - nginx
+            - apache
+          name: tags
+          description: >-
+            Tag list separated by commas. As an example "nginx,apache" would filter out all
+            responses except those tagged nginx or apache
+          schema:
+            type: array
+            items:
+              type: string
+          in: query
+        -
+          name: type
+          description: >-
+            Filter to return only checks of a given type (a TMS `script` or a WPM `recording`). If
+            not provided, all checks are returned.
+          schema:
+            enum:
+              - script
+              - recording
+            type: string
+          in: query
+          required: false
+        -
+          name: limit
+          description: Limit of returned checks
+          schema:
+            default: 1000
+            type: string
+          in: query
+          required: false
+        -
+          name: offset
+          description: Offset of returned checks
+          schema:
+            default: 0
+            type: string
+          in: query
+          required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/checksAll'
+      operationId: ListTransactionChecks
+      summary: Returns a list overview of all transaction checks.
+    post:
+      requestBody:
+        description: Specifies the check to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckWithoutID'
+        required: true
+        x-go-name: Check
+      tags:
+        - TMS Checks
+      responses:
+        '200':
+          $ref: '#/components/responses/checkAddedResponse'
+      operationId: CreateTransactionCheck
+      summary: Creates a new transaction check.
+  '/tms/check/{cid}':
+    get:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: extended_tags
+          description: >-
+            Specifies whether to return an extended tags representation in the response (with type
+            and count).
+          schema:
+            type: boolean
+          in: query
+          required: false
+        -
+          name: cid
+          description: Specifies the id of the check to be fetched
+          schema:
+            format: int64
+            type: integer
+          in: path
+          required: true
+          x-go-name: CheckID
+      responses:
+        '200':
+          $ref: '#/components/responses/checkDetailed'
+      operationId: GetTransactionCheck
+      summary: Returns a single transaction check.
+    put:
+      requestBody:
+        description: Specifies the data to be modified for the check
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckWithoutIDPUT'
+        required: true
+        x-go-name: Check
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: cid
+          description: Specifies the id of the check to be modified
+          schema:
+            format: int64
+            type: integer
+          in: path
+          required: true
+          x-go-name: CheckID
+      responses:
+        '200':
+          $ref: '#/components/responses/checkModifiedResponse'
+      operationId: UpdateTransactionCheck
+      summary: Modify settings for transaction check.
+    delete:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: cid
+          description: Specifies the id of the check to be deleted
+          schema:
+            format: int64
+            type: integer
+          in: path
+          required: true
+          x-go-name: CheckID
+      responses:
+        '200':
+          $ref: '#/components/responses/checkDeletedResponse'
+      operationId: DeleteTransactionCheck
+      summary: Deletes a transaction check.
+  '/tms/check/{check_id}/report/status':
+    get:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: check_id
+          description: Specifies the id of the check for which the status change report will be fetched
+          schema:
+            format: int64
+            type: integer
+          in: path
+          required: true
+        -
+          name: from
+          description: >-
+            Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is one week earlier than `to`
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          name: to
+          description: >-
+            End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is the current time
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          example:
+            - desc
+          name: order
+          description: Sorting order of outages. Ascending or descending
+          schema:
+            default: asc
+            enum:
+              - asc
+              - desc
+            type: string
+          in: query
+          required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/reportStatusSingle'
+      operationId: GetCheckReportStatus
+      summary: Returns a status change report for a single transaction check
+      description: >-
+        Get a list of status changes for a specified check and time period. If order is speficied to
+        descending, the list is ordered by newest first. (The default is ordered by oldest first.) It
+        can be used to display a detailed view of a check.
+  /tms/check/report/status:
+    get:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: from
+          description: >-
+            Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is one week earlier than `to`
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          name: to
+          description: >-
+            End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is the current time
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          example:
+            - desc
+          name: order
+          description: Sorting order of outages. Ascending or descending
+          schema:
+            default: asc
+            enum:
+              - asc
+              - desc
+            type: string
+          in: query
+          required: false
+        -
+          name: limit
+          description: Limit of returned checks
+          schema:
+            default: 100
+            type: string
+          in: query
+          required: false
+        -
+          name: offset
+          description: Offset of returned checks
+          schema:
+            default: 0
+            type: string
+          in: query
+          required: false
+        -
+          name: omit_empty
+          description: Omits checks without any results within specified time
+          schema:
+            default: false
+            type: boolean
+          in: query
+          required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/reportStatusAll'
+      operationId: GetAllCheckReportStatus
+      summary: Returns a status change report for all transaction checks in the current organization
+      description: >-
+        Get a list of status changes for all transaction check in the current organization from the
+        requested time period. If order is speficied to descending, the list of statuses within each
+        check is ordered by newest first. (The default is ordered by oldest first.) It can be used to
+        display a list view of all checks and their current status.
+  '/tms/check/{check_id}/report/performance':
+    get:
+      tags:
+        - TMS Checks
+      parameters:
+        -
+          name: check_id
+          description: Specifies the id of the check for which the performance report will be fetched
+          schema:
+            format: int64
+            type: integer
+          in: path
+          required: true
+        -
+          name: from
+          description: >-
+            Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is 10 times the resolution (10 hours, 10 day, 10 weeks) earlier than `to`. The
+            value is extended to the nearest hour, day or week, depending on the 'resolution'
+            parameter and configured time zone of the account.
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          name: to
+          description: >-
+            End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
+            value is the current time. The value is extended to the nearest hour, day or week,
+            depending on the 'resolution' parameter and configured time zone of the account.
+          schema:
+            format: date-time
+            type: string
+          in: query
+          required: false
+        -
+          example:
+            - desc
+          name: order
+          description: Sorting order of outages. Ascending or descending
+          schema:
+            default: asc
+            enum:
+              - asc
+              - desc
+            type: string
+          in: query
+          required: false
+        -
+          example: day
+          name: resolution
+          description: >-
+            Size of an interval for which the results are calculated. For the `hour` resolution,
+            the max allowed period is one week and 1 day. For the `day` resolution, the max
+            allowed period is 6 months and 1 day.
+          schema:
+            default: hour
+            enum:
+              - hour
+              - day
+              - week
+            type: string
+          in: query
+        -
+          name: include_uptime
+          description: >-
+            Include uptime information. Adds field downtime, uptime, and unmonitored to the
+            interval array objects.
+          schema:
+            default: false
+            type: boolean
+          in: query
+          required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/reportPerformance'
+      operationId: GetCheckReportPerformance
+      summary: Returns a performance report for a single transaction check
+      description: >-
+        For a given period of time, return a list of time intervals with the given resolution. An
+        interval may be a week, a day or an hour depending on the chosen resolution. It can be used to
+        display a detailed view of a check with information about its steps and generate graphs.
+components:
+  schemas:
+    actions_from:
+      type: integer
+    actions_to:
+      type: integer
+    actions_limit:
+      default: 100
+      type: integer
+    actions_offset:
+      default: 0
+      type: integer
+    actions_checkids:
+      type: string
+    actions_userids:
+      type: string
+    actions_status:
+      type: string
+    actions_via:
+      type: string
+    actions_alerts_entry:
+      properties:
+        actions:
+          type: object
+          properties:
+            alerts:
+              description: Alert entry
+              type: array
+              items:
+                type: object
+                properties:
+                  username:
+                    description: Name of alerted user
+                    type: string
+                    example: John Doe
+                  userid:
+                    description: Identifier of alerted user
+                    type: string
+                    example: 111250
+                  checkid:
+                    description: Identifier of alerted user
+                    type: string
+                    example: 241688
+                  time:
+                    description: Time of alert generation. Format UNIX time
+                    type: string
+                    example: 1292248276
+                  via:
+                    description: 'Alert medium. apns - iphone, agcm - android'
+                    enum:
+                      - email
+                      - sms
+                      - twitter
+                      - apns
+                      - agcm
+                    type: string
+                    example: sms
+                  status:
+                    description: Alert status
+                    enum:
+                      - sent
+                      - delivered
+                      - error
+                      - notdelivered
+                      - nocredits
+                    type: string
+                    example: delivered
+                  messageshort:
+                    description: Short description of message
+                    type: string
+                    example: up
+                  messagefull:
+                    description: Full message body
+                    type: string
+                    example: >-
+                      PingdomAlert UP: MyCheck (example.com) is UP again at 2010-12-13
+                      14:50:54. Downtime: 12m.
+                  sentto:
+                    description: 'Target address, phone number etc'
+                    type: string
+                    example: 46-555555
+                  charged:
+                    description: True if your account was charged for this message
+                    type: string
+                    example: true
+    analysis_checkid:
+      type: integer
+    analysis_analysisid:
+      type: integer
+    analysis_limit:
+      default: 100
+      type: integer
+    analysis_offset:
+      default: 0
+      type: integer
+    analysis_from:
+      default: 0
+      type: integer
+    analysis_to:
+      type: integer
+    analysis_resp_attrs:
+      properties:
+        analysis:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: Analysis id
+                type: integer
+                example: 28739021
+              timefirsttest:
+                description: Time of test that initiated the confirmation test
+                type: integer
+                example: 1290441826
+              timeconfirmtest:
+                description: Time of the confirmation test that performed the error analysis
+                type: integer
+                example: 1290441865
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+          example: apache
+        type:
+          type: string
+          example: a
+        count:
+          type: integer
+          example: 2
+    Check:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 100
+        name:
+          type: string
+          example: mycheck
+        lasterrortime:
+          description: Timestamp of last error (if any). Format is UNIX timestamp
+          type: integer
+          example: 1297446423
+        lasttesttime:
+          description: Timestamp of last test (if any). Format is UNIX timestamp
+          type: integer
+          example: 1300977363
+        lastresponsetime:
+          description: Response time (in milliseconds) of last test.
+          type: integer
+          example: 355
+        lastdownstart:
+          description: Timestamp of start of last check down (if any). Format is UNIX timestamp.
+          type: integer
+          example: 1300977363
+        lastdownend:
+          description: >-
+            Timestamp of end of last check down (if any). Format is UNIX timestamp. During a
+            downtime it will be lasttesttime.
+          type: integer
+          example: 1300977463
+        status:
+          enum:
+            - up
+            - down
+            - unconfirmed_down
+            - unknown
+            - paused
+          type: string
+        resolution:
+          description: How often should the check be tested? (minutes)
+          type: integer
+        hostname:
+          description: Target host
+          type: string
+        created:
+          description: Creating time. Format is UNIX timestamp
+          type: integer
+        tags:
+          description: List of tags for check
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+    CheckWithStringType:
+      allOf:
+        -
+          $ref: '#/components/schemas/Check'
+      properties:
+        type:
+          type: string
+          example: http
+    Counts:
+      type: object
+      properties:
+        total:
+          description: Total number of checks
+          type: integer
+          example: 55
+        limited:
+          description: Number of checks after tags filter was applied
+          type: integer
+          example: 3
+        filtered:
+          description: Number of checks after limit was applied
+          type: integer
+          example: 5
+    Checks:
+      type: object
+      properties:
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckWithStringType'
+        counts:
+          $ref: '#/components/schemas/Counts'
+    HttpCertificateAttributes:
+      type: object
+      properties:
+        verify_certificate:
+          description: Treat target site as down if an invalid/unverifiable certificate is found.
+          default: true
+          type: boolean
+        ssl_down_days_before:
+          description: >-
+            Treat the target site as down if a certificate expires within the given number of
+            days. This parameter will be ignored if `verify_certificate` is set to `false`.
+          default: 0
+          type: integer
+    HttpAttributesBase:
+      type: object
+      properties:
+        url:
+          description: Path to target on server
+          type: string
+          example: my.pingdom.com
+        encryption:
+          description: Connection encryption
+          type: boolean
+          example: true
+        port:
+          description: Target port
+          type: integer
+          example: 443
+        shouldcontain:
+          description: >-
+            Target site should contain this string. Note! This parameter cannot be used together
+            with the parameter “shouldnotcontain”, use only one of them in your request.
+          type: string
+          example: Expected string
+        shouldnotcontain:
+          description: >-
+            Target site should NOT contain this string. Note! This parameter cannot be used
+            together with the parameter “shouldcontain”, use only one of them in your request.
+          type: string
+          example: This should not appear on checked site
+        postdata:
+          description: >-
+            Data that should be posted to the web page, for example submission data for a sign-up
+            or login form. The data needs to be formatted in the same way as a web browser would
+            send it to the web server
+          type: string
+          example: Data to be send to server
+        requestheaders:
+          description: >-
+            Custom HTTP header. The entry value should contain a one-element string array. The
+            element should contain `headerName` and `headerValue` colon-separated. To add more
+            than one header send other parameters named `requestheaders{number}`.
+          type: array
+          items:
+            type: string
+    HttpAttributesSet:
+      allOf:
+        -
+          $ref: '#/components/schemas/HttpAttributesBase'
+        -
+          $ref: '#/components/schemas/HttpCertificateAttributes'
+      properties:
+        auth:
+          description: 'Username and password, colon separated.'
+          type: string
+          example: 'User:e4gh51!'
+    HttpAttributesGet:
+      allOf:
+        -
+          $ref: '#/components/schemas/HttpAttributesBase'
+      properties:
+        username:
+          description: Username for target HTTP authentication
+          type: string
+          example: User
+        password:
+          description: Password for target HTTP authentication
+          type: string
+          example: e4gh51!
+    DetailedHttpAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            http:
+              $ref: '#/components/schemas/HttpAttributesGet'
+    HttpCustomAttributes:
+      required:
+        - url
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/HttpCertificateAttributes'
+      properties:
+        url:
+          description: Path to target on server
+          type: string
+          example: /phpMyAdmin.conf
+        encryption:
+          description: Connection encryption
+          type: boolean
+          example: false
+        port:
+          description: Target port
+          type: integer
+          example: 80
+        additionalurls:
+          description: Full URL (including hostname) to target additional XML file
+          type: string
+    DetailedHttpCustomAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            httpcustom:
+              $ref: '#/components/schemas/HttpCustomAttributes'
+    TcpAttributes:
+      required:
+        - port
+      type: object
+      properties:
+        port:
+          description: Target port
+          type: integer
+          example: 22
+        stringtosend:
+          description: String to send
+          type: string
+          example: Raw data to be send
+        stringtoexpect:
+          description: String to expect in response
+          type: string
+          example: Raw data expected to be received
+    DetailedTcpAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            tcp:
+              $ref: '#/components/schemas/TcpAttributes'
+    DnsAttributes:
+      required:
+        - nameserver
+        - expectedip
+      type: object
+      properties:
+        nameserver:
+          description: DNS server to use
+          type: string
+          example: 8.8.8.8
+        expectedip:
+          description: Expected IP
+          type: string
+          example: 104.20.90.241
+    DetailedDnsAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            dns:
+              $ref: '#/components/schemas/DnsAttributes'
+    UdpAttributes:
+      required:
+        - port
+        - stringtosend
+        - stringtoexpect
+      type: object
+      properties:
+        port:
+          description: Target port
+          type: integer
+          example: 53
+        stringtosend:
+          description: String to send
+          type: string
+          example: Raw data to be send
+        stringtoexpect:
+          description: String to expect in response
+          type: string
+          example: Raw data expected to be received
+    DetailedUdpAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            udp:
+              $ref: '#/components/schemas/UdpAttributes'
+    SmtpAttributesBase:
+      type: object
+      properties:
+        port:
+          description: Target port
+          type: integer
+          example: 25
+        encryption:
+          description: Connection encryption
+          type: boolean
+          example: true
+        stringtoexpect:
+          description: String to expect in response
+          type: string
+    SmtpAttributesSet:
+      allOf:
+        -
+          $ref: '#/components/schemas/SmtpAttributesBase'
+      properties:
+        auth:
+          description: Username and password colon separated for target SMTP authentication
+          type: string
+          example: 'User:e4gh51!'
+    SmtpAttributesGet:
+      allOf:
+        -
+          $ref: '#/components/schemas/SmtpAttributesBase'
+      properties:
+        username:
+          description: Username for target SMTP authentication
+          type: string
+          example: User
+        password:
+          description: Password for target SMTP authentication
+          type: string
+          example: e4gh51!
+    DetailedSmtpAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            smtp:
+              $ref: '#/components/schemas/SmtpAttributesGet'
+    Pop3Attributes:
+      type: object
+      properties:
+        port:
+          description: Target port
+          type: integer
+          example: 110
+        stringtoexpect:
+          description: String to expect in response
+          type: string
+          example: Raw data expected to be received
+    DetailedPop3Attributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            pop3:
+              $ref: '#/components/schemas/Pop3Attributes'
+    ImapAttributes:
+      type: object
+      properties:
+        port:
+          description: Target port
+          type: integer
+          example: 143
+        stringtoexpect:
+          description: String to expect in response
+          type: string
+          example: Raw data expected to be received
+    DetailedImapAttributes:
+      type: object
+      properties:
+        type:
+          type: object
+          properties:
+            imap:
+              $ref: '#/components/schemas/ImapAttributes'
+    DetailedCheckAttributes:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/Check'
+      properties:
+        probe_filters:
+          description: Filters used for probe selections
+          type: array
+          items:
+            type: string
+          example:
+            - 'region: EU'
+        sendnotificationwhendown:
+          type: integer
+          example: 6
+        notifyagainevery:
+          type: integer
+          example: 5
+        notifywhenbackup:
+          type: boolean
+          example: true
+        responsetime_threshold:
+          type: boolean
+          example: 30000
+        custom_message:
+          type: string
+          example: Important check is down!
+        integrationids:
+          type: array
+          items:
+            type: integer
+          example:
+            - 74356
+            - 74358
+    DetailedCheckHttp:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedHttpAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+            -
+              $ref: '#/components/schemas/HttpCertificateAttributes'
+    DetailedCheckHttpCustom:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedHttpCustomAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+            -
+              $ref: '#/components/schemas/HttpCertificateAttributes'
+    DetailedCheckTcp:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedTcpAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheckDns:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedDnsAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheckUdp:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedUdpAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheckSmtp:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedSmtpAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheckPop3:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedPop3Attributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheckImap:
+      type: object
+      properties:
+        check:
+          type: object
+          allOf:
+            -
+              $ref: '#/components/schemas/DetailedImapAttributes'
+            -
+              $ref: '#/components/schemas/DetailedCheckAttributes'
+    DetailedCheck:
+      oneOf:
+        -
+          $ref: '#/components/schemas/DetailedCheckHttp'
+        -
+          $ref: '#/components/schemas/DetailedCheckHttpCustom'
+        -
+          $ref: '#/components/schemas/DetailedCheckTcp'
+        -
+          $ref: '#/components/schemas/DetailedCheckDns'
+        -
+          $ref: '#/components/schemas/DetailedCheckUdp'
+        -
+          $ref: '#/components/schemas/DetailedCheckSmtp'
+        -
+          $ref: '#/components/schemas/DetailedCheckPop3'
+        -
+          $ref: '#/components/schemas/DetailedCheckImap'
+    CreateCheck:
+      oneOf:
+        -
+          $ref: '#/components/schemas/HttpAttributesSet'
+        -
+          $ref: '#/components/schemas/HttpCustomAttributes'
+        -
+          $ref: '#/components/schemas/TcpAttributes'
+        -
+          $ref: '#/components/schemas/DnsAttributes'
+        -
+          $ref: '#/components/schemas/UdpAttributes'
+        -
+          $ref: '#/components/schemas/SmtpAttributesSet'
+        -
+          $ref: '#/components/schemas/Pop3Attributes'
+        -
+          $ref: '#/components/schemas/ImapAttributes'
+      required:
+        - name
+        - host
+        - type
+      type: object
+      properties:
+        name:
+          description: Check name
+          type: string
+          example: mycheck
+        host:
+          description: Target host
+          type: string
+          example: www.example.com
+        type:
+          description: Type of check
+          enum:
+            - http
+            - httpcustom
+            - tcp
+            - ping
+            - dns
+            - udp
+            - smtp
+            - pop3
+            - imap
+          type: string
+          example: http
+        paused:
+          default: false
+          type: boolean
+        resolution:
+          description: How often should the check be tested? (minutes)
+          default: 5
+          enum:
+            - 1
+            - 5
+            - 15
+            - 30
+            - 60
+          type: integer
+          example: 5
+        userids:
+          description: 'User identifiers. For example userids=154325,465231,765871'
+          type: string
+        sendnotificationwhendown:
+          description: Send notification when down X times
+          default: 2
+          type: integer
+          example: 2
+        notifyagainevery:
+          description: Notify again every n result. 0 means that no extra notifications will be sent.
+          default: 0
+          type: integer
+        notifywhenbackup:
+          description: Notify when back up again
+          default: true
+          type: boolean
+          example: true
+        tags:
+          description: List of tags for check. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Overwrites previous filters for check. To remove
+            all filters from a check, use an empty value. Comma separated key:value pairs.
+            Currently only region is supported. Possible values are 'EU', 'NA', 'APAC' and
+            'LATAM'. For example, "region: NA".
+          type: array
+          items:
+            type: string
+        ipv6:
+          description: >-
+            Use ipv6 instead of ipv4, if an IP address is provided as host this will be overrided
+            by the IP address version
+          default: false
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+          example: 30000
+        integrationids:
+          description: 'Integration identifiers. For example integrationids:[1,2,3].'
+          type: array
+          items:
+            type: integer
+        teamids:
+          description: Teams to alert. Comma separated Integers.
+          type: string
+        custom_message:
+          description: Custom message that will be added to email and webhook alerts.
+          type: string
+    ModifyCheckSettings:
+      oneOf:
+        -
+          $ref: '#/components/schemas/HttpAttributesSet'
+        -
+          $ref: '#/components/schemas/HttpCustomAttributes'
+        -
+          $ref: '#/components/schemas/TcpAttributes'
+        -
+          $ref: '#/components/schemas/DnsAttributes'
+        -
+          $ref: '#/components/schemas/UdpAttributes'
+        -
+          $ref: '#/components/schemas/SmtpAttributesSet'
+        -
+          $ref: '#/components/schemas/Pop3Attributes'
+        -
+          $ref: '#/components/schemas/ImapAttributes'
+      type: object
+      properties:
+        name:
+          description: Check name
+          type: string
+          example: mycheck
+        host:
+          description: Target host
+          type: string
+          example: www.example.com
+        paused:
+          default: false
+          type: boolean
+        resolution:
+          description: How often should the check be tested? (minutes)
+          default: 5
+          enum:
+            - 1
+            - 5
+            - 15
+            - 30
+            - 60
+          type: integer
+          example: 5
+        userids:
+          description: 'User identifiers. For example userids=154325,465231,765871'
+          type: string
+        sendnotificationwhendown:
+          description: Send notification when down X times
+          default: 2
+          type: integer
+          example: 2
+        notifyagainevery:
+          description: Notify again every n result. 0 means that no extra notifications will be sent.
+          default: 0
+          type: integer
+        notifywhenbackup:
+          description: Notify when back up again
+          default: true
+          type: boolean
+          example: true
+        checkids:
+          description: 'Identifiers of checks to modify in bulk. For example checkids=1234,5678'
+          type: string
+          example: '123,456'
+        tags:
+          description: List of tags for check. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+        addtags:
+          description: Check tags to add in addition to current check tags
+          type: array
+          items:
+            type: string
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Overwrites previous filters for check. To remove
+            all filters from a check, use an empty value. Comma separated key:value pairs.
+            Currently only region is supported. Possible values are 'EU', 'NA', 'APAC' and
+            'LATAM'. For example, "region: NA".
+          type: array
+          items:
+            type: string
+        ipv6:
+          description: >-
+            Use ipv6 instead of ipv4, if an IP address is provided as host this will be overrided
+            by the IP address version
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+          example: 30000
+        integrationids:
+          description: 'Integration identifiers. For example integrationids:[1,2,3].'
+          type: array
+          items:
+            type: integer
+        teamids:
+          description: Teams to alert. Comma separated Integers.
+          type: string
+        custom_message:
+          description: Custom message that will be added to email and webhook alerts.
+          type: string
+    credits_resp_attrs:
+      properties:
+        credits:
+          type: object
+          properties:
+            checklimit:
+              description: Total number of check slots on this account
+              type: integer
+              example: 18
+            availablechecks:
+              description: Free check slots available for new checks
+              type: integer
+              example: 5
+            useddefault:
+              description: Total number of default check slots
+              type: integer
+              example: 6
+            usedtransaction:
+              description: Total number of transaction check slots
+              type: integer
+              example: 7
+            availablesms:
+              description: SMS credits remaining on this account
+              type: integer
+              example: 20
+            availablesmstests:
+              description: SMS provider tests remaining on this account
+              type: integer
+              example: 7
+            autofillsms:
+              description: Auto fill SMS
+              type: boolean
+              example: false
+            autofillsms_amount:
+              description: The amount of sms to purchase when "autofillsms_when_left" is triggered
+              type: integer
+              example: 0
+            autofillsms_when_left:
+              description: The amount of sms left that is going to trigger purchase of sms
+              type: integer
+              example: 0
+            max_sms_overage:
+              description: >-
+                The amount of overage SMSes that may be used, or null if SMS overage is not
+                enabled.
+              type: integer
+              example: 0
+            availablerumsites:
+              description: Open RUM site slots available
+              type: integer
+              example: 4
+            usedrumsites:
+              description: Number of used RUM sites
+              type: integer
+              example: 1
+            maxrumfilters:
+              description: Number of maximum rum filters
+              type: integer
+              example: 10
+            maxrumpageviews:
+              description: Number of maximum pageviews per month
+              type: integer
+              example: 100000
+    maintenance_id:
+      type: integer
+    maintenance_limit:
+      type: integer
+    maintenance_offset:
+      type: integer
+    maintenance_orderby:
+      enum:
+        - description
+        - from
+        - to
+        - effectiveto
+      type: string
+    maintenance_order:
+      default: asc
+      enum:
+        - asc
+        - desc
+      type: string
+    maintenance_resp_attrs:
+      properties:
+        maintenance:
+          description: A list of maintenance windows
+          type: array
+          items:
+            description: Maintenance window body
+            type: object
+            properties:
+              id:
+                description: Maintenance window identifier
+                type: integer
+                example: 1
+              description:
+                description: Description
+                type: string
+                example: Maintenance window from DB
+              from:
+                description: Initial maintenance window start. Format UNIX time.
+                type: integer
+                example: 1497520800
+              to:
+                description: Initial maintenance window end. Format UNIX time.
+                type: integer
+                example: 1497574800
+              recurrencetype:
+                description: Type of recurrence.
+                enum:
+                  - none
+                  - day
+                  - week
+                  - month
+                type: string
+                example: week
+              repeatevery:
+                description: Repeat every n-th day/week/month
+                type: integer
+                example: 0
+              effectiveto:
+                description: Recurrence end. Format UNIX time.
+                type: integer
+                example: 1497574800
+              checks:
+                description: Connected checks
+                type: object
+                properties:
+                  uptime:
+                    description: List of connected Uptime checks
+                    type: array
+                    items:
+                      description: Id of connected Uptime check
+                      type: integer
+                    example:
+                      - 506206
+                      - 506233
+                      - 222
+                  tms:
+                    description: List of connected Transaction checks
+                    type: array
+                    items:
+                      description: Id of connected Transaction check
+                      type: integer
+                    example:
+                      - 123
+                      - 111
+    maintenance_id_resp_attrs:
+      properties:
+        maintenance:
+          description: ''
+          type: object
+          properties:
+            id:
+              description: Maintenance window identifier
+              type: number
+              example: 456
+            description:
+              description: Description
+              type: string
+              example: Particular maintenance window
+            from:
+              description: Initial maintenance window start. Format UNIX time.
+              type: number
+              example: 1497520800
+            to:
+              description: Initial maintenance window end. Format UNIX time.
+              type: number
+              example: 1497574800
+            recurrencetype:
+              description: Type of recurrence.
+              type: string
+              example: none
+            repeatevery:
+              description: Repeat every n-th day/week/month
+              type: number
+              example: 0
+            effectiveto:
+              description: Recurrence end. Format UNIX time.
+              type: number
+              example: 1497574800
+            checks:
+              description: Connected checks
+              type: object
+              properties:
+                uptime:
+                  description: Id of connected Uptime check
+                  type: array
+                  items:
+                    description: List of connected Uptime checks
+                    type: number
+                  example:
+                    - 506206
+                    - 506233
+                    - 222
+                tms:
+                  description: Id of connected TMS check
+                  type: array
+                  items:
+                    description: List of connected TMS checks
+                    type: number
+                  example:
+                    - 123
+                    - 111
+    maintenance_post:
+      required:
+        - description
+        - from
+        - to
+      type: object
+      properties:
+        description:
+          description: Description
+          type: string
+          example: New maintenance window.
+        from:
+          description: >-
+            Initial maintenance window start. Format UNIX time. (Only future allowed. Use 1 for
+            the current timestamp.)
+          type: integer
+          example: 1500471702
+        to:
+          description: >-
+            Initial maintenance window end. Format UNIX time. (Only future allowed. Use 1 for the
+            current timestamp.)
+          type: integer
+          example: 1500475302
+        recurrencetype:
+          description: Type of recurrence.
+          default: none
+          enum:
+            - none
+            - day
+            - week
+            - month
+          type: string
+          example: week
+        repeatevery:
+          description: Repeat every n-th day/week/month
+          default: 0
+          type: integer
+        effectiveto:
+          description: >-
+            Recurrence end. Format UNIX time. Default: equal to `to`. (Only future allowed. Use 1
+            for the current timestamp.)
+          type: integer
+          example: 1500475302
+        uptimeids:
+          description: >-
+            Identifiers of uptime checks to assign to the maintenance window - Comma separated
+            Integers
+          type: array
+          items:
+            type: integer
+          example:
+            - 1234567
+            - 3456789
+        tmsids:
+          description: >-
+            Identifiers of transaction checks to assign to the maintenance window - Comma
+            separated Integers
+          type: array
+          items:
+            type: integer
+          example:
+            - 1234567
+            - 3456789
+    maintenance_post_resp_attrs:
+      properties:
+        maintenance:
+          type: object
+          properties:
+            id:
+              description: Unique id of the new maintenance window
+              type: integer
+              example: 777
+    maintenance_id_put:
+      type: object
+      properties:
+        description:
+          description: Description
+          type: string
+          example: Modified maintenance window
+        from:
+          description: >-
+            Initial maintenance window start. Format UNIX time. (Only future allowed. Use 1 for
+            the current timestamp.)
+          type: integer
+          example: 1500471702
+        to:
+          description: >-
+            Initial maintenance window end. Format UNIX time. (Only future allowed. Use 1 for the
+            current timestamp.)
+          type: integer
+          example: 1500475302
+        recurrencetype:
+          description: Type of recurrence
+          enum:
+            - none
+            - day
+            - week
+            - month
+          type: string
+          example: week
+        repeatevery:
+          description: Repeat every n-th day/week/month
+          default: 0
+          type: integer
+        effectiveto:
+          description: >-
+            Recurrence end. Format UNIX time. Default: equal to `to`. (Only future allowed. Use 1
+            for the current timestamp.)
+          type: integer
+          example: 1500475302
+        uptimeids:
+          description: >-
+            Identifiers of uptime checks to assign to the maintenance window - Comma separated
+            Integers
+          type: array
+          items:
+            type: integer
+          example:
+            - 1234567
+            - 3456789
+        tmsids:
+          description: >-
+            Identifiers of transaction checks to assign to the maintenance window - Comma
+            separated Integers
+          type: array
+          items:
+            type: integer
+          example:
+            - 1234567
+            - 3456789
+    maintenance_id_put_resp_attrs:
+      properties:
+        message:
+          description: Modification result description
+          type: string
+          example: Maintenance window successfully modified!
+    maintenance_id_delete_resp_attrs:
+      properties:
+        message:
+          description: Result description
+          type: string
+          example: Maintenance window successfully deleted!
+    maintenance_delete:
+      required:
+        - maintenanceids
+      type: object
+      properties:
+        maintenanceids:
+          description: Comma-separated list of identifiers of maintenance windows to be deleted.
+          type: array
+          items:
+            type: integer
+          example:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+    maintenance_delete_resp_attrs:
+      properties:
+        message:
+          description: Result description
+          type: string
+          example: 5 maintenance windows successfully deleted.
+    maintenance.occurrences_id:
+      type: integer
+    maintenance.occurrences_id_put:
+      type: object
+      properties:
+        from:
+          description: >-
+            Beginning of the maintenance occurrence. Format UNIX time. (Only future allowed. Use 1
+            for the current timestamp.)
+          type: integer
+          example: 1500471702
+        to:
+          description: >-
+            End of the maintenance occurrence. Format UNIX time. (Only future allowed. Use 1 for
+            the current timestamp.)
+          type: integer
+          example: 1500475302
+    maintenance.occurrences_id_resp_attrs:
+      properties:
+        occurrence:
+          type: object
+          properties:
+            id:
+              description: Identifier of an occurence.
+              type: number
+              example: 57
+            maintenanceid:
+              description: Identifier of the related maintenance window.
+              type: number
+              example: 44
+            from:
+              description: Beginning of the occurrence. Format UNIX timestamp.
+              type: number
+              example: 1501714800
+            to:
+              description: The end of the occurrence. Format UNIX timestamp.
+              type: number
+              example: 1501719300
+    maintenance.occurrences_maintenanceid:
+      type: integer
+    maintenance.occurrences_from:
+      type: integer
+    maintenance.occurrences_to:
+      type: integer
+    maintenance.occurrences_resp_attrs:
+      properties:
+        occurrences:
+          description: A list of maintenance occurrences.
+          type: array
+          items:
+            description: Maintenance occurrence
+            type: object
+            properties:
+              id:
+                description: Identifier of an occurence.
+                type: number
+                example: 455
+              maintenanceid:
+                description: Identifier of the related maintenance window.
+                type: number
+                example: 44
+              from:
+                description: Beginning of the occurrence. Format UNIX timestamp.
+                type: number
+                example: 1501628400
+              to:
+                description: The end of the occurrence. Format UNIX timestamp.
+                type: number
+                example: 1501632900
+    maintenance.occurrences_id_put_resp_attrs:
+      properties:
+        message:
+          description: Modification result description
+          type: string
+          example: Occurrence successfully modified!
+    maintenance.occurrences_id_delete_resp_attrs:
+      properties:
+        message:
+          description: Result description
+          type: string
+          example: Occurrence successfully deleted!
+    maintenance.occurrences_delete:
+      required:
+        - occurrenceids
+      properties:
+        occurrenceids:
+          description: Comma-separated list of identifiers of maintenance occurrences to delete.
+          type: array
+          items:
+            type: integer
+    maintenance.occurrences_delete_resp_attrs:
+      properties:
+        message:
+          description: Result description
+          type: string
+          example: 5 occurrences successfully deleted.
+    Probe:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        country:
+          type: string
+          example: United States
+        city:
+          type: string
+          example: New York
+        name:
+          type: string
+          example: 'New York, NY'
+        active:
+          description: Is the probe currently active?
+          type: boolean
+          example: true
+        hostname:
+          description: DNS name
+          type: string
+          example: s413.pingdom.com
+        ip:
+          description: IPv4 address
+          type: string
+          example: 70.32.40.2
+        ipv6:
+          description: IPv6 address (not all probes have this)
+          type: string
+          example: '2001:0db8:85a3:0000:0000:8a2e:0370:7334'
+        countryiso:
+          description: Country ISO code
+          type: string
+          example: US
+    Probes:
+      type: object
+      properties:
+        probes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Probe'
+    Region:
+      type: object
+      properties:
+        id:
+          description: Region identifier
+          type: integer
+        description:
+          description: Region description
+          type: string
+        countryid:
+          description: Corresponding country identifier
+          type: integer
+        datetimeformatid:
+          description: Corresponding datetimeformat identifier
+          type: integer
+        numberformatid:
+          description: Corresponding numberformat identifier
+          type: integer
+        timezoneid:
+          description: Corresponding timezon identifier
+          type: integer
+    Timezone:
+      type: object
+      properties:
+        id:
+          description: Time zone identifier
+          type: integer
+        description:
+          description: Time zone description
+          type: string
+    DateTimeFormat:
+      type: object
+      properties:
+        id:
+          description: Date/time identifier
+          type: integer
+        description:
+          description: Date/time description
+          type: string
+    NumberFormat:
+      type: object
+      properties:
+        id:
+          description: Number format identifier
+          type: integer
+        description:
+          description: Number format description
+          type: string
+    Country:
+      type: object
+      properties:
+        id:
+          description: Country id
+          type: integer
+        iso:
+          description: Country ISO code
+          type: string
+        name:
+          description: Country name
+          type: string
+    PhoneCode:
+      type: object
+      properties:
+        countryid:
+          description: Country id (Can be mapped against countries.id)
+          type: integer
+        name:
+          description: Country name
+          type: string
+        phonecode:
+          description: Area phone code
+          type: string
+    References:
+      type: object
+      properties:
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Region'
+          example:
+            -
+              id: 2
+              description: United State (Alaska)
+        timezones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Timezone'
+          example:
+            -
+              id: 4
+              description: '(GMT -9:00) Alaska'
+        datetimeformats:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateTimeFormat'
+          example:
+            -
+              id: 3
+              description: '31/07/2006 14:45:05'
+        numberformats:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumberFormat'
+          example:
+            -
+              id: 5
+              description: '123 456 789,00'
+        countries:
+          type: array
+          items:
+            $ref: '#/components/schemas/Country'
+            example:
+              -
+                id: 350
+                name: Afghanistan
+                iso: AF
+        phonecodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneCode'
+          example:
+            countryid: 295
+            name: Zimbabwe
+            phonecode: 263
+            iso: ZW
+    results_checkid:
+      type: integer
+    results_to:
+      type: integer
+    results_from:
+      type: integer
+    results_probes:
+      description: 'Default: all probes'
+      type: string
+    results_status:
+      description: 'Default: all statuses'
+      type: string
+    results_limit:
+      default: 1000
+      type: integer
+    results_offset:
+      default: 0
+      type: integer
+    results_includeanalysis:
+      default: false
+      type: boolean
+    results_maxresponse:
+      type: integer
+    results_minresponse:
+      type: integer
+    results_resp_attrs:
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              probeid:
+                description: Probe identifier
+                type: number
+                example: 33
+              time:
+                description: Time when test was performed. Format is UNIX timestamp
+                type: number
+                example: 1294235764
+              status:
+                description: Result status
+                enum:
+                  - up
+                  - down
+                  - unconfirmed
+                  - unknown
+                type: string
+                example: up
+              responsetime:
+                description: Response time (in milliseconds) (Will be 0 if no response was received)
+                type: number
+                example: 91
+              statusdesc:
+                description: Short status description
+                type: string
+                example: OK
+              statusdesclong:
+                description: Long status description
+                type: string
+                example: OK
+        activeprobes:
+          description: 'For your convenience, a list of used probes that produced the showed results'
+          type: array
+          items:
+            description: Probe identifier
+            type: number
+            example: 33
+    HTTP:
+      required:
+        - host
+        - type
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - http
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        url:
+          description: (http specific) Target path on server
+          default: /
+          type: string
+        encryption:
+          description: (http specific) Connection encryption
+          default: false
+          type: boolean
+        port:
+          description: (http specific) Target port
+          default: 80
+          type: integer
+        auth:
+          description: (http specific) Username and password for target HTTP authentication.
+          type: string
+          example: 'auth=user:password'
+        shouldcontain:
+          description: (http specific) Target site should contain this string
+          type: string
+        shouldnotcontain:
+          description: (http specific) Target site should NOT contain this string
+          type: string
+        postdata:
+          description: >-
+            (http specific) Data that should be posted to the web page, for example submission
+            data for a sign-up or login form. The data needs to be formatted in the same way as a
+            web browser would send it to the web server
+          type: string
+        'requestheader{X}':
+          description: >-
+            (http specific) Custom HTTP header name. Replace {X} with a number unique for each
+            header argument.
+          type: string
+          example: 'requestheader1=My-Header:CoolValue'
+        verify_certificate:
+          description: >-
+            (http specific) Treat target site as down if an invalid/unverifiable certificate is
+            found.
+          default: true
+          type: boolean
+        ssl_down_days_before:
+          description: >-
+            (http specific) Treat the target site as down if a certificate expires within the
+            given number of days. This parameter will be ignored if `verify_certificate` is set to
+            `false`.
+          default: 0
+          type: integer
+    HTTP-Custom:
+      required:
+        - host
+        - type
+        - url
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - httpcustom
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        url:
+          description: (httpcustom specific) Target path to XML file on server
+          type: string
+        encryption:
+          description: (httpcustom specific) Connection encryption
+          default: false
+          type: boolean
+        port:
+          description: (httpcustom specific) Target port
+          default: 80
+          type: integer
+        auth:
+          description: (httpcustom specific) Username and password for target HTTP authentication.
+          type: string
+          example: 'auth=user:password'
+        additionalurls:
+          description: (httpcustom specific) ;-separated list of addidional URLs with hostname included.
+          type: string
+          example: additionalurls=www.mysite.com;www.myothersite.com
+    TCP:
+      required:
+        - host
+        - type
+        - port
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - tcp
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        port:
+          description: (tcp specific) Target port
+          type: integer
+        stringtosend:
+          description: (tcp specific) String to send
+          type: string
+        stringtoexpect:
+          description: (tcp specific) String to expect in response
+          type: string
+    DNS:
+      required:
+        - host
+        - type
+        - expectedip
+        - nameserver
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - dns
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'. For example,
+            "region: NA".
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        expectedip:
+          description: (dns specific) Expected ip
+          type: string
+        nameserver:
+          description: (dns specific) Nameserver
+          type: string
+    UDP:
+      required:
+        - host
+        - type
+        - port
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - udp
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        port:
+          description: (udp specific) Target port
+          type: integer
+        stringtosend:
+          description: (udp specific) String to send
+          type: string
+        stringtoexpect:
+          description: (udp specific) String to expect in response
+          type: string
+    SMTP:
+      required:
+        - host
+        - type
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - smtp
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        port:
+          description: (smtp specific) Target port
+          default: 25
+          type: integer
+        auth:
+          description: (smtp specific) Username and password for target HTTP authentication.
+          type: string
+          example: 'auth=user:password'
+        stringtoexpect:
+          description: (smtp specific) String to expect in response
+          type: string
+        encryption:
+          description: (smtp specific) Connection encryption
+          default: false
+          type: boolean
+    POP3:
+      required:
+        - host
+        - type
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - pop3
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        port:
+          description: (pop3 specific) Target port
+          default: 110
+          type: integer
+        stringtoexpect:
+          description: (pop3 specific) String to expect in response
+          type: string
+        encryption:
+          description: (pop3 specific) Connection encryption
+          default: false
+          type: boolean
+    IMAP:
+      required:
+        - host
+        - type
+      properties:
+        host:
+          description: Target host
+          type: string
+          example: pingdom.com
+        type:
+          enum:
+            - imap
+          type: string
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 17
+        probe_filters:
+          description: >-
+            Filters used for probe selections. Comma separated key:value pairs. Currently only
+            region is supported. Possible values are 'EU', 'NA', 'APAC' and 'LATAM'.
+          type: integer
+        ipv6:
+          description: Use ipv6 instead of ipv4
+          type: boolean
+        responsetime_threshold:
+          description: >-
+            Triggers a down alert if the response time exceeds threshold specified in ms (Not
+            available for Starter and Free plans.)
+          default: 30000
+          type: integer
+        port:
+          description: (imap specific) Target port
+          default: 143
+          type: integer
+        stringtoexpect:
+          description: (imap specific) String to expect in response
+          type: string
+        encryption:
+          description: (imap specific) Connection encryption
+          default: false
+          type: boolean
+    single_resp:
+      properties:
+        result:
+          properties:
+            status:
+              description: 'Test result status (up, down)'
+              type: string
+              example: up
+            responsetime:
+              description: Response time in milliseconds
+              type: integer
+              example: 73
+            statusdesc:
+              description: Short status description
+              type: string
+              example: OK
+            statusdesclong:
+              description: Long status description
+              type: string
+              example: OK
+            probeid:
+              description: Probe identifier
+              type: integer
+              example: 17
+            probedesc:
+              description: Probe description
+              type: string
+              example: 'Stockholm, Sweden'
+    summary.average_checkid:
+      type: integer
+    summary.average_from:
+      default: 0
+      type: integer
+    summary.average_to:
+      type: integer
+    summary.average_probes:
+      type: string
+    summary.average_includeuptime:
+      default: false
+      type: boolean
+    summary.average_bycountry:
+      default: false
+      type: boolean
+    summary.average_byprobe:
+      default: false
+      type: boolean
+    summary_resp_attrs:
+      properties:
+        summary:
+          type: object
+          properties:
+            responsetime:
+              type: object
+              properties:
+                from:
+                  description: Start time of period
+                  type: number
+                  example: 0
+                to:
+                  description: End time of period
+                  type: number
+                  example: 1294245226
+                avgresponse:
+                  oneOf:
+                    -
+                      description: Total average response time in milliseconds
+                      type: integer
+                      example: 458
+                    -
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          countryiso:
+                            description: Country group ISO code
+                            type: string
+                            example: SE
+                          probeid:
+                            description: Probe group probe identifier
+                            type: integer
+                            example: 123
+                          avgresponse:
+                            description: Group average response time in milliseconds
+                            type: integer
+                            example: 250
+            status:
+              type: object
+              properties:
+                totalup:
+                  description: >-
+                    Total uptime in seconds (Please note that the accuracy of this value
+                    is depending on your check resolution).
+                  type: integer
+                  example: 53072286
+                totaldown:
+                  description: >-
+                    Total downtime in seconds (Please note that the accuracy of this value
+                    is depending on your check resolution).
+                  type: integer
+                  example: 771879
+                totalunknown:
+                  description: >-
+                    Total unknown/unmonitored/paused in seconds (Please note that the
+                    accuracy of this value is depending on your check resolution. Also
+                    note that time before the check was created counts as unknown).
+                  type: integer
+                  example: 1240401138
+    summary.hoursofday_checkid:
+      type: integer
+    summary.hoursofday_from:
+      type: integer
+    summary.hoursofday_to:
+      type: integer
+    summary.hoursofday_probes:
+      type: string
+    summary.hoursofday_uselocaltime:
+      default: false
+      type: boolean
+    summary.hoursofday_resp_attrs:
+      properties:
+        hoursofday:
+          type: array
+          items:
+            type: object
+            properties:
+              hour:
+                description: >-
+                  Hour of day (0-23). Please note that if data is missing for an individual
+                  hour, it's entry will not be included in the result.
+                type: number
+                example: 1
+              avgresponse:
+                description: Average response time (in milliseconds) for this hour of the day
+                type: number
+                example: 299
+    summary.outage_checkid:
+      type: integer
+    summary.outage_from:
+      type: integer
+    summary.outage_to:
+      type: integer
+    summary.outage_order:
+      default: asc
+      enum:
+        - asc
+        - desc
+      type: string
+    summary.outage_resp_attrs:
+      properties:
+        summary:
+          type: object
+          properties:
+            states:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    description: Interval status
+                    enum:
+                      - up
+                      - down
+                      - unknown
+                    type: string
+                    example: up
+                  timefrom:
+                    description: Interval start. Format UNIX timestamp
+                    type: number
+                    example: 1293143523
+                  timeto:
+                    description: Interval end. Format UNIX timestamp
+                    type: number
+                    example: 1294180263
+    summary.performance_checkid:
+      type: integer
+    summary.performance_from:
+      type: integer
+    summary.performance_to:
+      type: integer
+    summary.performance_resolution:
+      default: hour
+      enum:
+        - hour
+        - day
+        - week
+      type: string
+    summary.performance_includeuptime:
+      default: false
+      type: boolean
+    summary.performance_probes:
+      type: string
+    summary.performance_order:
+      default: asc
+      enum:
+        - asc
+        - desc
+      type: string
+    Weeks:
+      type: object
+      properties:
+        weeks:
+          $ref: '#/components/schemas/summary.performance_results'
+    Days:
+      type: object
+      properties:
+        days:
+          $ref: '#/components/schemas/summary.performance_results'
+    Hours:
+      type: object
+      properties:
+        hours:
+          $ref: '#/components/schemas/summary.performance_results'
+    summary.performance_results:
+      type: array
+      items:
+        type: object
+        properties:
+          starttime:
+            description: Interval start. Format UNIX timestamp
+            type: number
+            example: 1287957600
+          avgresponse:
+            description: Average response time for this interval in milliseconds
+            type: number
+            example: 468
+          uptime:
+            description: Total uptime for this interval in seconds
+            type: number
+            example: 608400
+          downtime:
+            description: Total downtime for this interval in seconds
+            type: number
+            example: 0
+          unmonitored:
+            description: Total unmonitored time for this interval in seconds
+            type: number
+            example: 0
+    summary.performance_resp_attrs:
+      properties:
+        summary:
+          oneOf:
+            -
+              $ref: '#/components/schemas/Weeks'
+            -
+              $ref: '#/components/schemas/Days'
+            -
+              $ref: '#/components/schemas/Hours'
+    summary.probes_checkid:
+      type: integer
+    summary.probes_from:
+      type: integer
+    summary.probes_to:
+      type: integer
+    summary.probes_resp_attrs:
+      properties:
+        probes:
+          type: array
+          items:
+            description: Probe identifier
+            type: integer
+          example:
+            - 43
+            - 42
+            - 41
+            - 40
+            - 39
+            - 37
+            - 36
+            - 35
+            - 34
+            - 33
+            - 32
+            - 31
+            - 30
+            - 29
+            - 28
+            - 27
+            - 24
+            - 23
+            - 22
+            - 21
+    Members:
+      type: object
+      properties:
+        id:
+          description: Contact identifier
+          type: integer
+        name:
+          description: The team member’s name
+          type: string
+        type:
+          description: Type defines whether the member is a user (login user) or a contact only
+          enum:
+            - user
+            - contact
+          type: string
+    Teams:
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertingTeams'
+      example:
+        teams:
+          -
+            id: 1
+            name: Team Rocket
+            members:
+              -
+                id: 1
+                name: John Doe
+                type: user
+          -
+            id: 2
+            name: The A-Team
+            members:
+              -
+                id: 2
+                name: John 'Hannibal' Smith
+                type: user
+              -
+                id: 3
+                name: Templeton 'Faceman' Peck
+                type: contact
+    AlertingTeams:
+      type: object
+      properties:
+        id:
+          description: Team identifier
+          type: integer
+        name:
+          description: Team name
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Members'
+    Team_ID:
+      properties:
+        team:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertingTeam_ID'
+    AlertingTeam_ID:
+      type: object
+      properties:
+        id:
+          description: Team identifier
+          type: integer
+        name:
+          description: Team name
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Members'
+      example:
+        id: 1
+        name: Team Rocket
+        members:
+          -
+            id: 1
+            name: John Doe
+            type: user
+          -
+            id: 4
+            name: Sidekick Jimmy
+            type: contact
+    UpdateTeam:
+      required:
+        - name
+        - member_ids
+      type: object
+      properties:
+        name:
+          description: Team name
+          type: string
+        member_ids:
+          description: IDs of contacts to be the members of this team
+          type: array
+          items:
+            format: int64
+            type: integer
+      example:
+        name: Team Rocket
+        members_ids:
+          - 1
+          - 4
+    CreateTeam:
+      required:
+        - name
+        - member_ids
+      type: object
+      properties:
+        name:
+          description: Team name
+          type: string
+        member_ids:
+          description: Contact ids
+          type: array
+          items:
+            type: integer
+      example:
+        name: API Team
+        member_ids:
+          - 12345
+          - 54321
+    SMSes:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            description: Contact target's severity level
+            type: string
+          country_code:
+            description: Country code
+            type: string
+          number:
+            description: Phone number
+            type: string
+          provider:
+            description: Provider
+            type: string
+    Emails:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            description: Contact target's severity level
+            type: string
+          address:
+            description: Email address
+            type: string
+    APNS:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            description: Contact target's severity level
+            type: string
+          device_name:
+            description: Contact targets's device name
+            type: string
+          apns_device:
+            description: Contact target's apns
+            type: string
+    AGCM:
+      type: array
+      items:
+        type: object
+        properties:
+          severity:
+            description: Contact target's severity level
+            type: string
+          agcm_id:
+            description: Contact target's agcm id
+            type: string
+    ContactTargets:
+      type: object
+      properties:
+        id:
+          description: Contact ID
+          type: integer
+        name:
+          description: Contact name
+          type: string
+        paused:
+          description: Describes whether alerts are paused for this contact
+          enum:
+            - true
+            - false
+          type: boolean
+        type:
+          description: Type defines whether this is a user (login user) or a contact only
+          enum:
+            - user
+            - contact
+          type: string
+        owner:
+          description: Indicates whether the contact is the owner of the organization
+          enum:
+            - true
+            - false
+          type: boolean
+        notification_targets:
+          anyOf:
+            -
+              $ref: '#/components/schemas/SMSes'
+            -
+              $ref: '#/components/schemas/Emails'
+            -
+              $ref: '#/components/schemas/APNS'
+            -
+              $ref: '#/components/schemas/AGCM'
+        teams:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: Team ID
+                type: integer
+              name:
+                description: Name of the team
+                type: string
+    Contact:
+      properties:
+        contact:
+          $ref: '#/components/schemas/ContactTargets'
+      example:
+        contact:
+          id: 123456
+          name: John Doe
+          paused: false
+          type: user
+          owner: true
+          notification_targets:
+            email:
+              -
+                severity: HIGH
+                address: johndoe@teamrocket.com
+            sms:
+              -
+                severity: HIGH
+                country_code: '00'
+                number: '111111111'
+                provider: provider's name
+          teams:
+            -
+              id: 123456
+              name: The Dream Team
+    CreateContact:
+      required:
+        - name
+        - notification_targets
+      type: object
+      properties:
+        name:
+          description: Contact name
+          type: string
+        paused:
+          description: Pause contact
+          default: false
+          enum:
+            - true
+            - false
+          type: boolean
+        notification_targets:
+          anyOf:
+            -
+              $ref: '#/components/schemas/SMSes'
+            -
+              $ref: '#/components/schemas/Emails'
+      example:
+        name: John Doe
+        notification_targets:
+          email:
+            -
+              severity: HIGH
+              address: johndoe@teamrocket.com
+          sms:
+            -
+              severity: HIGH
+              country_code: '93'
+              number: '111111111'
+              provider: provider's name
+    ContactsList:
+      properties:
+        contacts:
+          description: List of all contacts targets
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactTargets'
+      example:
+        contacts:
+          -
+            id: 1
+            name: John Doe
+            paused: false
+            type: user
+            owner: true
+            notification_targets:
+              email:
+                -
+                  severity: HIGH
+                  address: johndoe@teamrocket.com
+              sms:
+                -
+                  severity: HIGH
+                  country_code: '00'
+                  number: '111111111'
+                  provider: provider's name
+            teams:
+              -
+                id: 123456
+                name: The Dream Team
+          -
+            id: 2
+            name: John "Hannibal" Smith
+            paused: true
+            type: user
+            notification_targets:
+              email:
+                -
+                  severity: HIGH
+                  address: hannibal@ateam.org
+              sms:
+                -
+                  severity: HIGH
+                  country_code: '00'
+                  number: '222222222'
+                  provider: provider's name
+            teams: []
+    UpdateContact:
+      required:
+        - name
+        - paused
+        - notification_targets
+      type: object
+      properties:
+        name:
+          description: Contact name
+          type: string
+        paused:
+          description: Pause contact
+          enum:
+            - true
+            - false
+          type: boolean
+        notification_targets:
+          anyOf:
+            -
+              $ref: '#/components/schemas/SMSes'
+            -
+              $ref: '#/components/schemas/Emails'
+      example:
+        name: John Doe
+        paused: false
+        notification_targets:
+          email:
+            -
+              severity: HIGH
+              address: johndoe@teamrocket.com
+          sms:
+            -
+              severity: HIGH
+              country_code: '93'
+              number: '111111111'
+              provider: provider's name
+    Traceroute:
+      type: object
+      properties:
+        traceroute:
+          $ref: '#/components/schemas/TracerouteData'
+    TracerouteData:
+      type: object
+      properties:
+        result:
+          description: Traceroute output
+          type: string
+          example: 'traceroute to pingdom.com (83.140.19.136), 30 hops max, 40 byte packets ...'
+        probeid:
+          description: Probe identifier
+          type: integer
+          example: 23
+        probedescription:
+          description: Probe description
+          type: string
+          example: 'Dallas 4, TX'
+    CheckGeneral:
+      type: object
+      properties:
+        active:
+          description: 'Check status: active or inactive'
+          type: boolean
+          example: true
+          x-go-name: Active
+        created_at:
+          format: int64
+          description: Timestamp when the check was created
+          type: integer
+          example: 1553070682
+          x-go-name: CreatedAt
+        id:
+          format: int64
+          description: Id of the check
+          type: integer
+          example: 3
+          x-go-name: CheckID
+        interval:
+          format: int64
+          description: >-
+            TMS test intervals in minutes. Allowed intervals: 5,10,20,60,720,1440. The interval
+            you're allowed to set may vary depending on your current plan.
+          type: integer
+          example: 10
+          x-go-name: Interval
+        modified_at:
+          format: int64
+          description: Timestamp when the check was modified
+          type: integer
+          example: 1553070968
+          x-go-name: ModifiedAt
+        last_downtime_start:
+          format: int64
+          description: Timestamp when the last downtime started. This field is optional
+          type: integer
+          example: 1553081100
+          x-go-name: LastDowntimeStart
+        last_downtime_end:
+          format: int64
+          description: Timestamp when the last downtime ended. This field is optional
+          type: integer
+          example: 1553089000
+          x-go-name: LastDowntimeEnd
+        name:
+          description: Name of the check
+          type: string
+          example: My awesome check
+          x-go-name: Name
+        region:
+          description: >-
+            Name of the region where the check is executed. Supported regions: us-east, us-west,
+            eu, au
+          type: string
+          example: us-west
+          x-go-name: Region
+        status:
+          description: 'Whether the check is passing or failing at the moment (successful, failing, unknown)'
+          type: string
+          example: successful
+          x-go-name: Status
+        tags:
+          description: >-
+            List of tags for a check. The tag name may contain the characters 'A-Z', 'a-z', '0-9',
+            '_' and '-'. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+          example:
+            - tag1
+            - tag2
+        type:
+          description: >-
+            Type of transaction check: "script" for regular TMS checks and "recording" for checks
+            made using the Transaction Recorder
+          enum:
+            - script
+            - recording
+          type: string
+          example:
+            - script
+      x-go-package: github.com/pingdom/tms-api/internal/models
+    CheckSimple:
+      type: object
+      properties:
+        id:
+          format: int64
+          description: Id of the check
+          type: integer
+          example: 3
+          x-go-name: CheckID
+        name:
+          description: Name of the check
+          type: string
+          example: My awesome check
+          x-go-name: Name
+      x-go-package: github.com/pingdom/tms-api/internal/models
+    CheckWithoutID:
+      description: CheckWithoutID is a struct describing a TMS check data common for creating a check
+      required:
+        - name
+        - steps
+      type: object
+      properties:
+        active:
+          description: 'Check status: active or inactive'
+          default: true
+          type: boolean
+          example: false
+          x-go-name: Active
+        contact_ids:
+          description: Contacts to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 19876654
+          x-go-name: ContactIDs
+        custom_message:
+          description: Custom message that is part of the email and webhook alerts
+          type: string
+          example: My custom message
+          x-go-name: CustomMessage
+        interval:
+          format: int64
+          description: >-
+            TMS test intervals in minutes. Allowed intervals: 5,10,20,60,720,1440. The interval
+            you're allowed to set may vary depending on your current plan.
+          default: 10
+          type: integer
+          example: 20
+          x-go-name: Interval
+        name:
+          description: Name of the check
+          type: string
+          example: My awesome check
+          x-go-name: Name
+        region:
+          description: >-
+            Name of the region where the check is executed. Supported regions: us-east, us-west,
+            eu, au
+          default: us-east
+          type: string
+          example: us-west
+          x-go-name: Region
+        send_notification_when_down:
+          format: int64
+          description: Send notification when down X times
+          default: 1
+          type: integer
+          example: 0
+          x-go-name: NotifyAfter
+        severity_level:
+          description: >-
+            Check importance- how important are the alerts when the check fails. Allowed values:
+            low, high
+          default: high
+          type: string
+          example: low
+          x-go-name: SeverityLevel
+        steps:
+          description: steps to be executed as part of the check
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+          x-go-name: Steps
+        team_ids:
+          description: Teams to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 135790
+          x-go-name: TeamIDs
+        integration_ids:
+          description: Integration identifiers.
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 1234
+            - 1359
+          x-go-name: IntegrationIDs
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        tags:
+          description: >-
+            List of tags for a check. The tag name may contain the characters 'A-Z', 'a-z', '0-9',
+            '_' and '-'. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+          example:
+            - tag1
+            - tag2
+      x-go-package: github.com/pingdom/tms-api/internal/models
+    CheckWithoutIDPUT:
+      description: CheckWithoutIDPUT is a struct describing a TMS check data common for updating a check
+      type: object
+      properties:
+        active:
+          description: 'Check status: active or inactive'
+          type: boolean
+          example: true
+          x-go-name: Active
+        contact_ids:
+          description: Contacts to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 19876654
+          x-go-name: ContactIDs
+        custom_message:
+          description: Custom message that is part of the email and webhook alerts
+          type: string
+          example: My custom message
+          x-go-name: CustomMessage
+        interval:
+          format: int64
+          description: >-
+            TMS test intervals in minutes. Allowed intervals: 5,10,20,60,720,1440. The interval
+            you're allowed to set may vary depending on your current plan.
+          type: integer
+          example: 10
+          x-go-name: Interval
+        name:
+          description: Name of the check
+          type: string
+          example: My awesome check
+          x-go-name: Name
+        region:
+          description: >-
+            Name of the region where the check is executed. Supported regions: us-east, us-west,
+            eu, au
+          type: string
+          example: us-west
+          x-go-name: Region
+        send_notification_when_down:
+          format: int64
+          description: Send notification when down X times
+          type: integer
+          example: 1
+          x-go-name: NotifyAfter
+        severity_level:
+          description: >-
+            Check importance- how important are the alerts when the check fails. Allowed values:
+            low, high
+          type: string
+          example: low
+          x-go-name: SeverityLevel
+        steps:
+          description: steps to be executed as part of the check
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+          x-go-name: Steps
+        team_ids:
+          description: Teams to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 135790
+          x-go-name: TeamIDs
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        tags:
+          description: >-
+            List of tags for a check. The tag name may contain the characters 'A-Z', 'a-z', '0-9',
+            '_' and '-'. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+          example:
+            - tag1
+            - tag2
+        integration_ids:
+          description: Integration identifiers as a list of integers.
+          type: array
+          items:
+            type: integer
+          example:
+            - 12345
+            - 98765
+      x-go-package: github.com/pingdom/tms-api/internal/models
+    CheckWithoutIDGET:
+      description: CheckWithoutIDGET is a struct describing a TMS check data common for displaying a check
+      type: object
+      properties:
+        active:
+          description: Check status - active or inactive
+          type: boolean
+          example: true
+          x-go-name: Active
+        contact_ids:
+          description: Contacts to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 19876654
+          x-go-name: ContactIDs
+        created_at:
+          format: int64
+          description: Timestamp when the check was created
+          type: integer
+          example: 1553070682
+          x-go-name: CreatedAt
+        modified_at:
+          format: int64
+          description: Timestamp when the check was modified
+          type: integer
+          example: 1553070968
+          x-go-name: ModifiedAt
+        last_downtime_start:
+          format: int64
+          description: Timestamp when the last downtime started. This field is optional
+          type: integer
+          example: 1553081100
+          x-go-name: LastDowntimeStart
+        last_downtime_end:
+          format: int64
+          description: Timestamp when the last downtime ended. This field is optional
+          type: integer
+          example: 1553089000
+          x-go-name: LastDowntimeEnd
+        custom_message:
+          description: Custom message that is part of the email and webhook alerts
+          type: string
+          example: My custom message
+          x-go-name: CustomMessage
+        interval:
+          format: int64
+          description: >-
+            TMS test intervals in minutes. Allowed intervals: 5,10,20,60,720,1440. The interval
+            you're allowed to set may vary depending on your current plan.
+          type: integer
+          example: 10
+          x-go-name: Interval
+        name:
+          description: Name of the check
+          type: string
+          example: My awesome check
+          x-go-name: Name
+        region:
+          description: >-
+            Name of the region where the check is executed. Supported regions: us-east, us-west,
+            eu, au
+          type: string
+          example: us-west
+          x-go-name: Region
+        send_notification_when_down:
+          format: int64
+          description: Send notification when down X times
+          type: integer
+          example: 1
+          x-go-name: NotifyAfter
+        severity_level:
+          description: >-
+            Check importance- how important are the alerts when the check fails. Allowed values:
+            low, high
+          type: string
+          example: low
+          x-go-name: SeverityLevel
+        status:
+          description: 'Whether the check is passing or failing at the moment (successful, failing, unknown)'
+          type: string
+          example: successful
+          x-go-name: Status
+        steps:
+          description: steps to be executed as part of the check
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+          x-go-name: Steps
+        team_ids:
+          description: Teams to alert
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 12345678
+            - 135790
+          x-go-name: TeamIDs
+        integration_ids:
+          description: Integration identifiers.
+          type: array
+          items:
+            format: int64
+            type: integer
+          example:
+            - 1234
+            - 1359
+          x-go-name: IntegrationIDs
+        metadata:
+          $ref: '#/components/schemas/MetadataGET'
+        tags:
+          description: >-
+            List of tags for a check. The tag name may contain the characters 'A-Z', 'a-z', '0-9',
+            '_' and '-'. The maximum length of a tag is 64 characters.
+          type: array
+          items:
+            type: string
+          example:
+            - tag1
+            - tag2
+        type:
+          description: >-
+            Type of transaction check: "script" for regular TMS checks and "recording" for checks
+            made using the Transaction Recorder
+          enum:
+            - script
+            - recording
+          type: string
+          example:
+            - script
+    ChecksAll:
+      type: object
+      properties:
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckGeneral'
+          x-go-name: Check
+        limit:
+          format: uint64
+          type: integer
+          example: 1000
+          x-go-name: Limit
+        offset:
+          format: uint64
+          type: integer
+          example: 0
+          x-go-name: Offset
+    Step:
+      description: Step is a struct describing a single step of a TMS check
+      type: object
+      properties:
+        args:
+          description: |-
+            Parameters for the operation
+            The actual parameters required depend on the chosen operation
+          type: object
+          properties:
+            checkbox:
+              type: string
+              x-go-name: Checkbox
+            element:
+              type: string
+              x-go-name: Element
+            form:
+              type: string
+              x-go-name: Form
+            input:
+              type: string
+              x-go-name: Input
+            option:
+              type: string
+              x-go-name: Option
+            password:
+              type: string
+              x-go-name: Password
+            radio:
+              type: string
+              x-go-name: Radio
+            seconds:
+              type: string
+              x-go-name: Seconds
+            select:
+              type: string
+              x-go-name: Select
+            url:
+              type: string
+              example: 'http://www.google.com'
+              x-go-name: URL
+            username:
+              type: string
+              x-go-name: Username
+            value:
+              type: string
+              x-go-name: Value
+          x-go-name: Parameters
+        fn:
+          description: Operation to be done
+          type: string
+          example: go_to
+          x-go-name: Function
+    HttpAuthentications:
+      properties:
+        credentials:
+          description: Basic Authentication credentials to use on host
+          type: object
+          properties:
+            password:
+              description: Basic Authentication password
+              type: string
+              example: secret
+              x-go-name: Password
+            userName:
+              description: Basic Authentication Username
+              type: string
+              example: admin
+              x-go-name: UserName
+          x-go-name: Credentials
+        host:
+          type: string
+          example: 'https://example.com/auth'
+          x-go-name: Host
+    MetadataGET:
+      description: Recording related metadata. Used for recordings only. Modify with caution!
+      type: object
+      properties:
+        width:
+          description: Width of the browser window
+          type: integer
+          example: 1950
+          x-go-name: Width
+        height:
+          description: Height of the browser window
+          type: integer
+          example: 1080
+          x-go-name: Height
+        disableWebSecurity:
+          description: Setting this field to false will disable the same-origin policy during check execution
+          type: boolean
+          x-go-name: DisableWebSecurity
+        authentications:
+          description: >-
+            Allowed values are either an empty JSON object (no authentication) or Basic
+            Authentication
+          type: object
+          properties:
+            httpAuthentications:
+              description: >-
+                HTTP (browser-level) authentications. Currently, only Basic Authentication is
+                supported
+              type: array
+              items:
+                $ref: '#/components/schemas/HttpAuthentications'
+          x-go-name: Authentications
+    Metadata:
+      description: Recording related metadata. Used for recordings only. Modify with caution!
+      required:
+        - width
+        - height
+        - disableWebSecurity
+        - authentications
+      type: object
+      properties:
+        width:
+          description: Width of the browser window
+          type: integer
+          example: 1950
+          x-go-name: Width
+        height:
+          description: Height of the browser window
+          type: integer
+          example: 1080
+          x-go-name: Height
+        disableWebSecurity:
+          description: Setting this field to false will disable the same-origin policy during check execution
+          type: boolean
+          x-go-name: DisableWebSecurity
+        authentications:
+          description: >-
+            Allowed values are either an empty JSON object (no authentication) or Basic
+            Authentication
+          type: object
+          properties:
+            httpAuthentications:
+              description: >-
+                HTTP (browser-level) authentications. Currently, only Basic Authentication is
+                supported
+              type: array
+              items:
+                $ref: '#/components/schemas/HttpAuthentications'
+          x-go-name: Authentications
+    State:
+      type: object
+      properties:
+        status:
+          description: Interval status
+          enum:
+            - up
+            - down
+            - unknown
+          type: string
+          example: down
+        from:
+          $ref: '#/components/schemas/PropertyFrom'
+        to:
+          format: date-time
+          description: Interval end. The format is `RFC 3339`
+          type: string
+          example: '2020-07-14T07:25:15.000Z'
+        error_in_step:
+          description: Number of step in which an error has occured (only if `status` is `down`)
+          type: integer
+          example: 2
+        message:
+          description: Error message for the step that is failing (only if `status` is `down`)
+          type: string
+          example: 'URL should be ''http://www.example12345.com/'' but is ''http://www.example.com/''.'
+    CheckStatus:
+      type: object
+      properties:
+        check_id:
+          $ref: '#/components/schemas/PropertyCheckID'
+        name:
+          $ref: '#/components/schemas/PropertyCheckName'
+        states:
+          description: Intervals when the check had a specific status (`up`/`down`).
+          type: array
+          items:
+            $ref: '#/components/schemas/State'
+    ReportStatusSingle:
+      type: object
+      properties:
+        report:
+          $ref: '#/components/schemas/CheckStatus'
+    ReportStatusAll:
+      type: object
+      properties:
+        report:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckStatus'
+    AverageResponse:
+      format: int64
+      description: Average response times in milliseconds
+      type: integer
+      example: 123
+    Downtime:
+      format: int64
+      description: >-
+        Amount of time when the check was down within given interval (only with the `include_uptime`
+        flag)
+      type: integer
+      example: 10
+    Uptime:
+      format: int64
+      description: >-
+        Amount of time when the check was up within given interval (only with the `include_uptime`
+        flag)
+      type: integer
+      example: 230
+    Unmonitored:
+      format: int64
+      description: >-
+        Amount of time when there is no specific data about check status (up/down) within given
+        interval (only with the `include_uptime` flag)
+      type: integer
+      example: 50
+    PropertyFrom:
+      format: date-time
+      description: Interval start. The format is `RFC 3339`
+      type: string
+      example: '2020-07-10T10:51:55.000Z'
+    PropertyCheckID:
+      format: int64
+      description: ID of the check
+      type: integer
+      example: 123
+    PropertyCheckName:
+      description: Name of the check
+      type: string
+      example: My awesome check
+    ReportPerformance:
+      type: object
+      properties:
+        report:
+          type: object
+          properties:
+            check_id:
+              $ref: '#/components/schemas/PropertyCheckID'
+            name:
+              $ref: '#/components/schemas/PropertyCheckName'
+            resolution:
+              description: Size of a time bucket for which the results are calculated
+              enum:
+                - hour
+                - day
+                - week
+              type: string
+              example: day
+            intervals:
+              description: Intervals for which the measurements were performed.
+              type: array
+              items:
+                type: object
+                properties:
+                  average_response:
+                    $ref: '#/components/schemas/AverageResponse'
+                  from:
+                    $ref: '#/components/schemas/PropertyFrom'
+                  downtime:
+                    $ref: '#/components/schemas/Downtime'
+                  uptime:
+                    $ref: '#/components/schemas/Uptime'
+                  unmonitored:
+                    $ref: '#/components/schemas/Unmonitored'
+                  steps:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        step:
+                          $ref: '#/components/schemas/Step'
+                        average_response:
+                          $ref: '#/components/schemas/AverageResponse'
+  responses:
+    checkAddedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CheckSimple'
+      description: Simplified description of an added check.
+    checkDeletedResponse:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Deletion of check 1234567 was successful
+      description: Message indicating a successful modification
+    checkDetailed:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CheckWithoutIDGET'
+      description: Detailed description of specified check.
+    checkModifiedResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CheckWithoutIDGET'
+      description: Detailed description of a modified check.
+    checksAll:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ChecksAll'
+      description: Description of all checks for a user.
+    reportStatusSingle:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReportStatusSingle'
+      description: Status change report for a single transaction check
+    reportStatusAll:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReportStatusAll'
+      description: Status change report for all transaction check in the current organization
+    reportPerformance:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReportPerformance'
+      description: Performance report for a single transaction check
+x-tagGroups:
+  -
+    name: Uptime
+    tags:
+      - Actions
+      - Analysis
+      - Checks
+      - Credits
+      - Maintenance
+      - Maintenance occurrences
+      - Probes
+      - Reference
+      - Results
+      - Single
+      - Summary.average
+      - Summary.hoursofday
+      - Summary.outage
+      - Summary.performance
+      - Summary.probes
+      - Traceroute
+  -
+    name: Alerting settings
+    tags:
+      - Teams
+      - Contacts
+  -
+    name: Transaction
+    tags:
+      - TMS Checks

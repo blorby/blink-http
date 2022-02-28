@@ -1,26 +1,46 @@
 package consts
 
+// http
 const (
 	UrlKey         = "url"
-	QueryKey      = "query"
+	QueryKey       = "query"
 	ContentTypeKey = "contentType"
 	HeadersKey     = "headers"
 	CookiesKey     = "cookies"
 	BodyKey        = "body"
-	UsernameKey   = "username"
-	PasswordKey   = "password"
-	TokenKey      = "token"
-	BasicAuthKey  = "basic-auth"
-	BearerAuthKey = "bearer-token"
-	ApiTokenKey   = "apikey-auth"
-	ApiAddressKey = "API Address"
+	UsernameKey    = "username"
+	PasswordKey    = "password"
+	TokenKey       = "token"
+	BasicAuthKey   = "basic-auth"
+	BearerAuthKey  = "bearer-token"
+	ApiTokenKey    = "apikey-auth"
+	ApiAddressKey  = "API Address"
 	RequestUrlKey  = "REQUEST_URL"
 
-	BasicAuthPrefix = "Basic "
+	BasicAuthPrefix  = "Basic "
 	BearerAuthPrefix = "Bearer "
 
 	BasicAuthPassword = "PASSWORD"
 	BasicAuthUsername = "USERNAME"
 
 	DefaultTimeout = 30
+)
+
+// openapi
+const (
+	TypeArray    = "array"
+	TypeInteger  = "integer"
+	TypeNumber   = "number"
+	TypeBoolean  = "boolean"
+	TypeBool     = "bool"
+	TypeObject   = "object"
+	TypeString   = "string"
+	TypeJson     = "code:json"
+	TypeDropdown = "dropdown"
+
+	ParamPrefix            = "{"
+	ParamSuffix            = "}"
+	BodyParamDelimiter     = "__"
+	ArrayDelimiter         = ","
+	ParamPlaceholderPrefix = "Example: "
 )
