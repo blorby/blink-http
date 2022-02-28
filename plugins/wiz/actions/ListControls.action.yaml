@@ -30,5 +30,5 @@ parameters:
     display_name: Filter By
     type: code:json
     required: false
-    description: Filter the results.
+    description: "Filter the results. For example: {\"search\": \"permissions\", \"severity\": [\"MEDIUM\",\"HIGH\"]}"
     index: 4

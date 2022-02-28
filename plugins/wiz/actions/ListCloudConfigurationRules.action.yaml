@@ -30,7 +30,7 @@ parameters:
     display_name: Filter By
     type: code:json
     required: false
-    description: Filter the results.
+    description: "Filter the results. For example: {\"search\": \"Access Keys\", \"severity\": [\"MEDIUM\",\"HIGH\"]}"
     index: 4
   OrderBy:
     display_name: Order By
