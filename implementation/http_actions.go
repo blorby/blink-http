@@ -71,7 +71,12 @@ func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequ
 		query = ""
 	}
 
-	body, err := json.Marshal(map[string]string{"query": query})
+	variables, ok := request.Parameters[consts.VariablesKey]
+	if !ok {
+		variables = ""
+	}
+
+	body, err := json.Marshal(map[string]string{"query": query, "variables": variables})
 	if err != nil {
 		return nil, err
 	}
