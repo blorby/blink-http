@@ -1,4 +1,4 @@
-package plugins
+package azure
 
 import (
 	"encoding/json"
@@ -64,6 +64,6 @@ func (p AzurePlugin) TestConnection(connection *blink_conn.ConnectionInstance) (
 	return false, []byte("Test connection failed, Azure is not yet supported by the http plugin")
 }
 
-func getNewAzurePlugin() AzurePlugin {
+func GetNewAzurePlugin() AzurePlugin {
 	return AzurePlugin{}
 }

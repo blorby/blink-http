@@ -7,8 +7,15 @@ parameters:
     type: "string"
     description: "The url to communicate with"
     required: true
+    index: 1
   query:
     type: "code:json"
     description: "GraphQL query"
     default: ""
     required: true
+    index: 2
+  variables:
+    type: "code:json"
+    description: "GraphQL query variables"
+    required: false
+    index: 3

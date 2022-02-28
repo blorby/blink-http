@@ -1,6 +1,7 @@
-package plugins
+package datadog
 
 import (
+	"github.com/blinkops/blink-http/plugins/connections"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 )
@@ -8,13 +9,13 @@ import (
 type DatadogPlugin struct{}
 
 func (p DatadogPlugin) HandleAuth(req *http.Request, conn map[string]string) error {
-	return handleGenericConnection(conn, req, nil, nil)
+	return connections.HandleGenericConnection(conn, req, nil, nil)
 }
 
 func (p DatadogPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
 	return false, []byte("Test connection failed, Datadog is not yet supported by the http plugin")
 }
 
-func getNewDatadogPlugin() DatadogPlugin {
+func GetNewDatadogPlugin() DatadogPlugin {
 	return DatadogPlugin{}
 }

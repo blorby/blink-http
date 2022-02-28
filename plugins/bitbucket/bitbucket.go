@@ -1,4 +1,4 @@
-package plugins
+package bitbucket
 
 import (
 	"encoding/base64"
@@ -9,17 +9,16 @@ import (
 	"net/http"
 )
 
-type AzureDevopsPlugin struct{}
+type BitbucketPlugin struct{}
 
-func (p AzureDevopsPlugin) HandleAuth(req *http.Request, conn map[string]string) error {
+func (p BitbucketPlugin) HandleAuth(req *http.Request, conn map[string]string) error {
 	// OAuth
 	if val, ok := conn["Token"]; ok {
 		req.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix+val)
-		return nil
 	}
-	// Basic Authentication
-	username, userExists := conn["Username"]
-	password, passExists := conn["Access Token"]
+	// Api key
+	username, userExists := conn["USERNAME"]
+	password, passExists := conn["PASSWORD"]
 	if !userExists || !passExists {
 		log.Info("failed to set authentication headers")
 		return fmt.Errorf("failed to set authentication headers")
@@ -30,10 +29,10 @@ func (p AzureDevopsPlugin) HandleAuth(req *http.Request, conn map[string]string)
 	return nil
 }
 
-func (p AzureDevopsPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	return false, []byte("Test connection failed, AzureDevops is not yet supported by the http plugin")
+func (p BitbucketPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
+	return false, []byte("Test connection failed, Bitbucket is not yet supported by the http plugin")
 }
 
-func getNewAzureDevopsPlugin() AzureDevopsPlugin {
-	return AzureDevopsPlugin{}
+func GetNewBitbucketPlugin() BitbucketPlugin {
+	return BitbucketPlugin{}
 }

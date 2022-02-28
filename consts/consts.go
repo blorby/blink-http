@@ -4,6 +4,7 @@ package consts
 const (
 	UrlKey         = "url"
 	QueryKey       = "query"
+	VariablesKey   = "variables"
 	ContentTypeKey = "contentType"
 	HeadersKey     = "headers"
 	CookiesKey     = "cookies"
@@ -17,7 +18,7 @@ const (
 	ApiAddressKey  = "API Address"
 	RequestUrlKey  = "REQUEST_URL"
 
-	BasicAuthPrefix  = "Basic "
+	BasicAuthPrefix = "Basic "
 	BearerAuthPrefix = "Bearer "
 
 	BasicAuthPassword = "PASSWORD"

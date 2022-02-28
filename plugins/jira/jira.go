@@ -1,7 +1,8 @@
-package plugins
+package jira
 
 import (
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/plugins/connections"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 )
@@ -9,15 +10,15 @@ import (
 type JiraPlugin struct{}
 
 func (p JiraPlugin) HandleAuth(req *http.Request, conn map[string]string) error {
-	prefixes := HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix}
-	aliases := HeaderAlias{"API TOKEN": "PASSWORD", "USER EMAIL": "USERNAME"}
-	return handleGenericConnection(conn, req, prefixes, aliases)
+	prefixes := connections.HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix}
+	aliases := connections.HeaderAlias{"API TOKEN": "PASSWORD", "USER EMAIL": "USERNAME"}
+	return connections.HandleGenericConnection(conn, req, prefixes, aliases)
 }
 
 func (p JiraPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
 	return false, []byte("Test connection failed, Jira is not yet supported by the http plugin")
 }
 
-func getNewJiraPlugin() JiraPlugin {
+func GetNewJiraPlugin() JiraPlugin {
 	return JiraPlugin{}
 }

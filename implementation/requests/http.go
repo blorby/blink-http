@@ -1,4 +1,4 @@
-package implementation
+package requests
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
-	"github.com/blinkops/blink-http/plugins"
+	"github.com/blinkops/blink-http/plugins/types"
 	"github.com/blinkops/blink-sdk/plugin"
 	"github.com/blinkops/blink-sdk/plugin/connections"
 	log "github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func SendRequest(ctx *plugin.ActionContext, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func SendRequest(ctx *plugin.ActionContext, plugin types.Plugin, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	cookieJar, err := cookiejar.New(nil)
@@ -56,20 +56,21 @@ func SendRequest(ctx *plugin.ActionContext, method string, urlString string, tim
 		request.Header.Set(name, value)
 	}
 
-	var pluginName string
 	for connName, connInstance := range ctx.GetAllConnections() {
-		if err = handleAuth(connName, connInstance, request); err != nil {
+		if err = handleAuth(connName, connInstance, request, plugin); err != nil {
 			return nil, err
 		}
-		pluginName = connName
 	}
 
 	response, err := client.Do(request)
 
-	return CreateResponse(response, err, pluginName)
+	return CreateResponse(response, err, plugin)
 }
 
-func handleAuth(connName string, connInstance *connections.ConnectionInstance, req *http.Request) error {
+func handleAuth(connName string, connInstance *connections.ConnectionInstance, req *http.Request, plugin types.Plugin) error {
+	if plugin != nil {
+		return plugin.HandleAuth(req, connInstance.Data)
+	}
 	switch connName {
 	case consts.BasicAuthKey:
 		if err := handleBasicAuth(connInstance.Data, req); err != nil {
@@ -84,11 +85,7 @@ func handleAuth(connName string, connInstance *connections.ConnectionInstance, r
 			return err
 		}
 	default:
-		if integration, ok := plugins.Plugins[connName]; ok {
-			if err := integration.HandleAuth(req, connInstance.Data); err != nil {
-				return err
-			}
-		}
+		return errors.New("invalid connection type")
 	}
 	return nil
 }
@@ -176,7 +173,7 @@ func ReadBody(responseBody io.ReadCloser) ([]byte, error) {
 	return body, nil
 }
 
-func CreateResponse(response *http.Response, err error, pluginName string) ([]byte, error) {
+func CreateResponse(response *http.Response, err error, plugin types.Plugin) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
@@ -189,8 +186,8 @@ func CreateResponse(response *http.Response, err error, pluginName string) ([]by
 	if err != nil {
 		return nil, err
 	}
-	if plugin, ok := plugins.Plugins[pluginName]; ok {
-		if pluginWithValidation, ok := plugin.(plugins.PluginWithValidation); ok {
+	if plugin != nil {
+		if pluginWithValidation, ok := plugin.(types.PluginWithValidation); ok {
 			return pluginWithValidation.ValidateResponse(response.StatusCode, body)
 		}
 	}
