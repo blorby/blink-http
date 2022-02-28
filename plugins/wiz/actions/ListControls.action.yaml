@@ -1,0 +1,34 @@
+name: "ListControls"
+display_name: "List Controls"
+description: "List controls."
+enabled: true
+collection_name: "wiz"
+connection_types:
+  wiz:
+    name: wiz
+parameters:
+  Limit:
+    display_name: Limit
+    type: string
+    required: true
+    description: Number of records to fetch.
+    default: 10
+    index: 1
+  Offset:
+    display_name: Offset
+    type: string
+    required: false
+    description: Pagination cursor.
+    index: 2
+  ProjectName:
+    display_name: Project Name
+    type: string
+    required: false
+    description: Pass Project ID to select analytics on the provided project.
+    index: 3
+  FilterBy:
+    display_name: Filter By
+    type: code:json
+    required: false
+    description: Filter the results.
+    index: 4
