@@ -1,4 +1,4 @@
-package plugins
+package connections
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ type (
 	HeaderAlias             map[string]string
 )
 
-func handleGenericConnection(connection map[string]string, request *http.Request, prefixes HeaderValuePrefixes, headerAlias HeaderAlias) error {
+func HandleGenericConnection(connection map[string]string, request *http.Request, prefixes HeaderValuePrefixes, headerAlias HeaderAlias) error {
 	headers := make(map[string]string)
 	delete(connection, consts.RequestUrlKey)
 	for header, headerValue := range connection {
@@ -64,7 +64,7 @@ func cleanRedundantHeaders(requestHeaders *http.Header) {
 	requestHeaders.Del(consts.BasicAuthPassword)
 }
 
-func sendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance, authHandler types.AuthHandler) (*http.Response, error) {
+func SendTestConnectionRequest(url string, method string, data []byte, conn *blink_conn.ConnectionInstance, authHandler types.AuthHandler) (*http.Response, error) {
 	requestBody := bytes.NewBuffer(data)
 	req, err := http.NewRequest(method, url, requestBody)
 	if err != nil {

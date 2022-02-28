@@ -1,8 +1,9 @@
-package plugins
+package grafana
 
 import (
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/plugins/connections"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 )
@@ -10,9 +11,9 @@ import (
 type GrafanaPlugin struct{}
 
 func (p GrafanaPlugin) HandleAuth(req *http.Request, conn map[string]string) error {
-	prefixes := HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix}
-	aliases := HeaderAlias{"API_KEY": "AUTHORIZATION"}
-	return handleGenericConnection(conn, req, prefixes, aliases)
+	prefixes := connections.HeaderValuePrefixes{"AUTHORIZATION": consts.BearerAuthPrefix}
+	aliases := connections.HeaderAlias{"API_KEY": "AUTHORIZATION"}
+	return connections.HandleGenericConnection(conn, req, prefixes, aliases)
 }
 
 func (p GrafanaPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
@@ -20,7 +21,7 @@ func (p GrafanaPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	if !ok {
 		return false, []byte("Test connection failed, API Address wasn't provided")
 	}
-	res, err := sendTestConnectionRequest(requestUrl+"/api/org", http.MethodGet, nil, connection, p.HandleAuth)
+	res, err := connections.SendTestConnectionRequest(requestUrl+"/api/org", http.MethodGet, nil, connection, p.HandleAuth)
 	if err != nil {
 		return false, []byte("Test connection failed. " + err.Error())
 	}
@@ -31,6 +32,6 @@ func (p GrafanaPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	return true, nil
 }
 
-func getNewGrafanaPlugin() GrafanaPlugin {
+func GetNewGrafanaPlugin() GrafanaPlugin {
 	return GrafanaPlugin{}
 }

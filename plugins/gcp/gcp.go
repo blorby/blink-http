@@ -1,4 +1,4 @@
-package plugins
+package gcp
 
 import (
 	"encoding/json"
@@ -29,7 +29,7 @@ func (p GcpPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bo
 	return false, []byte("Test connection failed, Gcp is not yet supported by the http plugin")
 }
 
-func getNewGcpPlugin() GcpPlugin {
+func GetNewGcpPlugin() GcpPlugin {
 	return GcpPlugin{}
 }
 
