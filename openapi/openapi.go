@@ -6,7 +6,7 @@ import (
 	ops "github.com/blinkops/blink-http/openapi/operations"
 	"github.com/blinkops/blink-sdk/plugin"
 	"github.com/getkin/kin-openapi/openapi3"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 	"net/url"
 	"sort"
 	"strings"
