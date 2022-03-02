@@ -22,6 +22,7 @@ type (
 		Connections              map[string]connections.Connection `yaml:"connection_types"`
 		IconUri                  string                            `yaml:"icon_uri"`
 		IsConnectionOptional     bool                              `yaml:"is_connection_optional"`
+		NamedActions             []NamedAction                     `yaml:"named_actions"`
 		CollectionId             string
 		ActionConnectionTypes    []string
 		ReverseActionAliasMap    map[string]string

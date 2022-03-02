@@ -159,10 +159,10 @@ func (suite *OpenApiTestSuite) TestHandleBodyParams() {
 	handleBodyParams(&action, schema, parentPath, schemaPath, true)
 
 	assert.Equal(suite.T(), 13, len(myPlugin.actions[0].Parameters))
-	assert.Contains(suite.T(), myPlugin.actions[0].Parameters, "dashboard_id")
-	assert.Contains(suite.T(), myPlugin.actions[0].Parameters, "dashboard_timezone")
-	assert.Equal(suite.T(), "my test description", myPlugin.actions[0].Parameters["dashboard_timezone"].Description)
-	assert.Equal(suite.T(), true, myPlugin.actions[0].Parameters["dashboard_timezone"].Required)
+	assert.Contains(suite.T(), myPlugin.actions[0].Parameters, "dashboard__id")
+	assert.Contains(suite.T(), myPlugin.actions[0].Parameters, "dashboard__timezone")
+	assert.Equal(suite.T(), "my test description", myPlugin.actions[0].Parameters["dashboard__timezone"].Description)
+	assert.Equal(suite.T(), true, myPlugin.actions[0].Parameters["dashboard__timezone"].Required)
 }
 
 func (suite *OpenApiTestSuite) TestParseActionParam() {

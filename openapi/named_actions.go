@@ -48,6 +48,9 @@ func (o ParsedOpenApi) getNamedActionsGroup() NamedActionsGroup {
 			ActionToRunParamValues: o.getActionParamValues(action, opDefinition),
 		})
 	}
+	for _, namedAction := range o.mask.NamedActions {
+		namedActions = append(namedActions, namedAction)
+	}
 	group := NamedActionsGroup{
 		Name:                  o.mask.Name,
 		Connections:           o.mask.Connections,
