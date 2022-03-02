@@ -395,7 +395,7 @@ actions:
             is_multi: false
       action_to_run: http.post
       action_to_run_param_values:
-        body: '{"additionalurls":"{{params.additionalurls}}","auth":"{{params.auth}}","custom_message":"{{params.custom_message}}","encryption":"{{bool(params.encryption)}}","expectedip":"{{params.expectedip}}","host":"{{params.host}}","integrationids":"[\"{{arr(params.integrationids)}}\"]","ipv6":"{{bool(params.ipv6)}}","name":"{{params.name}}","nameserver":"{{params.nameserver}}","notifyagainevery":"{{int(params.notifyagainevery)}}","notifywhenbackup":"{{bool(params.notifywhenbackup)}}","paused":"{{bool(params.paused)}}","port":"{{int(params.port)}}","postdata":"{{params.postdata}}","probe_filters":"[\"{{arr(params.probe_filters)}}\"]","requestheaders":"[\"{{arr(params.requestheaders)}}\"]","resolution":"{{int(params.resolution)}}","responsetime_threshold":"{{int(params.responsetime_threshold)}}","sendnotificationwhendown":"{{int(params.sendnotificationwhendown)}}","shouldcontain":"{{params.shouldcontain}}","shouldnotcontain":"{{params.shouldnotcontain}}","ssl_down_days_before":"{{int(params.ssl_down_days_before)}}","stringtoexpect":"{{params.stringtoexpect}}","stringtosend":"{{params.stringtosend}}","tags":"[\"{{arr(params.tags)}}\"]","teamids":"{{params.teamids}}","type":"{{params.type}}","url":"{{params.url}}","userids":"{{params.userids}}","verify_certificate":"{{bool(params.verify_certificate)}}"}'
+        body: '{"additionalurls":"{{params.additionalurls}}","auth":"{{params.auth}}","custom_message":"{{params.custom_message}}","encryption":"{{bool(params.encryption)}}","expectedip":"{{params.expectedip}}","host":"{{params.host}}","integrationids":["{{arr(params.integrationids)}}"],"ipv6":"{{bool(params.ipv6)}}","name":"{{params.name}}","nameserver":"{{params.nameserver}}","notifyagainevery":"{{int(params.notifyagainevery)}}","notifywhenbackup":"{{bool(params.notifywhenbackup)}}","paused":"{{bool(params.paused)}}","port":"{{int(params.port)}}","postdata":"{{params.postdata}}","probe_filters":["{{arr(params.probe_filters)}}"],"requestheaders":["{{arr(params.requestheaders)}}"],"resolution":"{{int(params.resolution)}}","responsetime_threshold":"{{int(params.responsetime_threshold)}}","sendnotificationwhendown":"{{int(params.sendnotificationwhendown)}}","shouldcontain":"{{params.shouldcontain}}","shouldnotcontain":"{{params.shouldnotcontain}}","ssl_down_days_before":"{{int(params.ssl_down_days_before)}}","stringtoexpect":"{{params.stringtoexpect}}","stringtosend":"{{params.stringtosend}}","tags":["{{arr(params.tags)}}"],"teamids":"{{params.teamids}}","type":"{{params.type}}","url":"{{params.url}}","userids":"{{params.userids}}","verify_certificate":"{{bool(params.verify_certificate)}}"}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks''}}'
       is_connection_optional: ""
@@ -553,7 +553,7 @@ actions:
             is_multi: false
       action_to_run: http.post
       action_to_run_param_values:
-        body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":"[\"{{arr(params.tmsids)}}\"]","to":"{{int(params.to)}}","uptimeids":"[\"{{arr(params.uptimeids)}}\"]"}'
+        body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":["{{arr(params.tmsids)}}"],"to":"{{int(params.to)}}","uptimeids":["{{arr(params.uptimeids)}}"]}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance''}}'
       is_connection_optional: ""
@@ -588,7 +588,7 @@ actions:
             is_multi: false
       action_to_run: http.post
       action_to_run_param_values:
-        body: '{"member_ids":"[\"{{arr(params.member_ids)}}\"]","name":"{{params.name}}"}'
+        body: '{"member_ids":["{{arr(params.member_ids)}}"],"name":"{{params.name}}"}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/alerting/teams''}}'
       is_connection_optional: ""
@@ -656,6 +656,54 @@ actions:
             options: []
             index: 7
             format: int64
+            is_multi: false
+        metadata__authentications__httpAuthentications:
+            display_name: HTTP Authentications
+            type: array
+            description: HTTP (browser-level) authentications. Currently, only Basic Authentication is supported
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 8
+            format: ""
+            is_multi: false
+        metadata__disableWebSecurity:
+            display_name: Disable Web Security?
+            type: bool
+            description: Setting this field to false will disable the same-origin policy during check execution
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 9
+            format: ""
+            is_multi: false
+        metadata__height:
+            display_name: Height
+            type: integer
+            description: Height of the browser window
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 10
+            format: ""
+            is_multi: false
+        metadata__width:
+            display_name: Width
+            type: integer
+            description: Width of the browser window
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 11
+            format: ""
             is_multi: false
         name:
             display_name: Name
@@ -743,7 +791,7 @@ actions:
             is_multi: false
       action_to_run: http.post
       action_to_run_param_values:
-        body: '{"active":"{{bool(params.active)}}","contact_ids":"[\"{{arr(params.contact_ids)}}\"]","custom_message":"{{params.custom_message}}","integration_ids":"[\"{{arr(params.integration_ids)}}\"]","interval":"{{int(params.interval)}}","metadata":{"authentications":{"httpAuthentications":"[\"{{arr(params.metadata__authentications__httpAuthentications)}}\"]"},"disableWebSecurity":"{{bool(params.metadata__disableWebSecurity)}}","height":"{{int(params.metadata__height)}}","width":"{{int(params.metadata__width)}}"},"name":"{{params.name}}","region":"{{params.region}}","send_notification_when_down":"{{int(params.send_notification_when_down)}}","severity_level":"{{params.severity_level}}","steps":"[\"{{arr(params.steps)}}\"]","tags":"[\"{{arr(params.tags)}}\"]","team_ids":"[\"{{arr(params.team_ids)}}\"]"}'
+        body: '{"active":"{{bool(params.active)}}","contact_ids":["{{arr(params.contact_ids)}}"],"custom_message":"{{params.custom_message}}","integration_ids":["{{arr(params.integration_ids)}}"],"interval":"{{int(params.interval)}}","metadata":{"authentications":{"httpAuthentications":["{{arr(params.metadata__authentications__httpAuthentications)}}"]},"disableWebSecurity":"{{bool(params.metadata__disableWebSecurity)}}","height":"{{int(params.metadata__height)}}","width":"{{int(params.metadata__width)}}"},"name":"{{params.name}}","region":"{{params.region}}","send_notification_when_down":"{{int(params.send_notification_when_down)}}","severity_level":"{{params.severity_level}}","steps":["{{arr(params.steps)}}"],"tags":["{{arr(params.tags)}}"],"team_ids":["{{arr(params.team_ids)}}"]}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/tms/check''}}'
       is_connection_optional: ""
@@ -2765,7 +2813,7 @@ actions:
             is_multi: false
       action_to_run: http.put
       action_to_run_param_values:
-        body: '{"additionalurls":"{{params.additionalurls}}","addtags":"[\"{{arr(params.addtags)}}\"]","auth":"{{params.auth}}","checkids":"{{params.checkids}}","custom_message":"{{params.custom_message}}","encryption":"{{bool(params.encryption)}}","expectedip":"{{params.expectedip}}","host":"{{params.host}}","integrationids":"[\"{{arr(params.integrationids)}}\"]","ipv6":"{{bool(params.ipv6)}}","name":"{{params.name}}","nameserver":"{{params.nameserver}}","notifyagainevery":"{{int(params.notifyagainevery)}}","notifywhenbackup":"{{bool(params.notifywhenbackup)}}","paused":"{{bool(params.paused)}}","port":"{{int(params.port)}}","postdata":"{{params.postdata}}","probe_filters":"[\"{{arr(params.probe_filters)}}\"]","requestheaders":"[\"{{arr(params.requestheaders)}}\"]","resolution":"{{int(params.resolution)}}","responsetime_threshold":"{{int(params.responsetime_threshold)}}","sendnotificationwhendown":"{{int(params.sendnotificationwhendown)}}","shouldcontain":"{{params.shouldcontain}}","shouldnotcontain":"{{params.shouldnotcontain}}","ssl_down_days_before":"{{int(params.ssl_down_days_before)}}","stringtoexpect":"{{params.stringtoexpect}}","stringtosend":"{{params.stringtosend}}","tags":"[\"{{arr(params.tags)}}\"]","teamids":"{{params.teamids}}","url":"{{params.url}}","userids":"{{params.userids}}","verify_certificate":"{{bool(params.verify_certificate)}}"}'
+        body: '{"additionalurls":"{{params.additionalurls}}","addtags":["{{arr(params.addtags)}}"],"auth":"{{params.auth}}","checkids":"{{params.checkids}}","custom_message":"{{params.custom_message}}","encryption":"{{bool(params.encryption)}}","expectedip":"{{params.expectedip}}","host":"{{params.host}}","integrationids":["{{arr(params.integrationids)}}"],"ipv6":"{{bool(params.ipv6)}}","name":"{{params.name}}","nameserver":"{{params.nameserver}}","notifyagainevery":"{{int(params.notifyagainevery)}}","notifywhenbackup":"{{bool(params.notifywhenbackup)}}","paused":"{{bool(params.paused)}}","port":"{{int(params.port)}}","postdata":"{{params.postdata}}","probe_filters":["{{arr(params.probe_filters)}}"],"requestheaders":["{{arr(params.requestheaders)}}"],"resolution":"{{int(params.resolution)}}","responsetime_threshold":"{{int(params.responsetime_threshold)}}","sendnotificationwhendown":"{{int(params.sendnotificationwhendown)}}","shouldcontain":"{{params.shouldcontain}}","shouldnotcontain":"{{params.shouldnotcontain}}","ssl_down_days_before":"{{int(params.ssl_down_days_before)}}","stringtoexpect":"{{params.stringtoexpect}}","stringtosend":"{{params.stringtosend}}","tags":["{{arr(params.tags)}}"],"teamids":"{{params.teamids}}","url":"{{params.url}}","userids":"{{params.userids}}","verify_certificate":"{{bool(params.verify_certificate)}}"}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks/'' + params.checkid}}'
       is_connection_optional: ""
@@ -2994,7 +3042,7 @@ actions:
             is_multi: false
       action_to_run: http.put
       action_to_run_param_values:
-        body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":"[\"{{arr(params.tmsids)}}\"]","to":"{{int(params.to)}}","uptimeids":"[\"{{arr(params.uptimeids)}}\"]"}'
+        body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":["{{arr(params.tmsids)}}"],"to":"{{int(params.to)}}","uptimeids":["{{arr(params.uptimeids)}}"]}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance/'' + params.id}}'
       is_connection_optional: ""
@@ -3089,7 +3137,7 @@ actions:
             is_multi: false
       action_to_run: http.put
       action_to_run_param_values:
-        body: '{"member_ids":"[\"{{arr(params.member_ids)}}\"]","name":"{{params.name}}"}'
+        body: '{"member_ids":["{{arr(params.member_ids)}}"],"name":"{{params.name}}"}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/alerting/teams/'' + params.teamid}}'
       is_connection_optional: ""
@@ -3169,6 +3217,54 @@ actions:
             options: []
             index: 10
             format: int64
+            is_multi: false
+        metadata__authentications__httpAuthentications:
+            display_name: HTTP Authentications
+            type: array
+            description: HTTP (browser-level) authentications. Currently, only Basic Authentication is supported
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 2
+            format: ""
+            is_multi: false
+        metadata__disableWebSecurity:
+            display_name: Disable Web Security?
+            type: bool
+            description: Setting this field to false will disable the same-origin policy during check execution
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 3
+            format: ""
+            is_multi: false
+        metadata__height:
+            display_name: Height
+            type: integer
+            description: Height of the browser window
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 4
+            format: ""
+            is_multi: false
+        metadata__width:
+            display_name: Width
+            type: integer
+            description: Width of the browser window
+            placeholder: ""
+            required: false
+            default: ""
+            pattern: ""
+            options: []
+            index: 5
+            format: ""
             is_multi: false
         name:
             display_name: Name
@@ -3256,7 +3352,7 @@ actions:
             is_multi: false
       action_to_run: http.put
       action_to_run_param_values:
-        body: '{"active":"{{bool(params.active)}}","contact_ids":"[\"{{arr(params.contact_ids)}}\"]","custom_message":"{{params.custom_message}}","integration_ids":"[\"{{arr(params.integration_ids)}}\"]","interval":"{{int(params.interval)}}","metadata":{"authentications":{"httpAuthentications":"[\"{{arr(params.metadata__authentications__httpAuthentications)}}\"]"},"disableWebSecurity":"{{bool(params.metadata__disableWebSecurity)}}","height":"{{int(params.metadata__height)}}","width":"{{int(params.metadata__width)}}"},"name":"{{params.name}}","region":"{{params.region}}","send_notification_when_down":"{{int(params.send_notification_when_down)}}","severity_level":"{{params.severity_level}}","steps":"[\"{{arr(params.steps)}}\"]","tags":"[\"{{arr(params.tags)}}\"]","team_ids":"[\"{{arr(params.team_ids)}}\"]"}'
+        body: '{"active":"{{bool(params.active)}}","contact_ids":["{{arr(params.contact_ids)}}"],"custom_message":"{{params.custom_message}}","integration_ids":["{{arr(params.integration_ids)}}"],"interval":"{{int(params.interval)}}","metadata":{"authentications":{"httpAuthentications":["{{arr(params.metadata__authentications__httpAuthentications)}}"]},"disableWebSecurity":"{{bool(params.metadata__disableWebSecurity)}}","height":"{{int(params.metadata__height)}}","width":"{{int(params.metadata__width)}}"},"name":"{{params.name}}","region":"{{params.region}}","send_notification_when_down":"{{int(params.send_notification_when_down)}}","severity_level":"{{params.severity_level}}","steps":["{{arr(params.steps)}}"],"tags":["{{arr(params.tags)}}"],"team_ids":["{{arr(params.team_ids)}}"]}'
         contentType: application/json
         url: '{{''https://api.pingdom.com/api/3.1'' + ''/tms/check/'' + params.cid}}'
       is_connection_optional: ""

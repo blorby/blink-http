@@ -192,16 +192,16 @@ actions:
       interval:
         alias: "Interval"
         index: 7
-      metadata.authentications.httpAuthentications:
+      metadata__authentications__httpAuthentications:
         alias: "HTTP Authentications"
         index: 8
-      metadata.disableWebSecurity:
+      metadata__disableWebSecurity:
         alias: "Disable Web Security?"
         index: 9
-      metadata.height:
+      metadata__height:
         alias: "Height"
         index: 10
-      metadata.width:
+      metadata__width:
         alias: "Width"
         index: 11
       region:
@@ -912,19 +912,19 @@ actions:
         alias: "Check ID"
         index: 1
         required: true
-      metadata.authentications.httpAuthentications:
+      metadata__authentications__httpAuthentications:
         alias: "HTTP Authentications"
         index: 2
         required: true
-      metadata.disableWebSecurity:
+      metadata__disableWebSecurity:
         alias: "Disable Web Security?"
         index: 3
         required: true
-      metadata.height:
+      metadata__height:
         alias: "Height"
         index: 4
         required: true
-      metadata.width:
+      metadata__width:
         alias: "Width"
         index: 5
         required: true

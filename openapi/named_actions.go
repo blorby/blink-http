@@ -37,16 +37,10 @@ func (o ParsedOpenApi) getNamedActionsGroup() NamedActionsGroup {
 		if len(o.mask.Actions) > 0 && o.mask.GetAction(action.Name) == nil {
 			continue
 		}
-		originalName := o.mask.ReplaceActionAlias(action.Name)
-		maskedAct, ok := o.mask.Actions[originalName]
-		maskedActionName := action.Name
-		if ok {
-			maskedActionName = maskedAct.Alias
-		}
-		opDefinition := o.operations[originalName]
+		opDefinition := o.operations[action.Name]
 		namedActions = append(namedActions, NamedAction{
 			Name:                   action.Name,
-			DisplayName:            getDisplayName(maskedActionName),
+			DisplayName:            getDisplayName(action.Name),
 			Description:            action.Description,
 			Enabled:                true,
 			Parameters:             o.getActionParams(action),
@@ -110,7 +104,8 @@ func (o ParsedOpenApi) getActionParamValues(action plugin.Action, opDefinition *
 func (o ParsedOpenApi) getActionUrlTemplate(op *ops.OperationDefinition) string {
 	host := fmt.Sprintf("'%s'", o.requestUrl)
 	if o.mask.RequestUrl != "" {
-		host = fmt.Sprintf("connection.%s.%s", o.mask.RequestUrl, consts.RequestUrlKey)
+		connTemplate := fmt.Sprintf("connection.%s.%s", o.mask.RequestUrl, consts.RequestUrlKey)
+		host = fmt.Sprintf("(exists(%s) ? %s : '%s'),", connTemplate, connTemplate, o.requestUrl)
 	}
 
 	path := fmt.Sprintf("'%s'", op.Path)
@@ -215,7 +210,7 @@ func castBodyParamType(paramValue string, paramType string) interface{} {
 	case consts.TypeBoolean:
 		return fmt.Sprintf("{{bool(params.%s)}}", paramValue)
 	case consts.TypeArray:
-		return fmt.Sprintf(`["{{arr(params.%s)}}"]`, paramValue)
+		return []interface{}{fmt.Sprintf("{{arr(params.%s)}}", paramValue)}
 	case consts.TypeObject:
 		return fmt.Sprintf("{{obj(params.%s)}}", paramValue)
 	default:
