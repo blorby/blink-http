@@ -36,6 +36,6 @@ func (p GrafanaPlugin) GetDefaultRequestUrl() string {
 	return "http://localhost:3000"
 }
 
-func (p GrafanaPlugin) GetNewGrafanaPlugin() GrafanaPlugin {
+func GetNewGrafanaPlugin() GrafanaPlugin {
 	return GrafanaPlugin{}
 }
