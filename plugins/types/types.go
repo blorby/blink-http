@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+type Response struct {
+	StatusCode int
+	Body       []byte
+}
+
 type ActionHandler func(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin Plugin) ([]byte, error)
 type AuthHandler func(req *http.Request, conn map[string]string) error
 
@@ -23,5 +28,5 @@ type CustomPlugin interface {
 
 type PluginWithValidation interface {
 	Plugin
-	ValidateResponse(statusCode int, body []byte) ([]byte, error)
+	ValidateResponse(response *Response) (*Response, error)
 }

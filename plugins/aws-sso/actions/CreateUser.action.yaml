@@ -1,0 +1,26 @@
+name: "CreateUser"
+display_name: "Create User"
+description: "Create a user in AWS SSO."
+enabled: true
+parameters:
+  "Primary Email":
+    type: "string"
+    description: "The primary email of the user."
+    required: true
+    index: 1
+  "Given Name":
+    type: "string"
+    description: "The given name of the user."
+    required: true
+    index: 2
+  "Family Name":
+    type: "string"
+    description: "The family name of the user."
+    required: true
+    index: 3
+  "Active":
+    type: "bool"
+    description: "Whether the user is active or not."
+    required: true
+    default: true
+    index: 4

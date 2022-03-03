@@ -3,7 +3,6 @@ package wiz
 import (
 	"encoding/json"
 	"errors"
-	"github.com/blinkops/blink-http/consts"
 	"github.com/blinkops/blink-http/implementation/requests"
 	"github.com/blinkops/blink-http/plugins/types"
 	"github.com/blinkops/blink-sdk/plugin"
@@ -11,7 +10,7 @@ import (
 )
 
 func execQuery(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin, query string, variables []byte) ([]byte, error) {
-	requestUrl, err := getRequestUrl(ctx)
+	requestUrl, err := requests.GetRequestUrl(ctx, "wiz")
 	if err != nil {
 		return nil, err
 	}
@@ -23,21 +22,8 @@ func execQuery(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, 
 
 	headerMap := map[string]string{"Content-Type": "application/json"}
 
-	return requests.SendRequest(ctx, plugin, http.MethodPost, requestUrl, request.Timeout, headerMap, nil, body)
-}
-
-func getRequestUrl(ctx *plugin.ActionContext) (string, error) {
-	connection, err := ctx.GetCredentials("wiz")
-	if err != nil {
-		return "", err
-	}
-
-	requestUrl, ok := connection[consts.RequestUrlKey]
-	if !ok {
-		return "", errors.New("no request url provided")
-	}
-
-	return requestUrl, nil
+	resp, err := requests.SendRequest(ctx, plugin, http.MethodPost, requestUrl, request.Timeout, headerMap, nil, body)
+	return resp.Body, err
 }
 
 func getProjectIdByName(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin, projectName string) (string, error) {

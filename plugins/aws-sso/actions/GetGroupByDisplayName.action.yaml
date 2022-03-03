@@ -1,0 +1,10 @@
+name: "GetGroupByDisplayName"
+display_name: "Get Group By Display Name"
+description: "Get information about a group by its display name."
+enabled: true
+parameters:
+  "Group Name":
+    type: "string"
+    description: "The name of the group to get."
+    required: true
+    index: 1

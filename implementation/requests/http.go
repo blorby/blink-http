@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-func SendRequest(ctx *plugin.ActionContext, plugin types.Plugin, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) ([]byte, error) {
+func SendRequest(ctx *plugin.ActionContext, plugin types.Plugin, method string, urlString string, timeout int32, headers map[string]string, cookies map[string]string, data []byte) (*types.Response, error) {
 	requestBody := bytes.NewBuffer(data)
 
 	cookieJar, err := cookiejar.New(nil)
@@ -151,8 +151,10 @@ func checkSubdomains(apiAddress *url.URL, requestedURL *url.URL) error {
 
 func validateURL(connection map[string]string, requestedURL *url.URL, plugin types.Plugin) error {
 	// try to get the request url from the connection
-	apiAddressString, ok := connection[consts.RequestUrlKey]; if !ok {
-		apiAddressString, ok = connection[consts.ApiAddressKey]; if !ok {
+	apiAddressString, ok := connection[consts.RequestUrlKey]
+	if !ok {
+		apiAddressString, ok = connection[consts.ApiAddressKey]
+		if !ok {
 			// if there's no api address defined, make sure the request is being sent
 			// to the default request url of the connection type
 			if plugin != nil && plugin.GetDefaultRequestUrl() != "" {
@@ -197,7 +199,7 @@ func ReadBody(responseBody io.ReadCloser) ([]byte, error) {
 	return body, nil
 }
 
-func CreateResponse(response *http.Response, err error, plugin types.Plugin) ([]byte, error) {
+func CreateResponse(response *http.Response, err error, plugin types.Plugin) (*types.Response, error) {
 	if err != nil {
 		return nil, err
 	}
@@ -210,20 +212,26 @@ func CreateResponse(response *http.Response, err error, plugin types.Plugin) ([]
 	if err != nil {
 		return nil, err
 	}
+
+	resp := types.Response{
+		StatusCode: response.StatusCode,
+		Body:       body,
+	}
+
 	if plugin != nil {
 		if pluginWithValidation, ok := plugin.(types.PluginWithValidation); ok {
-			return pluginWithValidation.ValidateResponse(response.StatusCode, body)
+			return pluginWithValidation.ValidateResponse(&resp)
 		}
 	}
-	return ValidateResponse(response.StatusCode, body)
+	return ValidateResponse(&resp)
 }
 
-func ValidateResponse(statusCode int, body []byte) ([]byte, error) {
-	if statusCode < http.StatusOK || statusCode >= http.StatusBadRequest {
-		return body, errors.New(fmt.Sprintf("status: %v", statusCode))
+func ValidateResponse(response *types.Response) (*types.Response, error) {
+	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusBadRequest {
+		return nil, errors.New(string(response.Body))
 	}
 
-	return body, nil
+	return response, nil
 }
 
 func GetHeaders(contentType string, headers string) map[string]string {
@@ -246,4 +254,18 @@ func ParseStringToMap(value string, delimiter string) map[string]string {
 		}
 	}
 	return stringMap
+}
+
+func GetRequestUrl(ctx *plugin.ActionContext, provider string) (string, error) {
+	connection, err := ctx.GetCredentials(provider)
+	if err != nil {
+		return "", err
+	}
+
+	requestUrl, ok := connection[consts.RequestUrlKey]
+	if !ok {
+		return "", errors.New("no request url provided")
+	}
+
+	return requestUrl, nil
 }

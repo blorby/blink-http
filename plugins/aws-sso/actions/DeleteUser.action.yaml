@@ -1,0 +1,10 @@
+name: "DeleteUser"
+display_name: "Delete User"
+description: "Delete a user in AWS SSO."
+enabled: true
+parameters:
+  "Email":
+    type: "string"
+    description: "The email of the user."
+    required: true
+    index: 1

@@ -59,7 +59,8 @@ func executeCoreHTTPAction(ctx *plugin.ActionContext, method string, request *pl
 	headerMap := requests.GetHeaders(contentType, headers)
 	cookieMap := requests.ParseStringToMap(cookies, "=")
 
-	return requests.SendRequest(ctx, plugin, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
+	resp, err := requests.SendRequest(ctx, plugin, method, providedUrl, request.Timeout, headerMap, cookieMap, []byte(body))
+	return resp.Body, err
 }
 
 func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin) ([]byte, error) {
@@ -85,5 +86,6 @@ func executeGraphQL(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequ
 
 	headerMap := map[string]string{"Content-Type": "application/json"}
 
-	return requests.SendRequest(ctx, plugin, http.MethodPost, providedUrl, request.Timeout, headerMap, nil, body)
+	resp, err := requests.SendRequest(ctx, plugin, http.MethodPost, providedUrl, request.Timeout, headerMap, nil, body)
+	return resp.Body, err
 }

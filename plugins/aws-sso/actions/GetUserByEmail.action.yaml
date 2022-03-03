@@ -1,0 +1,10 @@
+name: "GetUserByEmail"
+display_name: "Get User By Email"
+description: "Get information about a user by their email."
+enabled: true
+parameters:
+  "Email":
+    type: "string"
+    description: "The email of the user to get."
+    required: true
+    index: 1
