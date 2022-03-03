@@ -32,6 +32,10 @@ func (p GrafanaPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	return true, nil
 }
 
+func (p GrafanaPlugin) GetDefaultRequestUrl() string {
+	return "http://localhost:3000"
+}
+
 func GetNewGrafanaPlugin() GrafanaPlugin {
 	return GrafanaPlugin{}
 }

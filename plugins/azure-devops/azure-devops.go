@@ -34,6 +34,10 @@ func (p AzureDevopsPlugin) TestConnection(connection *blink_conn.ConnectionInsta
 	return false, []byte("Test connection failed, AzureDevops is not yet supported by the http plugin")
 }
 
+func (p AzureDevopsPlugin) GetDefaultRequestUrl() string {
+	return "https://dev.azure.com"
+}
+
 func GetNewAzureDevopsPlugin() AzureDevopsPlugin {
 	return AzureDevopsPlugin{}
 }

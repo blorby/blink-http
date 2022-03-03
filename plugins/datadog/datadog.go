@@ -16,6 +16,10 @@ func (p DatadogPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	return false, []byte("Test connection failed, Datadog is not yet supported by the http plugin")
 }
 
+func (p DatadogPlugin) GetDefaultRequestUrl() string {
+	return ""
+}
+
 func GetNewDatadogPlugin() DatadogPlugin {
 	return DatadogPlugin{}
 }

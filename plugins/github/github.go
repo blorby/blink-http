@@ -19,6 +19,9 @@ func (p GithubPlugin) TestConnection(connection *blink_conn.ConnectionInstance) 
 	return false, []byte("Test connection failed, Github is not yet supported by the http plugin")
 }
 
+func (p GithubPlugin) GetDefaultRequestUrl() string {
+	return "https://api.github.com"
+}
 func GetNewGithubPlugin() GithubPlugin {
 	return GithubPlugin{}
 }

@@ -12,6 +12,7 @@ type AuthHandler func(req *http.Request, conn map[string]string) error
 type Plugin interface {
 	TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte)
 	HandleAuth(req *http.Request, conn map[string]string) error
+	GetDefaultRequestUrl() string
 }
 
 type CustomPlugin interface {

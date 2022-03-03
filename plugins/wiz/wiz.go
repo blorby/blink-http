@@ -72,6 +72,10 @@ func (p WizPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bo
 	return true, nil
 }
 
+func (p WizPlugin) GetDefaultRequestUrl() string {
+	return ""
+}
+
 func (p WizPlugin) GetCustomActionHandlers() map[string] types.ActionHandler {
 	return map[string] types.ActionHandler{
 		"ListCloudConfigurationRules": listCloudConfigurationRules,

@@ -1,0 +1,1779 @@
+name: pingdom
+connection_types:
+  pingdom:
+    name: pingdom
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: CreateMaintenanceWindow
+  display_name: Create Maintenance Window
+  description: Create new maintenance window.
+  enabled: true
+  parameters:
+    description:
+      display_name: Description
+      type: string
+      description: Description
+      placeholder: 'Example: New maintenance window.'
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    effectiveto:
+      display_name: Effectiveto
+      type: integer
+      description: 'Recurrence end. Format UNIX time. Default: equal to `to`. (Only
+        future allowed. Use 1 for the current timestamp.)'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Initial maintenance window start. Format UNIX time. (Only future
+        allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    recurrencetype:
+      display_name: Recurrencetype
+      type: dropdown
+      description: Type of recurrence.
+      placeholder: 'Example: week'
+      required: false
+      default: none
+      pattern: ""
+      options:
+      - none
+      - day
+      - week
+      - month
+      index: 2
+      format: ""
+      is_multi: false
+    repeatevery:
+      display_name: Repeatevery
+      type: integer
+      description: Repeat every n-th day/week/month
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    tmsids:
+      display_name: Tmsids
+      type: array
+      description: Identifiers of transaction checks to assign to the maintenance
+        window - Comma separated Integers
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: Initial maintenance window end. Format UNIX time. (Only future
+        allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    uptimeids:
+      display_name: Uptimeids
+      type: array
+      description: Identifiers of uptime checks to assign to the maintenance window
+        - Comma separated Integers
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":["{{arr(params.tmsids)}}"],"to":"{{int(params.to)}}","uptimeids":["{{arr(params.uptimeids)}}"]}'
+    contentType: application/json
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance''}}'
+  is_connection_optional: ""
+- name: DeleteCheck
+  display_name: Delete Check
+  description: Deletes a check.
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: Identifier of check to be deleted
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks/'' + params.checkid}}'
+  is_connection_optional: ""
+- name: DeleteMaintanaceWindow
+  display_name: Delete Maintanace Window
+  description: Delete the maintenance window.
+  enabled: true
+  parameters:
+    id:
+      display_name: ID
+      type: integer
+      description: id of maintenance window
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance/'' + params.id}}'
+  is_connection_optional: ""
+- name: DeleteMaintenceOccurrence
+  display_name: Delete Maintence Occurrence
+  description: Deletes the maintenance occurrence
+  enabled: true
+  parameters:
+    id:
+      display_name: ID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance.occurrences/'' +
+      params.id}}'
+  is_connection_optional: ""
+- name: GetAverageResponseTime
+  display_name: Get Average Response Time
+  description: Returns the average response time for each hour.
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Start time of period. Format is UNIX timestamp. Default value is
+        one week eariler than `to`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    probes:
+      display_name: Probes
+      type: string
+      description: Filter to only use results from a list of probes. Format is a comma
+        separated list of probe identifiers. By default all probes results are returned.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End time of period. Format is UNIX timestamp. Default value is
+        current time.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    uselocaltime:
+      display_name: Uselocaltime
+      type: bool
+      description: If true, use the user's local time zone for results (from and to
+        parameters should still be specified in UTC). If false, use UTC for results.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/summary.hoursofday/'' + params.checkid}}{{''?from=''
+      + params.from + ''&to='' + params.to + ''&probes='' + params.probes + ''&uselocaltime=''
+      + params.uselocaltime}}'
+  is_connection_optional: ""
+- name: GetAverageUptime
+  display_name: Get Average Uptime
+  description: Get the average time/uptime value for a specified
+  enabled: true
+  parameters:
+    bycountry:
+      display_name: Bycountry
+      type: bool
+      description: Split response times into country groups
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    byprobe:
+      display_name: Byprobe
+      type: bool
+      description: Split response times into probe groups
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Start time of period. Format is UNIX timestamp
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    includeuptime:
+      display_name: Includeuptime
+      type: bool
+      description: Include uptime information
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    probes:
+      display_name: Probes
+      type: string
+      description: Filter to only use results from a list of probes. Format is a comma
+        separated list of probe identifiers. By default result from all probes are
+        shown.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End time of period. Format is UNIX timestamp. Default is the current
+        time
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/summary.average/'' + params.checkid}}{{''?from=''
+      + params.from + ''&to='' + params.to + ''&probes='' + params.probes + ''&includeuptime=''
+      + params.includeuptime + ''&bycountry='' + params.bycountry + ''&byprobe=''
+      + params.byprobe}}'
+  is_connection_optional: ""
+- name: GetCheck
+  display_name: Get Check
+  description: Returns a detailed description of a check.
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: Identifier of check to be retrieved
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    include_teams:
+      display_name: Include Teams
+      type: bool
+      description: Include team connections for check.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks/'' + params.checkid}}{{''?include_teams=''
+      + params.include_teams}}'
+  is_connection_optional: ""
+- name: GetMaintenaceWindow
+  display_name: Get Maintenace Window
+  description: Returns the maintenance window specified by its id.
+  enabled: true
+  parameters:
+    id:
+      display_name: ID
+      type: integer
+      description: id of maintenance window
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance/'' + params.id}}'
+  is_connection_optional: ""
+- name: GetsMaintenanceOccurrenceDetails
+  display_name: Gets Maintenance Occurrence Details
+  description: Gets a maintenance occurrence details
+  enabled: true
+  parameters:
+    id:
+      display_name: ID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance.occurrences/'' +
+      params.id}}'
+  is_connection_optional: ""
+- name: ListChecks
+  display_name: List Checks
+  description: Returns a list overview of all checks.
+  enabled: true
+  parameters:
+    include_severity:
+      display_name: Include Severity
+      type: bool
+      description: Include severity level for each check.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    include_tags:
+      display_name: Include Tags
+      type: bool
+      description: Include tag list for each check. Tags can be marked as "a" or "u",
+        for auto tagged or user tagged.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Limits the number of returned probes to the specified quantity.
+        (Max value is 25000)
+      placeholder: ""
+      required: false
+      default: "25000"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: Offset for listing. (Requires limit.)
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    showencryption:
+      display_name: Showencryption
+      type: bool
+      description: If set, show encryption setting for each check
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    tags:
+      display_name: Tags
+      type: string
+      description: Tag list separated by commas. As an example "nginx,apache" would
+        filter out all responses except those tagged nginx or apache
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks''}}{{''?limit='' + params.limit
+      + ''&offset='' + params.offset + ''&showencryption='' + params.showencryption
+      + ''&include_tags='' + params.include_tags + ''&include_severity='' + params.include_severity
+      + ''&tags='' + params.tags}}'
+  is_connection_optional: ""
+- name: ListContacts
+  display_name: List Contacts
+  description: Returns a list of all contacts
+  enabled: true
+  parameters: {}
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/alerting/contacts''}}'
+  is_connection_optional: ""
+- name: ListCredits
+  display_name: List Credits
+  description: Returns information about remaining credits
+  enabled: true
+  parameters: {}
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/credits''}}'
+  is_connection_optional: ""
+- name: ListMaintenaceWindows
+  display_name: List Maintenace Windows
+  description: Returns a list of user's maintenance windows.
+  enabled: true
+  parameters:
+    limit:
+      display_name: Limit
+      type: integer
+      description: Count of items to list.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: Offset of the list.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    orderby:
+      display_name: Orderby
+      type: dropdown
+      description: Order by the specific property of the maintenance window.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - description
+      - from
+      - to
+      - effectiveto
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance''}}{{''?limit=''
+      + params.limit + ''&offset='' + params.offset + ''&orderby='' + params.orderby
+      + ''&order='' + params.order}}'
+  is_connection_optional: ""
+- name: ListMaintenanceOccurrences
+  display_name: List Maintenance Occurrences
+  description: Returns a list of maintenance occurrences.
+  enabled: true
+  parameters:
+    from:
+      display_name: From
+      type: integer
+      description: Effective from (unix timestamp). (List occurrences which are effective
+        from the specified unix timestamp. If not specified, current timestamp is
+        used.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    maintenanceid:
+      display_name: Maintenanceid
+      type: integer
+      description: Maintenance window identifier. (List only occurrences of a specific
+        maintenance window.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: Effective to (unix timestamp). (List occurrences which are effective
+        to the specified unix timestamp.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance.occurrences''}}{{''?maintenanceid=''
+      + params.maintenanceid + ''&from='' + params.from + ''&to='' + params.to}}'
+  is_connection_optional: ""
+- name: ListProbes
+  display_name: List Probes
+  description: Returns a list of Pingdom probe servers
+  enabled: true
+  parameters:
+    includedeleted:
+      display_name: Includedeleted
+      type: bool
+      description: Include old probes that are no longer in use.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Limits the number of returned probes to the specified quantity.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: Offset for listing. (Requires limit.)
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    onlyactive:
+      display_name: Onlyactive
+      type: bool
+      description: Return only active probes.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/probes''}}{{''?limit='' + params.limit
+      + ''&offset='' + params.offset + ''&onlyactive='' + params.onlyactive + ''&includedeleted=''
+      + params.includedeleted}}'
+  is_connection_optional: ""
+- name: ListRawResults
+  display_name: List Raw Results
+  description: Return a list of raw test results
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Start of period. Format is UNIX timestamp. Default value is 1 day
+        prior to `to`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    includeanalysis:
+      display_name: Includeanalysis
+      type: bool
+      description: Attach available root cause analysis identifiers to corresponding
+        results
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Number of results to show (Will be set to 1000 if the provided
+        value is greater than 1000)
+      placeholder: ""
+      required: false
+      default: "1000"
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    maxresponse:
+      display_name: Maxresponse
+      type: integer
+      description: Maximum response time (ms). If set, specified interval must not
+        be larger than 31 days.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    minresponse:
+      display_name: Minresponse
+      type: integer
+      description: Minimum response time (ms). If set, specified interval must not
+        be larger than 31 days.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: Number of results to skip (Max value is `43200`)
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    probes:
+      display_name: Probes
+      type: string
+      description: Filter to only show results from a list of probes. Format is a
+        comma separated list of probe identifiers
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    status:
+      display_name: Status
+      type: string
+      description: Filter to only show results with specified statuses. Format is
+        a comma separated list of (`down`, `up`, `unconfirmed`, `unknown`)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End of period. Format is UNIX timestamp. Default value is current
+        timestamp.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/results/'' + params.checkid}}{{''?to=''
+      + params.to + ''&from='' + params.from + ''&probes='' + params.probes + ''&status=''
+      + params.status + ''&limit='' + params.limit + ''&offset='' + params.offset
+      + ''&includeanalysis='' + params.includeanalysis + ''&maxresponse='' + params.maxresponse
+      + ''&minresponse='' + params.minresponse}}'
+  is_connection_optional: ""
+- name: ListReferences
+  display_name: List References
+  description: Get regions, timezone and date/time/number references
+  enabled: true
+  parameters: {}
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/reference''}}'
+  is_connection_optional: ""
+- name: ListStatusChanges
+  display_name: List Status Changes
+  description: Get a list of status changes for a specified check
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Start time of period. Format is UNIX timestamp. Default value is
+        one week earlier than `to`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    order:
+      display_name: Order
+      type: dropdown
+      description: Sorting order of outages. Ascending or descending.
+      placeholder: ""
+      required: false
+      default: asc
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 3
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End time of period. Format is UNIX timestamp. Default value is
+        the current time.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/summary.outage/'' + params.checkid}}{{''?from=''
+      + params.from + ''&to='' + params.to + ''&order='' + params.order}}'
+  is_connection_optional: ""
+- name: ListTestProbes
+  display_name: List Test Probes
+  description: Get a list of probes that performed tests
+  enabled: true
+  parameters:
+    checkid:
+      display_name: CheckID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Start time of period. Format is UNIX timestamp
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End time of period. Format is UNIX timestamp. The defualt value
+        is current time.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/summary.probes/'' + params.checkid}}{{''?from=''
+      + params.from + ''&to='' + params.to}}'
+  is_connection_optional: ""
+- name: UpdateCheck
+  display_name: Update Check
+  description: Modify settings for a check.
+  enabled: true
+  parameters:
+    addtags:
+      display_name: Addtags
+      type: array
+      description: Check tags to add in addition to current check tags
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 20
+      format: ""
+      is_multi: false
+    auth:
+      display_name: Auth
+      type: string
+      description: Username and password, colon separated.
+      placeholder: 'Example: User:e4gh51!'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    checkids:
+      display_name: Check IDs
+      type: string
+      description: Identifiers of checks to modify in bulk. For example checkids=1234,5678
+      placeholder: 'Example: 123,456'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    custom_message:
+      display_name: Custom Message
+      type: string
+      description: Custom message that will be added to email and webhook alerts.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 23
+      format: ""
+      is_multi: false
+    encryption:
+      display_name: Encryption
+      type: bool
+      description: Connection encryption
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    host:
+      display_name: Host
+      type: string
+      description: Target host
+      placeholder: 'Example: www.example.com'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    integrationids:
+      display_name: Integrationids
+      type: array
+      description: Integration identifiers. For example integrationids:[1,2,3].
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 19
+      format: ""
+      is_multi: false
+    ipv6:
+      display_name: Ipv6
+      type: bool
+      description: Use ipv6 instead of ipv4, if an IP address is provided as host
+        this will be overrided by the IP address version
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 27
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: Check name
+      placeholder: 'Example: mycheck'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    notifyagainevery:
+      display_name: Notifyagainevery
+      type: integer
+      description: Notify again every n result. 0 means that no extra notifications
+        will be sent.
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    notifywhenbackup:
+      display_name: Notifywhenbackup
+      type: bool
+      description: Notify when back up again
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 26
+      format: ""
+      is_multi: false
+    paused:
+      display_name: Paused
+      type: bool
+      description: ""
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    port:
+      display_name: Port
+      type: integer
+      description: Target port
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    postdata:
+      display_name: Postdata
+      type: string
+      description: Data that should be posted to the web page, for example submission
+        data for a sign-up or login form. The data needs to be formatted in the same
+        way as a web browser would send it to the web server
+      placeholder: 'Example: Data to be send to server'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 21
+      format: ""
+      is_multi: false
+    probe_filters:
+      display_name: Probe Filters
+      type: array
+      description: 'Filters used for probe selections. Overwrites previous filters
+        for check. To remove all filters from a check, use an empty value. Comma separated
+        key:value pairs. Currently only region is supported. Possible values are ''EU'',
+        ''NA'', ''APAC'' and ''LATAM''. For example, "region: NA".'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 18
+      format: ""
+      is_multi: false
+    requestheaders:
+      display_name: Requestheaders
+      type: array
+      description: Custom HTTP header. The entry value should contain a one-element
+        string array. The element should contain `headerName` and `headerValue` colon-separated.
+        To add more than one header send other parameters named `requestheaders{number}`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    resolution:
+      display_name: Resolution
+      type: integer
+      description: How often should the check be tested? (minutes)
+      placeholder: ""
+      required: false
+      default: "5"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    responsetime_threshold:
+      display_name: Responsetime Threshold
+      type: integer
+      description: Triggers a down alert if the response time exceeds threshold specified
+        in ms (Not available for Starter and Free plans.)
+      placeholder: ""
+      required: false
+      default: "30000"
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    sendnotificationwhendown:
+      display_name: Sendnotificationwhendown
+      type: integer
+      description: Send notification when down X times
+      placeholder: ""
+      required: false
+      default: "2"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    shouldcontain:
+      display_name: Shouldcontain
+      type: string
+      description: Target site should contain this string. Note! This parameter cannot
+        be used together with the parameter “shouldnotcontain”, use only one of them
+        in your request.
+      placeholder: 'Example: Expected string'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 24
+      format: ""
+      is_multi: false
+    shouldnotcontain:
+      display_name: Shouldnotcontain
+      type: string
+      description: Target site should NOT contain this string. Note! This parameter
+        cannot be used together with the parameter “shouldcontain”, use only one of
+        them in your request.
+      placeholder: 'Example: This should not appear on checked site'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 25
+      format: ""
+      is_multi: false
+    ssl_down_days_before:
+      display_name: SSL Down Days Before
+      type: integer
+      description: Treat the target site as down if a certificate expires within the
+        given number of days. This parameter will be ignored if `verify_certificate`
+        is set to `false`.
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    tags:
+      display_name: Tags
+      type: array
+      description: List of tags for check. The maximum length of a tag is 64 characters.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    teamids:
+      display_name: Teamids
+      type: string
+      description: Teams to alert. Comma separated Integers.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 22
+      format: ""
+      is_multi: false
+    url:
+      display_name: URL
+      type: string
+      description: Path to target on server
+      placeholder: 'Example: my.pingdom.com'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    userids:
+      display_name: Userids
+      type: string
+      description: User identifiers. For example userids=154325,465231,765871
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    verify_certificate:
+      display_name: Verify Certificate
+      type: bool
+      description: Treat target site as down if an invalid/unverifiable certificate
+        is found.
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    body: '{"addtags":["{{arr(params.addtags)}}"],"auth":"{{params.auth}}","checkids":"{{params.checkids}}","custom_message":"{{params.custom_message}}","encryption":"{{bool(params.encryption)}}","host":"{{params.host}}","integrationids":["{{arr(params.integrationids)}}"],"ipv6":"{{bool(params.ipv6)}}","name":"{{params.name}}","notifyagainevery":"{{int(params.notifyagainevery)}}","notifywhenbackup":"{{bool(params.notifywhenbackup)}}","paused":"{{bool(params.paused)}}","port":"{{int(params.port)}}","postdata":"{{params.postdata}}","probe_filters":["{{arr(params.probe_filters)}}"],"requestheaders":["{{arr(params.requestheaders)}}"],"resolution":"{{int(params.resolution)}}","responsetime_threshold":"{{int(params.responsetime_threshold)}}","sendnotificationwhendown":"{{int(params.sendnotificationwhendown)}}","shouldcontain":"{{params.shouldcontain}}","shouldnotcontain":"{{params.shouldnotcontain}}","ssl_down_days_before":"{{int(params.ssl_down_days_before)}}","tags":["{{arr(params.tags)}}"],"teamids":"{{params.teamids}}","url":"{{params.url}}","userids":"{{params.userids}}","verify_certificate":"{{bool(params.verify_certificate)}}"}'
+    contentType: application/json
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/checks/'' + params.checkid}}'
+  is_connection_optional: ""
+- name: UpdateMaintenaceOccurrence
+  display_name: Update Maintenace Occurrence
+  description: Modifies a maintenance occurrence
+  enabled: true
+  parameters:
+    from:
+      display_name: From
+      type: integer
+      description: Beginning of the maintenance occurrence. Format UNIX time. (Only
+        future allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    id:
+      display_name: ID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End of the maintenance occurrence. Format UNIX time. (Only future
+        allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    body: '{"from":"{{int(params.from)}}","to":"{{int(params.to)}}"}'
+    contentType: application/json
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance.occurrences/'' +
+      params.id}}'
+  is_connection_optional: ""
+- name: UpdateMaintenanceWindow
+  display_name: Update Maintenance Window
+  description: Modify the maintenance window.
+  enabled: true
+  parameters:
+    description:
+      display_name: Description
+      type: string
+      description: Description
+      placeholder: 'Example: Modified maintenance window'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    effectiveto:
+      display_name: Effectiveto
+      type: integer
+      description: 'Recurrence end. Format UNIX time. Default: equal to `to`. (Only
+        future allowed. Use 1 for the current timestamp.)'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    from:
+      display_name: From
+      type: integer
+      description: Initial maintenance window start. Format UNIX time. (Only future
+        allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    id:
+      display_name: ID
+      type: integer
+      description: id of maintenance window
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    recurrencetype:
+      display_name: Recurrencetype
+      type: dropdown
+      description: Type of recurrence
+      placeholder: 'Example: week'
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - none
+      - day
+      - week
+      - month
+      index: 9
+      format: ""
+      is_multi: false
+    repeatevery:
+      display_name: Repeatevery
+      type: integer
+      description: Repeat every n-th day/week/month
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    tmsids:
+      display_name: Tmsids
+      type: array
+      description: Identifiers of transaction checks to assign to the maintenance
+        window - Comma separated Integers
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: Initial maintenance window end. Format UNIX time. (Only future
+        allowed. Use 1 for the current timestamp.)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    uptimeids:
+      display_name: Uptimeids
+      type: array
+      description: Identifiers of uptime checks to assign to the maintenance window
+        - Comma separated Integers
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    body: '{"description":"{{params.description}}","effectiveto":"{{int(params.effectiveto)}}","from":"{{int(params.from)}}","recurrencetype":"{{params.recurrencetype}}","repeatevery":"{{int(params.repeatevery)}}","tmsids":["{{arr(params.tmsids)}}"],"to":"{{int(params.to)}}","uptimeids":["{{arr(params.uptimeids)}}"]}'
+    contentType: application/json
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/maintenance/'' + params.id}}'
+  is_connection_optional: ""
+- name: GetCheckReportStatus
+  display_name: Get Check Report Status
+  description: Returns a status change report for a single transaction check
+  enabled: true
+  parameters:
+    check_id:
+      display_name: Check ID
+      type: integer
+      description: Specifies the id of the check for which the status change report
+        will be fetched
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int64
+      is_multi: false
+    from:
+      display_name: From
+      type: string
+      description: Start time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is one week earlier than `to`
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: date-time
+      is_multi: false
+    order:
+      display_name: Order
+      type: dropdown
+      description: Sorting order of outages. Ascending or descending
+      placeholder: ""
+      required: false
+      default: asc
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 1
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: string
+      description: End time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is the current time
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: date-time
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/tms/check/'' + params.check_id
+      + ''/report/status''}}{{''?from='' + params.from + ''&to='' + params.to + ''&order=''
+      + params.order}}'
+  is_connection_optional: ""
+- name: ListStatusReports
+  display_name: Get Check Report Status All
+  description: Returns a status change report for all transaction checks in the current
+    organization
+  enabled: true
+  parameters:
+    from:
+      display_name: From
+      type: string
+      description: Start time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is one week earlier than `to`
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: date-time
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: string
+      description: Limit of returned checks
+      placeholder: ""
+      required: false
+      default: "100"
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: string
+      description: Offset of returned checks
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    omit_empty:
+      display_name: Omit Empty
+      type: bool
+      description: Omits checks without any results within specified time
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    order:
+      display_name: Order
+      type: dropdown
+      description: Sorting order of outages. Ascending or descending
+      placeholder: ""
+      required: false
+      default: asc
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 6
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: string
+      description: End time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is the current time
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: date-time
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/tms/check/report/status''}}{{''?from=''
+      + params.from + ''&to='' + params.to + ''&order='' + params.order + ''&limit=''
+      + params.limit + ''&offset='' + params.offset + ''&omit_empty='' + params.omit_empty}}'
+  is_connection_optional: ""
+- name: GetPerformanceReport
+  display_name: Get Performance Report
+  description: Returns a performance report for a single transaction check
+  enabled: true
+  parameters:
+    check_id:
+      display_name: Check ID
+      type: integer
+      description: Specifies the id of the check for which the performance report
+        will be fetched
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int64
+      is_multi: false
+    from:
+      display_name: From
+      type: string
+      description: Start time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is 10 times the resolution (10 hours, 10 day, 10 weeks)
+        earlier than `to`. The value is extended to the nearest hour, day or week,
+        depending on the 'resolution' parameter and configured time zone of the account.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: date-time
+      is_multi: false
+    include_uptime:
+      display_name: Include Uptime
+      type: bool
+      description: Include uptime information. Adds field downtime, uptime, and unmonitored
+        to the interval array objects.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    order:
+      display_name: Order
+      type: dropdown
+      description: Sorting order of outages. Ascending or descending
+      placeholder: ""
+      required: false
+      default: asc
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 5
+      format: ""
+      is_multi: false
+    resolution:
+      display_name: Resolution
+      type: dropdown
+      description: Size of an interval for which the results are calculated. For the
+        `hour` resolution, the max allowed period is one week and 1 day. For the `day`
+        resolution, the max allowed period is 6 months and 1 day.
+      placeholder: ""
+      required: false
+      default: hour
+      pattern: ""
+      options:
+      - hour
+      - day
+      - week
+      index: 6
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: string
+      description: End time of period. The format is `RFC 3339` (properly URL-encoded!).
+        The default value is the current time. The value is extended to the nearest
+        hour, day or week, depending on the 'resolution' parameter and configured
+        time zone of the account.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: date-time
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/tms/check/'' + params.check_id
+      + ''/report/performance''}}{{''?from='' + params.from + ''&to='' + params.to
+      + ''&order='' + params.order + ''&resolution='' + params.resolution + ''&include_uptime=''
+      + params.include_uptime}}'
+  is_connection_optional: ""
+- name: Traceroute
+  display_name: Traceroute
+  description: Perform a traceroute
+  enabled: true
+  parameters:
+    host:
+      display_name: Host
+      type: string
+      description: Target host.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    probeid:
+      display_name: Probeid
+      type: integer
+      description: Probe identifier.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://api.pingdom.com/api/3.1'' + ''/traceroute''}}{{''?host='' +
+      params.host + ''&probeid='' + params.probeid}}'
+  is_connection_optional: ""
