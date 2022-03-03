@@ -2,48 +2,42 @@ openapi: 3.0.0
 info:
   title: Pingdom Public API
   version: '3.1'
-  description: Pingdom public API
+  description: Pingdom API
   x-logo:
     url: 'https://tmp-new-api-doc.s3-eu-west-1.amazonaws.com/sw-pingdom-logo.svg'
 servers:
-  -
-    url: 'https://api.pingdom.com/api/3.1'
+  - url: 'https://api.pingdom.com/api/3.1'
 paths:
   /actions:
     get:
       tags:
         - Actions
       parameters:
-        -
-          name: from
+        - name: from
           description: Only include actions generated later than this timestamp. Format is UNIX time.
           schema:
             $ref: '#/components/schemas/actions_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: Only include actions generated prior to this timestamp. Format is UNIX time.
           schema:
             $ref: '#/components/schemas/actions_to'
           in: query
           required: false
-        -
-          name: limit
+        - name: limit
           description: Limits the number of returned results to the specified quantity.
           schema:
             $ref: '#/components/schemas/actions_limit'
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Offset for listing.
           schema:
             $ref: '#/components/schemas/actions_offset'
           in: query
           required: false
-        -
-          name: checkids
+        - name: checkids
           description: >-
             Comma-separated list of check identifiers. Limit results to actions generated from
             these checks. Default: all checks.
@@ -51,8 +45,7 @@ paths:
             $ref: '#/components/schemas/actions_checkids'
           in: query
           required: false
-        -
-          name: userids
+        - name: userids
           description: >-
             Comma-separated list of user identifiers. Limit results to actions sent to these
             users. Default: all users.
@@ -60,8 +53,7 @@ paths:
             $ref: '#/components/schemas/actions_userids'
           in: query
           required: false
-        -
-          name: status
+        - name: status
           description: >-
             Comma-separated list of statuses. Limit results to actions with these statuses.
             Default: all statuses.
@@ -69,8 +61,7 @@ paths:
             $ref: '#/components/schemas/actions_status'
           in: query
           required: false
-        -
-          name: via
+        - name: via
           description: >-
             Comma-separated list of via mediums. Limit results to actions with these mediums.
             Default: all mediums.
@@ -85,37 +76,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/actions_alerts_entry'
           description: Successful HTTP Response
-      operationId: LIstAlertActions
+      operationId: ListActionsAlerts
       summary: Returns a list of actions alerts.
       description: Returns a list of actions (alerts) that have been generated for your account.
-      x-internal: false
   '/analysis/{checkid}':
     get:
       tags:
         - Analysis
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/analysis_checkid'
           in: path
           required: true
-        -
-          name: limit
+        - name: limit
           description: Limits the number of returned results to the specified quantity.
           schema:
             $ref: '#/components/schemas/analysis_limit'
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Offset for listing. (Requires limit.)
           schema:
             $ref: '#/components/schemas/analysis_offset'
           in: query
           required: false
-        -
-          name: from
+        - name: from
           description: >-
             Return only results with timestamp of first test greater or equal to this value.
             Format is UNIX timestamp.
@@ -123,8 +109,7 @@ paths:
             $ref: '#/components/schemas/analysis_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: >-
             Return only results with timestamp of first test less or equal to this value. Format
             is UNIX timestamp. Default: current timestamp
@@ -139,7 +124,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/analysis_resp_attrs'
           description: Successful HTTP Response
-      operationId: GetRootCauseAnalysis
       summary: Returns a list of the latest root cause analysis
       description: Returns a list of the latest root cause analysis results for a specified check.
   '/analysis/{checkid}/{analysisid}':
@@ -147,14 +131,12 @@ paths:
       tags:
         - Analysis
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/analysis_checkid'
           in: path
           required: true
-        -
-          name: analysisid
+        - name: analysisid
           schema:
             $ref: '#/components/schemas/analysis_analysisid'
           in: path
@@ -162,7 +144,6 @@ paths:
       responses:
         '200':
           description: Successful HTTP Response
-      operationId: GetAnalysisResult
       summary: Returns the raw result for a specified analysis.
       description: >-
         Returns the raw result for a specified error analysis. This data is primarily intended for
@@ -174,32 +155,28 @@ paths:
       tags:
         - Checks
       parameters:
-        -
-          example: 3
+        - example: 3
           name: limit
           description: Limits the number of returned probes to the specified quantity. (Max value is 25000)
           schema:
             default: 25000
             type: integer
           in: query
-        -
-          example: 0
+        - example: 0
           name: offset
           description: Offset for listing. (Requires limit.)
           schema:
             default: 0
             type: integer
           in: query
-        -
-          example: false
+        - example: false
           name: showencryption
           description: 'If set, show encryption setting for each check'
           schema:
             default: false
             type: boolean
           in: query
-        -
-          example: false
+        - example: false
           name: include_tags
           description: >-
             Include tag list for each check. Tags can be marked as "a" or "u", for auto tagged or
@@ -208,16 +185,14 @@ paths:
             default: false
             type: boolean
           in: query
-        -
-          example: false
+        - example: false
           name: include_severity
           description: Include severity level for each check.
           schema:
             default: false
             type: boolean
           in: query
-        -
-          example: 'nginx,apache,ssh'
+        - example: 'nginx,apache,ssh'
           name: tags
           description: >-
             Tag list separated by commas. As an example "nginx,apache" would filter out all
@@ -233,6 +208,7 @@ paths:
                 $ref: '#/components/schemas/Checks'
           description: Successful operation
       operationId: ListChecks
+      summary: Returns a list overview of all checks.
       description: Returns a list overview of all checks.
     put:
       requestBody:
@@ -301,7 +277,7 @@ paths:
                     type: string
                     example: Modification of 4 checks was successful!
           description: Successful operation
-      operationId: UpdateMultipleChecks
+      operationId: UpdateChecks
       summary: Pause or change resolution for multiple checks.
       description: Pause or change resolution for multiple checks in one bulk call.
     post:
@@ -347,11 +323,18 @@ paths:
       summary: Creates a new check.
       description: Creates a new check with settings specified by provided parameters.
     delete:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+            example:
+              delcheckids: '1,2,3'
+        required: true
       tags:
         - Checks
       parameters:
-        -
-          style: form
+        - style: form
           explode: false
           example:
             - 1
@@ -376,7 +359,7 @@ paths:
                     type: string
                     example: Deletion of checks was successful!
           description: Successful operation
-      operationId: DeleteMultipleChecks
+      operationId: DeleteChecks
       summary: Deletes a list of checks.
       description: >-
         Deletes a list of checks. THIS METHOD IS IRREVERSIBLE! You will lose all collected data. Be
@@ -386,15 +369,13 @@ paths:
       tags:
         - Checks
       parameters:
-        -
-          name: checkid
+        - name: checkid
           description: Identifier of check to be retrieved
           schema:
             type: integer
           in: path
           required: true
-        -
-          name: include_teams
+        - name: include_teams
           description: Include team connections for check.
           schema:
             default: false
@@ -432,8 +413,7 @@ paths:
       tags:
         - Checks
       parameters:
-        -
-          name: checkid
+        - name: checkid
           description: Identifier of check to be updated
           schema:
             type: integer
@@ -460,8 +440,7 @@ paths:
       tags:
         - Checks
       parameters:
-        -
-          name: checkid
+        - name: checkid
           description: Identifier of check to be deleted
           schema:
             type: integer
@@ -500,29 +479,25 @@ paths:
       tags:
         - Maintenance
       parameters:
-        -
-          name: limit
+        - name: limit
           description: Count of items to list.
           schema:
             $ref: '#/components/schemas/maintenance_limit'
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Offset of the list.
           schema:
             $ref: '#/components/schemas/maintenance_offset'
           in: query
           required: false
-        -
-          name: orderby
+        - name: orderby
           description: Order by the specific property of the maintenance window.
           schema:
             $ref: '#/components/schemas/maintenance_orderby'
           in: query
           required: false
-        -
-          name: order
+        - name: order
           description: Order a-z for asc z-a for desc. Works only if orderby is specified.
           schema:
             $ref: '#/components/schemas/maintenance_order'
@@ -535,7 +510,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance_resp_attrs'
           description: Successful HTTP Response
-      operationId: ListMaintenanceWindows
+      operationId: ListMaintenaceWindows
+      summary: Returns a list of user's maintenance windows.
       description: Returns a list of user's maintenance windows.
     post:
       requestBody:
@@ -566,13 +542,13 @@ paths:
                 $ref: '#/components/schemas/maintenance_post_resp_attrs'
           description: Successful HTTP Response
       operationId: CreateMaintenanceWindow
+      summary: Create new maintenance window.
       description: Create new maintenance window.
     delete:
       tags:
         - Maintenance
       parameters:
-        -
-          style: form
+        - style: form
           explode: false
           example:
             - 1
@@ -603,8 +579,7 @@ paths:
       tags:
         - Maintenance
       parameters:
-        -
-          example: 3
+        - example: 3
           name: id
           description: id of maintenance window
           schema:
@@ -618,7 +593,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance_id_resp_attrs'
           description: Successful HTTP Response
-      operationId: GetMaintenanceWindow
+      operationId: GetMaintenaceWindow
+      summary: Returns the maintenance window specified by its id.
       description: Returns the maintenance window specified by its id.
     put:
       requestBody:
@@ -642,8 +618,7 @@ paths:
       tags:
         - Maintenance
       parameters:
-        -
-          example: 3
+        - example: 3
           name: id
           description: id of maintenance window
           schema:
@@ -658,13 +633,13 @@ paths:
                 $ref: '#/components/schemas/maintenance_id_put_resp_attrs'
           description: Successful HTTP Response
       operationId: UpdateMaintenanceWindow
+      summary: Modify the maintenance window.
       description: Modify the maintenance window.
     delete:
       tags:
         - Maintenance
       parameters:
-        -
-          example: 3
+        - example: 3
           name: id
           description: id of maintenance window
           schema:
@@ -678,7 +653,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance_id_delete_resp_attrs'
           description: Successful HTTP Response
-      operationId: DeleteMaintenanceWindow
+      operationId: DeleteMaintanaceWindow
       summary: Delete the maintenance window.
       description: Delete the maintenance window. Note that only future maintenance window can be deleted.
   '/maintenance.occurrences/{id}':
@@ -686,8 +661,7 @@ paths:
       tags:
         - Maintenance occurrences
       parameters:
-        -
-          name: id
+        - name: id
           schema:
             $ref: '#/components/schemas/maintenance.occurrences_id'
           in: path
@@ -699,7 +673,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance.occurrences_id_resp_attrs'
           description: Successful HTTP Response
-      operationId: GetMaintenanceOccurrenceDetails
+      operationId: GetsMaintenanceOccurrenceDetails
       summary: Gets a maintenance occurrence details
       description: Gets a maintenance occurrence details specified by its identifier.
     put:
@@ -721,8 +695,7 @@ paths:
       tags:
         - Maintenance occurrences
       parameters:
-        -
-          name: id
+        - name: id
           schema:
             $ref: '#/components/schemas/maintenance.occurrences_id'
           in: path
@@ -734,15 +707,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance.occurrences_id_put_resp_attrs'
           description: Successful HTTP Response
-      operationId: UpdateMaintenanceOccurrence
+      operationId: UpdateMaintenaceOccurrence
       summary: Modifies a maintenance occurrence
       description: Modifies a maintenance occurrence specified by its identifier.
     delete:
       tags:
         - Maintenance occurrences
       parameters:
-        -
-          name: id
+        - name: id
           schema:
             $ref: '#/components/schemas/maintenance.occurrences_id'
           in: path
@@ -754,7 +726,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance.occurrences_id_delete_resp_attrs'
           description: Successful HTTP Response
-      operationId: RemoveMaintenanceOccurrence
+      operationId: DeleteMaintenceOccurrence
       summary: Deletes the maintenance occurrence
       description: >-
         Deletes the maintenance occurrence specified by its identifier. Note that only future
@@ -764,8 +736,7 @@ paths:
       tags:
         - Maintenance occurrences
       parameters:
-        -
-          name: maintenanceid
+        - name: maintenanceid
           description: >-
             Maintenance window identifier. (List only occurrences of a specific maintenance
             window.)
@@ -773,8 +744,7 @@ paths:
             $ref: '#/components/schemas/maintenance.occurrences_maintenanceid'
           in: query
           required: false
-        -
-          name: from
+        - name: from
           description: >-
             Effective from (unix timestamp). (List occurrences which are effective from the
             specified unix timestamp. If not specified, current timestamp is used.)
@@ -782,8 +752,7 @@ paths:
             $ref: '#/components/schemas/maintenance.occurrences_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: >-
             Effective to (unix timestamp). (List occurrences which are effective to the specified
             unix timestamp.)
@@ -798,15 +767,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance.occurrences_resp_attrs'
           description: Successful HTTP Response
-      operationId: ListMaintenanceOccurrence
+      operationId: ListMaintenanceOccurrences.
       summary: Returns a list of maintenance occurrences.
       description: Returns a list of maintenance occurrences.
     delete:
       tags:
         - Maintenance occurrences
       parameters:
-        -
-          example:
+        - example:
             - 1
             - 2
             - 3
@@ -824,7 +792,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/maintenance.occurrences_delete_resp_attrs'
           description: Successful HTTP Response
-      operationId: DeleteMultipleMaintenanceOccurrence
       summary: Deletes multiple maintenance occurrences
       description: >-
         Deletes multiple maintenance occurrences specified by their identifiers. Note that only future
@@ -834,31 +801,27 @@ paths:
       tags:
         - Probes
       parameters:
-        -
-          example: 3
+        - example: 3
           name: limit
           description: Limits the number of returned probes to the specified quantity.
           schema:
             type: integer
           in: query
-        -
-          example: 0
+        - example: 0
           name: offset
           description: Offset for listing. (Requires limit.)
           schema:
             default: 0
             type: integer
           in: query
-        -
-          example: false
+        - example: false
           name: onlyactive
           description: Return only active probes.
           schema:
             default: false
             type: boolean
           in: query
-        -
-          example: false
+        - example: false
           name: includedeleted
           description: Include old probes that are no longer in use.
           schema:
@@ -886,7 +849,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/References'
           description: Successful operation
-      operationId: GetReferences
+      operationId: ListReferences
       summary: 'Get regions, timezone and date/time/number references'
       description: 'Get a reference of regions, timezones and date/time/number formats and their identifiers.'
   '/results/{checkid}':
@@ -894,28 +857,24 @@ paths:
       tags:
         - Results
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/results_checkid'
           in: path
           required: true
-        -
-          name: to
+        - name: to
           description: End of period. Format is UNIX timestamp. Default value is current timestamp.
           schema:
             $ref: '#/components/schemas/results_to'
           in: query
           required: false
-        -
-          name: from
+        - name: from
           description: Start of period. Format is UNIX timestamp. Default value is 1 day prior to `to`.
           schema:
             $ref: '#/components/schemas/results_from'
           in: query
           required: false
-        -
-          name: probes
+        - name: probes
           description: >-
             Filter to only show results from a list of probes. Format is a comma separated list of
             probe identifiers
@@ -923,8 +882,7 @@ paths:
             $ref: '#/components/schemas/results_probes'
           in: query
           required: false
-        -
-          name: status
+        - name: status
           description: >-
             Filter to only show results with specified statuses. Format is a comma separated list
             of (`down`, `up`, `unconfirmed`, `unknown`)
@@ -932,8 +890,7 @@ paths:
             $ref: '#/components/schemas/results_status'
           in: query
           required: false
-        -
-          name: limit
+        - name: limit
           description: >-
             Number of results to show (Will be set to 1000 if the provided value is greater than
             1000)
@@ -941,22 +898,19 @@ paths:
             $ref: '#/components/schemas/results_limit'
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Number of results to skip (Max value is `43200`)
           schema:
             $ref: '#/components/schemas/results_offset'
           in: query
           required: false
-        -
-          name: includeanalysis
+        - name: includeanalysis
           description: Attach available root cause analysis identifiers to corresponding results
           schema:
             $ref: '#/components/schemas/results_includeanalysis'
           in: query
           required: false
-        -
-          name: maxresponse
+        - name: maxresponse
           description: >-
             Maximum response time (ms). If set, specified interval must not be larger than 31
             days.
@@ -964,8 +918,7 @@ paths:
             $ref: '#/components/schemas/results_maxresponse'
           in: query
           required: false
-        -
-          name: minresponse
+        - name: minresponse
           description: >-
             Minimum response time (ms). If set, specified interval must not be larger than 31
             days.
@@ -980,7 +933,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/results_resp_attrs'
           description: Successful HTTP Response
-      operationId: ListRawTestResults
+      operationId: ListRawResults
       summary: Return a list of raw test results
       description: Return a list of raw test results for a specified check
   /single:
@@ -988,27 +941,18 @@ paths:
       tags:
         - Single
       parameters:
-        -
-          name: Query Parameters
+        - name: Query Parameters
           description: Query Parameters to chose
           schema:
             oneOf:
-              -
-                $ref: '#/components/schemas/HTTP'
-              -
-                $ref: '#/components/schemas/HTTP-Custom'
-              -
-                $ref: '#/components/schemas/TCP'
-              -
-                $ref: '#/components/schemas/DNS'
-              -
-                $ref: '#/components/schemas/UDP'
-              -
-                $ref: '#/components/schemas/SMTP'
-              -
-                $ref: '#/components/schemas/POP3'
-              -
-                $ref: '#/components/schemas/IMAP'
+              - $ref: '#/components/schemas/HTTP'
+              - $ref: '#/components/schemas/HTTP-Custom'
+              - $ref: '#/components/schemas/TCP'
+              - $ref: '#/components/schemas/DNS'
+              - $ref: '#/components/schemas/UDP'
+              - $ref: '#/components/schemas/SMTP'
+              - $ref: '#/components/schemas/POP3'
+              - $ref: '#/components/schemas/IMAP'
           in: query
           required: false
       responses:
@@ -1018,7 +962,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/single_resp'
           description: Successful operation
-      operationId: RunSingleTest
+      operationId: RunCheck
       summary: Performs a single check.
       description: >-
         Performs a single test using a specified Pingdom probe against a specified target. Please note
@@ -1028,28 +972,24 @@ paths:
       tags:
         - Summary.average
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/summary.average_checkid'
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: Start time of period. Format is UNIX timestamp
           schema:
             $ref: '#/components/schemas/summary.average_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: End time of period. Format is UNIX timestamp. Default is the current time
           schema:
             $ref: '#/components/schemas/summary.average_to'
           in: query
           required: false
-        -
-          name: probes
+        - name: probes
           description: >-
             Filter to only use results from a list of probes. Format is a comma separated list of
             probe identifiers. By default result from all probes are shown.
@@ -1057,22 +997,19 @@ paths:
             $ref: '#/components/schemas/summary.average_probes'
           in: query
           required: false
-        -
-          name: includeuptime
+        - name: includeuptime
           description: Include uptime information
           schema:
             $ref: '#/components/schemas/summary.average_includeuptime'
           in: query
           required: false
-        -
-          name: bycountry
+        - name: bycountry
           description: Split response times into country groups
           schema:
             $ref: '#/components/schemas/summary.average_bycountry'
           in: query
           required: false
-        -
-          name: byprobe
+        - name: byprobe
           description: Split response times into probe groups
           schema:
             $ref: '#/components/schemas/summary.average_byprobe'
@@ -1093,14 +1030,12 @@ paths:
       tags:
         - Summary.hoursofday
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/summary.hoursofday_checkid'
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. Format is UNIX timestamp. Default value is one week eariler than
             `to`.
@@ -1108,15 +1043,13 @@ paths:
             $ref: '#/components/schemas/summary.hoursofday_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: End time of period. Format is UNIX timestamp. Default value is current time.
           schema:
             $ref: '#/components/schemas/summary.hoursofday_to'
           in: query
           required: false
-        -
-          name: probes
+        - name: probes
           description: >-
             Filter to only use results from a list of probes. Format is a comma separated list of
             probe identifiers. By default all probes results are returned.
@@ -1124,8 +1057,7 @@ paths:
             $ref: '#/components/schemas/summary.hoursofday_probes'
           in: query
           required: false
-        -
-          name: uselocaltime
+        - name: uselocaltime
           description: >-
             If true, use the user's local time zone for results (from and to parameters should
             still be specified in UTC). If false, use UTC for results.
@@ -1151,14 +1083,12 @@ paths:
       tags:
         - Summary.outage
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/summary.outage_checkid'
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. Format is UNIX timestamp. Default value is one week earlier than
             `to`.
@@ -1166,15 +1096,13 @@ paths:
             $ref: '#/components/schemas/summary.outage_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: End time of period. Format is UNIX timestamp. Default value is the current time.
           schema:
             $ref: '#/components/schemas/summary.outage_to'
           in: query
           required: false
-        -
-          name: order
+        - name: order
           description: Sorting order of outages. Ascending or descending.
           schema:
             $ref: '#/components/schemas/summary.outage_order'
@@ -1187,7 +1115,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/summary.outage_resp_attrs'
           description: Successful HTTP Response
-      operationId: listStatusChanges
+      operationId: ListStatusChanges
       summary: Get a list of status changes for a specified check
       description: >-
         Get a list of status changes for a specified check and time period. If order is speficied to
@@ -1197,14 +1125,12 @@ paths:
       tags:
         - Summary.performance
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/summary.performance_checkid'
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. Format is UNIX timestamp. Default value is 10 intervals earlier
             than `to`.
@@ -1212,29 +1138,25 @@ paths:
             $ref: '#/components/schemas/summary.performance_from'
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: End time of period. Format is UNIX timestamp. Default value is the current time.
           schema:
             $ref: '#/components/schemas/summary.performance_to'
           in: query
           required: false
-        -
-          name: resolution
+        - name: resolution
           description: Interval size
           schema:
             $ref: '#/components/schemas/summary.performance_resolution'
           in: query
           required: false
-        -
-          name: includeuptime
+        - name: includeuptime
           description: Include uptime information.
           schema:
             $ref: '#/components/schemas/summary.performance_includeuptime'
           in: query
           required: false
-        -
-          name: probes
+        - name: probes
           description: >-
             Filter to only use results from a list of probes. Format is a comma separated list of
             probe identifiers. Can not be used if includeuptime is set to true. Also note that
@@ -1244,8 +1166,7 @@ paths:
             $ref: '#/components/schemas/summary.performance_probes'
           in: query
           required: false
-        -
-          name: order
+        - name: order
           description: Sorting order of sub intervals. Ascending or descending.
           schema:
             $ref: '#/components/schemas/summary.performance_order'
@@ -1258,7 +1179,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/summary.performance_resp_attrs'
           description: Successful HTTP Response
-      operationId: ListSubintervals
       summary: For a given interval return a list of subintervals
       description: >-
         For a given interval in time, return a list of sub intervals with the given resolution. Useful
@@ -1269,21 +1189,18 @@ paths:
       tags:
         - Summary.probes
       parameters:
-        -
-          name: checkid
+        - name: checkid
           schema:
             $ref: '#/components/schemas/summary.probes_checkid'
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: Start time of period. Format is UNIX timestamp
           schema:
             $ref: '#/components/schemas/summary.probes_from'
           in: query
           required: true
-        -
-          name: to
+        - name: to
           description: End time of period. Format is UNIX timestamp. The defualt value is current time.
           schema:
             $ref: '#/components/schemas/summary.probes_to'
@@ -1310,8 +1227,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Teams'
           description: Successful operation
-      operationId: ListTeams
-      summary: Returns a list of all teams and their members
       description: Returns a list of all teams and their members
     post:
       requestBody:
@@ -1337,7 +1252,6 @@ paths:
                         type: string
                         example: 12345678
           description: Successful operation
-      operationId: CreateTeam
       summary: Creates a new team
       description: Creates a new team with or without members
   '/alerting/teams/{teamid}':
@@ -1345,8 +1259,7 @@ paths:
       tags:
         - Teams
       parameters:
-        -
-          name: teamid
+        - name: teamid
           description: ID of the team to be retrieved
           schema:
             type: integer
@@ -1359,7 +1272,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Team_ID'
           description: Successful operation
-      operationId: GetTeam
       description: Returns a team with its members
     put:
       requestBody:
@@ -1371,8 +1283,7 @@ paths:
       tags:
         - Teams
       parameters:
-        -
-          name: teamid
+        - name: teamid
           description: ID of the team to be retrieved
           schema:
             type: integer
@@ -1385,14 +1296,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Team_ID'
           description: Successful operation
-      operationId: UpdateTeam
       description: Updates a team
     delete:
       tags:
         - Teams
       parameters:
-        -
-          name: teamid
+        - name: teamid
           description: ID of the team to be deleted
           schema:
             type: integer
@@ -1409,7 +1318,6 @@ paths:
                     type: string
                     example: Deletion of team 12345 was successful
           description: Message indicating a successful deletion
-      operationId: DeleteTeam
       description: Deletes a team
   /alerting/contacts:
     get:
@@ -1449,7 +1357,6 @@ paths:
                         type: string
                         example: 12345678
           description: Successful operation
-      operationId: CreateContact
       summary: Creates a new contact
       description: Creates a new contact with at least one contact method (notification target)
   '/alerting/contacts/{contactid}':
@@ -1457,8 +1364,7 @@ paths:
       tags:
         - Contacts
       parameters:
-        -
-          name: contactid
+        - name: contactid
           description: ID of contact to be retrieved
           schema:
             type: integer
@@ -1471,7 +1377,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contact'
           description: Successful operation
-      operationId: GetContact
       summary: Returns a contact with its contact methods
       description: Returns a contact with its contact methods (notification targets)
     put:
@@ -1484,8 +1389,7 @@ paths:
       tags:
         - Contacts
       parameters:
-        -
-          name: contactid
+        - name: contactid
           description: ID of contact to be updated
           schema:
             type: integer
@@ -1498,15 +1402,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contact'
           description: Successful operation
-      operationId: UpdateContact
       summary: Update a contact
       description: Update a contact with at least one contact method (notification target)
     delete:
       tags:
         - Contacts
       parameters:
-        -
-          name: contactid
+        - name: contactid
           description: ID of contact to be deleted
           schema:
             type: integer
@@ -1523,7 +1425,6 @@ paths:
                     type: string
                     example: Deletion of contact 12345 was successful
           description: Successful operation
-      operationId: DeleteContact
       summary: Deletes a contact with its contact methods
       description: Deletes a contact with its contact methods (notification targets)
   /traceroute:
@@ -1531,16 +1432,14 @@ paths:
       tags:
         - Traceroute
       parameters:
-        -
-          example: pingdom.com
+        - example: pingdom.com
           name: host
           description: Target host.
           schema:
             type: string
           in: query
           required: true
-        -
-          example: 23
+        - example: 23
           name: probeid
           description: Probe identifier.
           schema:
@@ -1553,7 +1452,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Traceroute'
           description: Successful operation
-      operationId: Traceroute
+      operationId: traceroute
       summary: Perform a traceroute
       description: Perform a traceroute to a specified target from a specified Pingdom probe.
   /tms/check:
@@ -1561,8 +1460,7 @@ paths:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: extended_tags
+        - name: extended_tags
           description: >-
             Specifies whether to return an extended tags representation in the response (with type
             and count).
@@ -1570,8 +1468,7 @@ paths:
             type: boolean
           in: query
           required: false
-        -
-          style: form
+        - style: form
           explode: false
           example:
             - nginx
@@ -1585,8 +1482,7 @@ paths:
             items:
               type: string
           in: query
-        -
-          name: type
+        - name: type
           description: >-
             Filter to return only checks of a given type (a TMS `script` or a WPM `recording`). If
             not provided, all checks are returned.
@@ -1597,16 +1493,14 @@ paths:
             type: string
           in: query
           required: false
-        -
-          name: limit
+        - name: limit
           description: Limit of returned checks
           schema:
             default: 1000
             type: string
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Offset of returned checks
           schema:
             default: 0
@@ -1616,7 +1510,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/checksAll'
-      operationId: ListTransactionChecks
+      operationId: getAllChecks
       summary: Returns a list overview of all transaction checks.
     post:
       requestBody:
@@ -1632,15 +1526,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/checkAddedResponse'
-      operationId: CreateTransactionCheck
+      operationId: addCheck
       summary: Creates a new transaction check.
   '/tms/check/{cid}':
     get:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: extended_tags
+        - name: extended_tags
           description: >-
             Specifies whether to return an extended tags representation in the response (with type
             and count).
@@ -1648,8 +1541,7 @@ paths:
             type: boolean
           in: query
           required: false
-        -
-          name: cid
+        - name: cid
           description: Specifies the id of the check to be fetched
           schema:
             format: int64
@@ -1660,7 +1552,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/checkDetailed'
-      operationId: GetTransactionCheck
+      operationId: getTtransactionCheck
       summary: Returns a single transaction check.
     put:
       requestBody:
@@ -1674,8 +1566,7 @@ paths:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: cid
+        - name: cid
           description: Specifies the id of the check to be modified
           schema:
             format: int64
@@ -1686,14 +1577,13 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/checkModifiedResponse'
-      operationId: UpdateTransactionCheck
+      operationId: modifyTransactionCheck
       summary: Modify settings for transaction check.
     delete:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: cid
+        - name: cid
           description: Specifies the id of the check to be deleted
           schema:
             format: int64
@@ -1704,23 +1594,21 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/checkDeletedResponse'
-      operationId: DeleteTransactionCheck
+      operationId: deleteTransactionCheck
       summary: Deletes a transaction check.
   '/tms/check/{check_id}/report/status':
     get:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: check_id
+        - name: check_id
           description: Specifies the id of the check for which the status change report will be fetched
           schema:
             format: int64
             type: integer
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is one week earlier than `to`
@@ -1729,8 +1617,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: >-
             End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is the current time
@@ -1739,8 +1626,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          example:
+        - example:
             - desc
           name: order
           description: Sorting order of outages. Ascending or descending
@@ -1755,7 +1641,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/reportStatusSingle'
-      operationId: GetCheckReportStatus
+      operationId: getCheckReportStatus
       summary: Returns a status change report for a single transaction check
       description: >-
         Get a list of status changes for a specified check and time period. If order is speficied to
@@ -1766,8 +1652,7 @@ paths:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is one week earlier than `to`
@@ -1776,8 +1661,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: >-
             End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is the current time
@@ -1786,8 +1670,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          example:
+        - example:
             - desc
           name: order
           description: Sorting order of outages. Ascending or descending
@@ -1799,24 +1682,21 @@ paths:
             type: string
           in: query
           required: false
-        -
-          name: limit
+        - name: limit
           description: Limit of returned checks
           schema:
             default: 100
             type: string
           in: query
           required: false
-        -
-          name: offset
+        - name: offset
           description: Offset of returned checks
           schema:
             default: 0
             type: string
           in: query
           required: false
-        -
-          name: omit_empty
+        - name: omit_empty
           description: Omits checks without any results within specified time
           schema:
             default: false
@@ -1826,7 +1706,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/reportStatusAll'
-      operationId: GetAllCheckReportStatus
+      operationId: getCheckReportStatusAll
       summary: Returns a status change report for all transaction checks in the current organization
       description: >-
         Get a list of status changes for all transaction check in the current organization from the
@@ -1838,16 +1718,14 @@ paths:
       tags:
         - TMS Checks
       parameters:
-        -
-          name: check_id
+        - name: check_id
           description: Specifies the id of the check for which the performance report will be fetched
           schema:
             format: int64
             type: integer
           in: path
           required: true
-        -
-          name: from
+        - name: from
           description: >-
             Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is 10 times the resolution (10 hours, 10 day, 10 weeks) earlier than `to`. The
@@ -1858,8 +1736,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          name: to
+        - name: to
           description: >-
             End time of period. The format is `RFC 3339` (properly URL-encoded!). The default
             value is the current time. The value is extended to the nearest hour, day or week,
@@ -1869,8 +1746,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          example:
+        - example:
             - desc
           name: order
           description: Sorting order of outages. Ascending or descending
@@ -1882,8 +1758,7 @@ paths:
             type: string
           in: query
           required: false
-        -
-          example: day
+        - example: day
           name: resolution
           description: >-
             Size of an interval for which the results are calculated. For the `hour` resolution,
@@ -1897,8 +1772,7 @@ paths:
               - week
             type: string
           in: query
-        -
-          name: include_uptime
+        - name: include_uptime
           description: >-
             Include uptime information. Adds field downtime, uptime, and unmonitored to the
             interval array objects.
@@ -1910,7 +1784,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/reportPerformance'
-      operationId: GetCheckReportPerformance
+      operationId: getPerformanceReport
       summary: Returns a performance report for a single transaction check
       description: >-
         For a given period of time, return a list of time intervals with the given resolution. An
@@ -2105,8 +1979,7 @@ components:
           type: boolean
     CheckWithStringType:
       allOf:
-        -
-          $ref: '#/components/schemas/Check'
+        - $ref: '#/components/schemas/Check'
       properties:
         type:
           type: string
@@ -2192,10 +2065,8 @@ components:
             type: string
     HttpAttributesSet:
       allOf:
-        -
-          $ref: '#/components/schemas/HttpAttributesBase'
-        -
-          $ref: '#/components/schemas/HttpCertificateAttributes'
+        - $ref: '#/components/schemas/HttpAttributesBase'
+        - $ref: '#/components/schemas/HttpCertificateAttributes'
       properties:
         auth:
           description: 'Username and password, colon separated.'
@@ -2203,8 +2074,7 @@ components:
           example: 'User:e4gh51!'
     HttpAttributesGet:
       allOf:
-        -
-          $ref: '#/components/schemas/HttpAttributesBase'
+        - $ref: '#/components/schemas/HttpAttributesBase'
       properties:
         username:
           description: Username for target HTTP authentication
@@ -2227,8 +2097,7 @@ components:
         - url
       type: object
       allOf:
-        -
-          $ref: '#/components/schemas/HttpCertificateAttributes'
+        - $ref: '#/components/schemas/HttpCertificateAttributes'
       properties:
         url:
           description: Path to target on server
@@ -2343,8 +2212,7 @@ components:
           type: string
     SmtpAttributesSet:
       allOf:
-        -
-          $ref: '#/components/schemas/SmtpAttributesBase'
+        - $ref: '#/components/schemas/SmtpAttributesBase'
       properties:
         auth:
           description: Username and password colon separated for target SMTP authentication
@@ -2352,8 +2220,7 @@ components:
           example: 'User:e4gh51!'
     SmtpAttributesGet:
       allOf:
-        -
-          $ref: '#/components/schemas/SmtpAttributesBase'
+        - $ref: '#/components/schemas/SmtpAttributesBase'
       properties:
         username:
           description: Username for target SMTP authentication
@@ -2412,8 +2279,7 @@ components:
     DetailedCheckAttributes:
       type: object
       allOf:
-        -
-          $ref: '#/components/schemas/Check'
+        - $ref: '#/components/schemas/Check'
       properties:
         probe_filters:
           description: Filters used for probe selections
@@ -2450,120 +2316,86 @@ components:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedHttpAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
-            -
-              $ref: '#/components/schemas/HttpCertificateAttributes'
+            - $ref: '#/components/schemas/DetailedHttpAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/HttpCertificateAttributes'
     DetailedCheckHttpCustom:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedHttpCustomAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
-            -
-              $ref: '#/components/schemas/HttpCertificateAttributes'
+            - $ref: '#/components/schemas/DetailedHttpCustomAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/HttpCertificateAttributes'
     DetailedCheckTcp:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedTcpAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedTcpAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheckDns:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedDnsAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedDnsAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheckUdp:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedUdpAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedUdpAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheckSmtp:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedSmtpAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedSmtpAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheckPop3:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedPop3Attributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedPop3Attributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheckImap:
       type: object
       properties:
         check:
           type: object
           allOf:
-            -
-              $ref: '#/components/schemas/DetailedImapAttributes'
-            -
-              $ref: '#/components/schemas/DetailedCheckAttributes'
+            - $ref: '#/components/schemas/DetailedImapAttributes'
+            - $ref: '#/components/schemas/DetailedCheckAttributes'
     DetailedCheck:
       oneOf:
-        -
-          $ref: '#/components/schemas/DetailedCheckHttp'
-        -
-          $ref: '#/components/schemas/DetailedCheckHttpCustom'
-        -
-          $ref: '#/components/schemas/DetailedCheckTcp'
-        -
-          $ref: '#/components/schemas/DetailedCheckDns'
-        -
-          $ref: '#/components/schemas/DetailedCheckUdp'
-        -
-          $ref: '#/components/schemas/DetailedCheckSmtp'
-        -
-          $ref: '#/components/schemas/DetailedCheckPop3'
-        -
-          $ref: '#/components/schemas/DetailedCheckImap'
+        - $ref: '#/components/schemas/DetailedCheckHttp'
+        - $ref: '#/components/schemas/DetailedCheckHttpCustom'
+        - $ref: '#/components/schemas/DetailedCheckTcp'
+        - $ref: '#/components/schemas/DetailedCheckDns'
+        - $ref: '#/components/schemas/DetailedCheckUdp'
+        - $ref: '#/components/schemas/DetailedCheckSmtp'
+        - $ref: '#/components/schemas/DetailedCheckPop3'
+        - $ref: '#/components/schemas/DetailedCheckImap'
     CreateCheck:
       oneOf:
-        -
-          $ref: '#/components/schemas/HttpAttributesSet'
-        -
-          $ref: '#/components/schemas/HttpCustomAttributes'
-        -
-          $ref: '#/components/schemas/TcpAttributes'
-        -
-          $ref: '#/components/schemas/DnsAttributes'
-        -
-          $ref: '#/components/schemas/UdpAttributes'
-        -
-          $ref: '#/components/schemas/SmtpAttributesSet'
-        -
-          $ref: '#/components/schemas/Pop3Attributes'
-        -
-          $ref: '#/components/schemas/ImapAttributes'
+        - $ref: '#/components/schemas/HttpAttributesSet'
+        - $ref: '#/components/schemas/HttpCustomAttributes'
+        - $ref: '#/components/schemas/TcpAttributes'
+        - $ref: '#/components/schemas/DnsAttributes'
+        - $ref: '#/components/schemas/UdpAttributes'
+        - $ref: '#/components/schemas/SmtpAttributesSet'
+        - $ref: '#/components/schemas/Pop3Attributes'
+        - $ref: '#/components/schemas/ImapAttributes'
       required:
         - name
         - host
@@ -2663,22 +2495,7 @@ components:
           type: string
     ModifyCheckSettings:
       oneOf:
-        -
-          $ref: '#/components/schemas/HttpAttributesSet'
-        -
-          $ref: '#/components/schemas/HttpCustomAttributes'
-        -
-          $ref: '#/components/schemas/TcpAttributes'
-        -
-          $ref: '#/components/schemas/DnsAttributes'
-        -
-          $ref: '#/components/schemas/UdpAttributes'
-        -
-          $ref: '#/components/schemas/SmtpAttributesSet'
-        -
-          $ref: '#/components/schemas/Pop3Attributes'
-        -
-          $ref: '#/components/schemas/ImapAttributes'
+        - $ref: '#/components/schemas/HttpAttributesSet'
       type: object
       properties:
         name:
@@ -3352,40 +3169,35 @@ components:
           items:
             $ref: '#/components/schemas/Region'
           example:
-            -
-              id: 2
+            - id: 2
               description: United State (Alaska)
         timezones:
           type: array
           items:
             $ref: '#/components/schemas/Timezone'
           example:
-            -
-              id: 4
+            - id: 4
               description: '(GMT -9:00) Alaska'
         datetimeformats:
           type: array
           items:
             $ref: '#/components/schemas/DateTimeFormat'
           example:
-            -
-              id: 3
+            - id: 3
               description: '31/07/2006 14:45:05'
         numberformats:
           type: array
           items:
             $ref: '#/components/schemas/NumberFormat'
           example:
-            -
-              id: 5
+            - id: 5
               description: '123 456 789,00'
         countries:
           type: array
           items:
             $ref: '#/components/schemas/Country'
             example:
-              -
-                id: 350
+              - id: 350
                 name: Afghanistan
                 iso: AF
         phonecodes:
@@ -3910,12 +3722,10 @@ components:
                   example: 1294245226
                 avgresponse:
                   oneOf:
-                    -
-                      description: Total average response time in milliseconds
+                    - description: Total average response time in milliseconds
                       type: integer
                       example: 458
-                    -
-                      type: array
+                    - type: array
                       items:
                         type: object
                         properties:
@@ -4087,12 +3897,9 @@ components:
       properties:
         summary:
           oneOf:
-            -
-              $ref: '#/components/schemas/Weeks'
-            -
-              $ref: '#/components/schemas/Days'
-            -
-              $ref: '#/components/schemas/Hours'
+            - $ref: '#/components/schemas/Weeks'
+            - $ref: '#/components/schemas/Days'
+            - $ref: '#/components/schemas/Hours'
     summary.probes_checkid:
       type: integer
     summary.probes_from:
@@ -4150,24 +3957,19 @@ components:
             $ref: '#/components/schemas/AlertingTeams'
       example:
         teams:
-          -
-            id: 1
+          - id: 1
             name: Team Rocket
             members:
-              -
-                id: 1
+              - id: 1
                 name: John Doe
                 type: user
-          -
-            id: 2
+          - id: 2
             name: The A-Team
             members:
-              -
-                id: 2
+              - id: 2
                 name: John 'Hannibal' Smith
                 type: user
-              -
-                id: 3
+              - id: 3
                 name: Templeton 'Faceman' Peck
                 type: contact
     AlertingTeams:
@@ -4206,12 +4008,10 @@ components:
         id: 1
         name: Team Rocket
         members:
-          -
-            id: 1
+          - id: 1
             name: John Doe
             type: user
-          -
-            id: 4
+          - id: 4
             name: Sidekick Jimmy
             type: contact
     UpdateTeam:
@@ -4335,14 +4135,10 @@ components:
           type: boolean
         notification_targets:
           anyOf:
-            -
-              $ref: '#/components/schemas/SMSes'
-            -
-              $ref: '#/components/schemas/Emails'
-            -
-              $ref: '#/components/schemas/APNS'
-            -
-              $ref: '#/components/schemas/AGCM'
+            - $ref: '#/components/schemas/SMSes'
+            - $ref: '#/components/schemas/Emails'
+            - $ref: '#/components/schemas/APNS'
+            - $ref: '#/components/schemas/AGCM'
         teams:
           type: array
           items:
@@ -4367,18 +4163,15 @@ components:
           owner: true
           notification_targets:
             email:
-              -
-                severity: HIGH
+              - severity: HIGH
                 address: johndoe@teamrocket.com
             sms:
-              -
-                severity: HIGH
+              - severity: HIGH
                 country_code: '00'
                 number: '111111111'
                 provider: provider's name
           teams:
-            -
-              id: 123456
+            - id: 123456
               name: The Dream Team
     CreateContact:
       required:
@@ -4398,20 +4191,16 @@ components:
           type: boolean
         notification_targets:
           anyOf:
-            -
-              $ref: '#/components/schemas/SMSes'
-            -
-              $ref: '#/components/schemas/Emails'
+            - $ref: '#/components/schemas/SMSes'
+            - $ref: '#/components/schemas/Emails'
       example:
         name: John Doe
         notification_targets:
           email:
-            -
-              severity: HIGH
+            - severity: HIGH
               address: johndoe@teamrocket.com
           sms:
-            -
-              severity: HIGH
+            - severity: HIGH
               country_code: '93'
               number: '111111111'
               provider: provider's name
@@ -4424,44 +4213,37 @@ components:
             $ref: '#/components/schemas/ContactTargets'
       example:
         contacts:
-          -
-            id: 1
+          - id: 1
             name: John Doe
             paused: false
             type: user
             owner: true
             notification_targets:
               email:
-                -
-                  severity: HIGH
+                - severity: HIGH
                   address: johndoe@teamrocket.com
               sms:
-                -
-                  severity: HIGH
+                - severity: HIGH
                   country_code: '00'
                   number: '111111111'
                   provider: provider's name
             teams:
-              -
-                id: 123456
+              - id: 123456
                 name: The Dream Team
-          -
-            id: 2
+          - id: 2
             name: John "Hannibal" Smith
             paused: true
             type: user
             notification_targets:
               email:
-                -
-                  severity: HIGH
+                - severity: HIGH
                   address: hannibal@ateam.org
               sms:
-                -
-                  severity: HIGH
+                - severity: HIGH
                   country_code: '00'
                   number: '222222222'
                   provider: provider's name
-            teams: []
+            teams: [ ]
     UpdateContact:
       required:
         - name
@@ -4480,21 +4262,17 @@ components:
           type: boolean
         notification_targets:
           anyOf:
-            -
-              $ref: '#/components/schemas/SMSes'
-            -
-              $ref: '#/components/schemas/Emails'
+            - $ref: '#/components/schemas/SMSes'
+            - $ref: '#/components/schemas/Emails'
       example:
         name: John Doe
         paused: false
         notification_targets:
           email:
-            -
-              severity: HIGH
+            - severity: HIGH
               address: johndoe@teamrocket.com
           sms:
-            -
-              severity: HIGH
+            - severity: HIGH
               country_code: '93'
               number: '111111111'
               provider: provider's name
@@ -5297,8 +5075,7 @@ components:
             $ref: '#/components/schemas/ReportPerformance'
       description: Performance report for a single transaction check
 x-tagGroups:
-  -
-    name: Uptime
+  - name: Uptime
     tags:
       - Actions
       - Analysis
@@ -5316,12 +5093,10 @@ x-tagGroups:
       - Summary.performance
       - Summary.probes
       - Traceroute
-  -
-    name: Alerting settings
+  - name: Alerting settings
     tags:
       - Teams
       - Contacts
-  -
-    name: Transaction
+  - name: Transaction
     tags:
       - TMS Checks

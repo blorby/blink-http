@@ -4,980 +4,606 @@ connection_types:
     name: pingdom
 is_connection_optional: false
 actions:
-  CreateCheck:
-    alias: CreateCheck
-    parameters:
-      host:
-        alias: "Host"
-        index: 1
-        required: true
-      url:
-        alias: "URL"
-        index: 2
-        required: true
-      name:
-        alias: "Name"
-        index: 3
-        required: true
-      type:
-        alias: "Type"
-        index: 4
-        required: true
-      expectedip:
-        alias: "Expected IP"
-        index: 5
-        required: true
-      nameserver:
-        alias: "Nameserver"
-        index: 6
-        required: true
-      stringtosend:
-        alias: "String To Send"
-        index: 7
-        required: true
-      additionalurls:
-        alias: "Additional URLs"
-        index: 8
-      auth:
-        alias: "Auth"
-        index: 9
-      custom_message:
-        alias: "Custom Message"
-        index: 10
-      encryption:
-        alias: "Encryption"
-        index: 11
-      integrationids:
-        alias: "Integration IDs"
-        index: 12
-      ipv6:
-        alias: "IPv6"
-        index: 13
-      notifyagainevery:
-        alias: "Notify Again Every"
-        index: 14
-      notifywhenbackup:
-        alias: "Notify When Backup"
-        index: 15
-      paused:
-        alias: "Paused?"
-        index: 16
-      port:
-        alias: "Port"
-        index: 17
-      postdata:
-        alias: "Post Data"
-        index: 18
-      probe_filters:
-        alias: "Probe Filters"
-        index: 19
-      requestheaders:
-        alias: "Request Headers"
-        index: 20
-      resolution:
-        alias: "Resolution"
-        index: 21
-      responsetime_threshold:
-        alias: "Response Time Threshold"
-        index: 22
-      sendnotificationwhendown:
-        alias: "Send Notification When Down"
-        index: 23
-      shouldcontain:
-        alias: "Should Contain"
-        index: 24
-      shouldnotcontain:
-        alias: "Should Not Contain"
-        index: 25
-      stringtoexpect:
-        alias: "String To Expect"
-        index: 26
-      ssl_down_days_before:
-        alias: "SSL Down Days Before"
-        index: 27
-      tags:
-        alias: "Tags"
-        index: 28
-      teamids:
-        alias: "Team IDs"
-        index: 29
-      userids:
-        alias: "User IDs"
-        index: 30
-      verify_certificate:
-        alias: "Verify Certificate?"
-        index: 31
-
-  CreateContact:
-    alias: CreateContact
-    parameters:
-      name:
-        alias: "Name"
-        index: 1
-        required: true
-      notification_targets:
-        alias: "Notification Targets"
-        index: 2
-        required: true
-      paused:
-        alias: "Paused?"
-        index: 3
-
   CreateMaintenanceWindow:
     alias: CreateMaintenanceWindow
     parameters:
-      description:
-        alias: "Description"
-        index: 1
-        required: true
       from:
         alias: "From"
-        index: 2
         required: true
+        description: "Initial maintenance window start. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
+        index: 1
+      recurrencetype:
+        alias: "Recurrencetype"
+        default: none
+        description: "Type of recurrence."
+        index: 2
+      repeatevery:
+        alias: "Repeatevery"
+        default: 0
+        description: "Repeat every n-th day/week/month"
+        index: 3
+      tmsids:
+        alias: "Tmsids"
+        description: "Identifiers of transaction checks to assign to the maintenance window - Comma separated Integers"
+        index: 4
       to:
         alias: "To"
-        index: 3
         required: true
-      effectiveto:
-        alias: "Effective To"
-        index: 4
-      recurrencetype:
-        alias: "Recurrence Type"
+        description: "Initial maintenance window end. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
         index: 5
-      repeatevery:
-        alias: "Repeat Every"
-        index: 6
-      tmsids:
-        alias: "Tms IDs"
-        index: 7
       uptimeids:
-        alias: "Uptime IDs"
-        index: 8
-
-  CreateTeam:
-    alias: CreateTeam
-    parameters:
-      member_ids:
-        alias: "Member IDs"
-        index: 1
-        required: true
-      name:
-        alias: "Name"
-        index: 2
-        required: true
-
-  CreateTransactionCheck:
-    alias: CreateTransactionCheck
-    parameters:
-      name:
-        alias: "Name"
-        index: 1
-        required: true
-      steps:
-        alias: "Steps"
-        index: 2
-        required: true
-      active:
-        alias: "Active?"
-        index: 3
-      contact_ids:
-        alias: "Contact IDs"
-        index: 4
-      custom_message:
-        alias: "Custom Message"
-        index: 5
-      integration_ids:
-        alias: "Integration IDs"
+        alias: "Uptimeids"
+        description: "Identifiers of uptime checks to assign to the maintenance window - Comma separated Integers"
         index: 6
-      interval:
-        alias: "Interval"
+      description:
+        alias: "Description"
+        required: true
+        description: "Description"
         index: 7
-      metadata__authentications__httpAuthentications:
-        alias: "HTTP Authentications"
+      effectiveto:
+        alias: "Effectiveto"
+        description: "Recurrence end. Format UNIX time. Default: equal to `to`. (Only future allowed. Use 1 for the current timestamp.)"
         index: 8
-      metadata__disableWebSecurity:
-        alias: "Disable Web Security?"
-        index: 9
-      metadata__height:
-        alias: "Height"
-        index: 10
-      metadata__width:
-        alias: "Width"
-        index: 11
-      region:
-        alias: "Region"
-        index: 12
-      send_notification_when_down:
-        alias: "Send Notification When Down"
-        index: 13
-      severity_level:
-        alias: "Severity Level"
-        index: 14
-      tags:
-        alias: "Tags"
-        index: 15
-      team_ids:
-        alias: "Team IDs"
-        index: 16
-
   DeleteCheck:
     alias: DeleteCheck
     parameters:
       checkid:
-        alias: "Check ID"
-        index: 1
+        alias: "CheckID"
         required: true
-
-  DeleteContact:
-    alias: DeleteContact
-    parameters:
-      contactid:
-        alias: "Contact ID"
+        description: "Identifier of check to be deleted"
         index: 1
-        required: true
-
-  DeleteMaintenanceWindow:
-    alias: DeleteMaintenanceWindow
+  DeleteMaintanaceWindow:
+    alias: DeleteMaintanaceWindow
     parameters:
       id:
         alias: "ID"
-        index: 1
         required: true
-
-  DeleteMaintenanceWindows:
-    alias: DeleteMaintenanceWindows
+        description: "id of maintenance window"
+        index: 1
+  DeleteMaintenceOccurrence:
+    alias: DeleteMaintenceOccurrence
     parameters:
-      maintenanceids:
-        alias: "Maintenance IDs"
-        index: 1
+      id:
+        alias: "ID"
         required: true
-
-  DeleteMultipleChecks:
-    alias: DeleteMultipleChecks
-    parameters:
-      delcheckids:
-        alias: "Check IDs"
         index: 1
-        required: true
-
-  DeleteMultipleMaintenanceOccurrence:
-    alias: DeleteMultipleMaintenanceOccurrence
-    parameters:
-      occurenceids:
-        alias: "Occurrence IDs"
-        index: 1
-        required: true
-
-  DeleteTeam:
-    alias: DeleteTeam
-    parameters:
-      teamid:
-        alias: "Team ID"
-        index: 1
-        required: true
-
-  DeleteTransactionCheck:
-    alias: DeleteTransactionCheck
-    parameters:
-      cid:
-        alias: "Check ID"
-        index: 1
-        required: true
-
-  GetAllCheckReportStatus:
-    alias: GetAllCheckReportStatus
-    parameters:
-      from:
-        alias: "From"
-        index: 1
-      limit:
-        alias: "Limit"
-        index: 2
-      offset:
-        alias: "Offset"
-        index: 3
-      omit_empty:
-        alias: "Omit Empty"
-        index: 4
-      order:
-        alias: "Order"
-        index: 5
-      to:
-        alias: "To"
-        index: 6
-
-  GetAnalysisResult:
-    alias: GetAnalysisResult
-    parameters:
-      analysisid:
-        alias: "Analysis ID"
-        index: 1
-        required: true
-      checkid:
-        alias: "Check ID"
-        index: 2
-        required: true
-
   GetAverageResponseTime:
     alias: GetAverageResponseTime
     parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
       from:
         alias: "From"
+        description: "Start time of period. Format is UNIX timestamp. Default value is one week eariler than `to`."
+        index: 1
+      to:
+        alias: "To"
+        description: "End time of period. Format is UNIX timestamp. Default value is current time."
         index: 2
       probes:
         alias: "Probes"
+        description: "Filter to only use results from a list of probes. Format is a comma separated list of probe identifiers. By default all probes results are returned."
         index: 3
-      to:
-        alias: "To"
-        index: 4
       uselocaltime:
-        alias: "Use Local Time?"
+        alias: "Uselocaltime"
+        default: false
+        description: "If true, use the user&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#39;s local time zone for results (from and to parameters should still be specified in UTC). If false, use UTC for results."
+        index: 4
+      checkid:
+        alias: "CheckID"
+        required: true
         index: 5
-
   GetAverageUptime:
     alias: GetAverageUptime
     parameters:
-      checkid:
-        alias: "Check ID"
+      includeuptime:
+        alias: "Includeuptime"
+        default: false
+        description: "Include uptime information"
         index: 1
-        required: true
       bycountry:
-        alias: "By Country?"
+        alias: "Bycountry"
+        default: false
+        description: "Split response times into country groups"
         index: 2
       byprobe:
-        alias: "By Probe?"
+        alias: "Byprobe"
+        default: false
+        description: "Split response times into probe groups"
         index: 3
+      checkid:
+        alias: "CheckID"
+        required: true
+        index: 4
       from:
         alias: "From"
-        index: 4
-      includeuptime:
-        alias: "Include Uptime?"
+        default: 0
+        description: "Start time of period. Format is UNIX timestamp"
         index: 5
-      probes:
-        alias: "Probes"
-        index: 6
       to:
         alias: "To"
+        description: "End time of period. Format is UNIX timestamp. Default is the current time"
+        index: 6
+      probes:
+        alias: "Probes"
+        description: "Filter to only use results from a list of probes. Format is a comma separated list of probe identifiers. By default result from all probes are shown."
         index: 7
-
   GetCheck:
     alias: GetCheck
     parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
       include_teams:
-        alias: "Include Teams?"
-        index: 2
-
-  GetCheckReportPerformance:
-    alias: GetCheckReportPerformance
-    parameters:
-      check_id:
-        alias: "Check ID"
+        alias: "Include Teams"
+        default: false
+        description: "Include team connections for check."
         index: 1
-        required: true
-      from:
-        alias: "From"
-        index: 2
-      include_uptime:
-        alias: "Include Uptime?"
-        index: 3
-      order:
-        alias: "Order"
-        index: 4
-      resolution:
-        alias: "Resolution"
-        index: 5
-      to:
-        alias: "To"
-        index: 6
-
-  GetCheckReportStatus:
-    alias: GetCheckReportStatus
-    parameters:
-      check_id:
-        alias: "Check ID"
-        index: 1
-        required: true
-      from:
-        alias: "From"
-        index: 2
-      order:
-        alias: "Order"
-        index: 3
-      to:
-        alias: "To"
-        index: 4
-
-  GetContact:
-    alias: GetContact
-    parameters:
-      contactid:
-        alias: "Contact ID"
-        index: 1
-        required: true
-
-  GetMaintenanceOccurrenceDetails:
-    alias: GetMaintenanceOccurrenceDetails
-    parameters:
-      id:
-        alias: "ID"
-        index: 1
-        required: true
-
-  GetMaintenanceWindow:
-    alias: GetMaintenanceWindow
-    parameters:
-      id:
-        alias: "ID"
-        index: 1
-        required: true
-
-  GetReferences:
-    alias: GetReferences
-    parameters:
-
-  GetRootCauseAnalysis:
-    alias: GetRootCauseAnalysis
-    parameters:
       checkid:
-        alias: "Check ID"
-        index: 1
+        alias: "CheckID"
         required: true
-      from:
-        alias: "From"
+        description: "Identifier of check to be retrieved"
         index: 2
-      limit:
-        alias: "Limit"
-        index: 3
-      offset:
-        alias: "Offset"
-        index: 4
-      to:
-        alias: "To"
-        index: 5
-
-  GetTeam:
-    alias: GetTeam
+  GetMaintenaceWindow:
+    alias: GetMaintenaceWindow
     parameters:
-      teamid:
-        alias: "Team ID"
-        index: 1
+      id:
+        alias: "ID"
         required: true
-
-  GetTransactionCheck:
-    alias: GetTransactionCheck
-    parameters:
-      cid:
-        alias: "Check ID"
+        description: "id of maintenance window"
         index: 1
+  GetsMaintenanceOccurrenceDetails:
+    alias: GetsMaintenanceOccurrenceDetails
+    parameters:
+      id:
+        alias: "ID"
         required: true
-      extended_tags:
-        alias: "Extended Tags"
-        index: 2
-
-  LIstAlertActions:
-    alias: LIstAlertActions
-    parameters:
-      checkids:
-        alias: "Check IDs"
         index: 1
-      from:
-        alias: "From"
-        index: 2
-      limit:
-        alias: "Limit"
-        index: 3
-      offset:
-        alias: "Offset"
-        index: 4
-      status:
-        alias: "Status"
-        index: 5
-      to:
-        alias: "To"
-        index: 6
-      userids:
-        alias: "User IDs"
-        index: 7
-      via:
-        alias: "Via"
-        index: 8
-
   ListChecks:
     alias: ListChecks
     parameters:
-      include_severity:
-        alias: "Include Severity?"
-        index: 1
       include_tags:
-        alias: "Include Tags?"
+        alias: "Include Tags"
+        default: false
+        description: "Include tag list for each check. Tags can be marked as &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;a&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34; or &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;u&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;, for auto tagged or user tagged."
+        index: 1
+      include_severity:
+        alias: "Include Severity"
+        default: false
+        description: "Include severity level for each check."
         index: 2
-      limit:
-        alias: "Limit"
-        index: 3
-      offset:
-        alias: "Offset"
-        index: 4
-      showencryption:
-        alias: "Show Encryption?"
-        index: 5
       tags:
         alias: "Tags"
+        description: "Tag list separated by commas. As an example &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;nginx,apache&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34; would filter out all responses except those tagged nginx or apache"
+        index: 3
+      limit:
+        alias: "Limit"
+        default: 25000
+        description: "Limits the number of returned probes to the specified quantity. (Max value is 25000)"
+        index: 4
+      offset:
+        alias: "Offset"
+        default: 0
+        description: "Offset for listing. (Requires limit.)"
+        index: 5
+      showencryption:
+        alias: "Showencryption"
+        default: false
+        description: "If set, show encryption setting for each check"
         index: 6
-
   ListContacts:
     alias: ListContacts
     parameters:
-
   ListCredits:
     alias: ListCredits
     parameters:
-
-  ListMaintenanceOccurrence:
-    alias: ListMaintenanceOccurrence
-    parameters:
-      from:
-        alias: "From"
-        index: 1
-      maintenanceid:
-        alias: "Maintenance ID"
-        index: 2
-      to:
-        alias: "To"
-        index: 3
-
-  ListMaintenanceWindows:
-    alias: ListMaintenanceWindows
+  ListMaintenaceWindows:
+    alias: ListMaintenaceWindows
     parameters:
       limit:
         alias: "Limit"
+        description: "Count of items to list."
         index: 1
       offset:
         alias: "Offset"
+        description: "Offset of the list."
         index: 2
-      order:
-        alias: "Order"
-        index: 3
       orderby:
         alias: "Orderby"
-        index: 4
-
+        description: "Order by the specific property of the maintenance window."
+        index: 3
+  ListMaintenanceOccurrences.:
+    alias: ListMaintenanceOccurrences
+    parameters:
+      to:
+        alias: "To"
+        description: "Effective to (unix timestamp). (List occurrences which are effective to the specified unix timestamp.)"
+        index: 1
+      maintenanceid:
+        alias: "Maintenanceid"
+        description: "Maintenance window identifier. (List only occurrences of a specific maintenance window.)"
+        index: 2
+      from:
+        alias: "From"
+        description: "Effective from (unix timestamp). (List occurrences which are effective from the specified unix timestamp. If not specified, current timestamp is used.)"
+        index: 3
   ListProbes:
     alias: ListProbes
     parameters:
-      includedeleted:
-        alias: "Include Deleted?"
-        index: 1
       limit:
         alias: "Limit"
-        index: 2
+        description: "Limits the number of returned probes to the specified quantity."
+        index: 1
       offset:
         alias: "Offset"
-        index: 3
+        default: 0
+        description: "Offset for listing. (Requires limit.)"
+        index: 2
       onlyactive:
-        alias: "Only Active?"
-        index: 4
-
-  ListRawTestResults:
-    alias: ListRawTestResults
-    parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
-      from:
-        alias: "From"
-        index: 2
-      includeanalysis:
-        alias: "Include Analysis?"
+        alias: "Onlyactive"
+        default: false
+        description: "Return only active probes."
         index: 3
-      limit:
-        alias: "Limit"
+      includedeleted:
+        alias: "Includedeleted"
+        default: false
+        description: "Include old probes that are no longer in use."
         index: 4
-      maxresponse:
-        alias: "Max Response"
-        index: 5
-      minresponse:
-        alias: "Min Response"
-        index: 6
-      offset:
-        alias: "Offset"
-        index: 7
+  ListRawResults:
+    alias: ListRawResults
+    parameters:
       probes:
         alias: "Probes"
-        index: 8
+        description: "Filter to only show results from a list of probes. Format is a comma separated list of probe identifiers"
+        index: 1
       status:
         alias: "Status"
-        index: 9
+        description: "Filter to only show results with specified statuses. Format is a comma separated list of (`down`, `up`, `unconfirmed`, `unknown`)"
+        index: 2
+      offset:
+        alias: "Offset"
+        default: 0
+        description: "Number of results to skip (Max value is `43200`)"
+        index: 3
+      minresponse:
+        alias: "Minresponse"
+        description: "Minimum response time (ms). If set, specified interval must not be larger than 31 days."
+        index: 4
+      checkid:
+        alias: "CheckID"
+        required: true
+        index: 5
       to:
         alias: "To"
-        index: 10
-
-  ListSubintervals:
-    alias: ListSubintervals
-    parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
+        description: "End of period. Format is UNIX timestamp. Default value is current timestamp."
+        index: 6
       from:
         alias: "From"
-        index: 2
-      includeuptime:
-        alias: "Include Uptime?"
-        index: 3
-      order:
-        alias: "Order"
-        index: 4
-      probes:
-        alias: "Probes"
-        index: 5
-      resolution:
-        alias: "Resolution"
-        index: 6
+        description: "Start of period. Format is UNIX timestamp. Default value is 1 day prior to `to`."
+        index: 7
+      limit:
+        alias: "Limit"
+        default: 1000
+        description: "Number of results to show (Will be set to 1000 if the provided value is greater than 1000)"
+        index: 8
+      includeanalysis:
+        alias: "Includeanalysis"
+        default: false
+        description: "Attach available root cause analysis identifiers to corresponding results"
+        index: 9
+      maxresponse:
+        alias: "Maxresponse"
+        description: "Maximum response time (ms). If set, specified interval must not be larger than 31 days."
+        index: 10
+  ListReferences:
+    alias: ListReferences
+    parameters:
+  ListStatusChanges:
+    alias: ListStatusChanges
+    parameters:
+      from:
+        alias: "From"
+        description: "Start time of period. Format is UNIX timestamp. Default value is one week earlier than `to`."
+        index: 1
       to:
         alias: "To"
-        index: 7
-
-  ListTeams:
-    alias: ListTeams
-    parameters:
-
+        description: "End time of period. Format is UNIX timestamp. Default value is the current time."
+        index: 2
+      order:
+        alias: "Order"
+        default: asc
+        description: "Sorting order of outages. Ascending or descending."
+        index: 3
+      checkid:
+        alias: "CheckID"
+        required: true
+        index: 4
   ListTestProbes:
     alias: ListTestProbes
     parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
       from:
         alias: "From"
-        index: 2
         required: true
+        description: "Start time of period. Format is UNIX timestamp"
+        index: 1
       to:
         alias: "To"
-        index: 3
-
-  ListTransactionChecks:
-    alias: ListTransactionChecks
-    parameters:
-      extended_tags:
-        alias: "Extended Tags"
-        index: 1
-      limit:
-        alias: "Limit"
+        description: "End time of period. Format is UNIX timestamp. The defualt value is current time."
         index: 2
-      offset:
-        alias: "Offset"
+      checkid:
+        alias: "CheckID"
+        required: true
         index: 3
-      tags:
-        alias: "Tags"
-        index: 4
-      type:
-        alias: "Type"
-        index: 5
-
-  RemoveMaintenanceOccurrence:
-    alias: RemoveMaintenanceOccurrence
-    parameters:
-      id:
-        alias: "Occurrence ID"
-        index: 1
-        required: true
-
-  RunSingleTest:
-    alias: RunSingleTest
-    parameters:
-      Query Parameters:
-        alias: "Query Parameters"
-        index: 1
-
-  Traceroute:
-    alias: Traceroute
-    parameters:
-      host:
-        alias: "Host"
-        index: 1
-        required: true
-      probeid:
-        alias: "Probe ID"
-        index: 2
-
   UpdateCheck:
     alias: UpdateCheck
     parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-      url:
-        alias: "URL"
-        index: 2
-      expectedip:
-        alias: "Expected IP"
-        index: 3
-      nameserver:
-        alias: "Nameserver"
-        index: 4
-      stringtosend:
-        alias: "String To Send"
-        index: 5
-      additionalurls:
-        alias: "Additional URLs"
-        index: 6
-      addtags:
-        alias: "Add Tags"
-        index: 7
-      auth:
-        alias: "Auth"
-        index: 8
       checkids:
         alias: "Check IDs"
-        index: 9
-      custom_message:
-        alias: "Custom Message"
-        index: 10
-      encryption:
-        alias: "Encryption"
-        index: 11
-      host:
-        alias: "Host"
-        index: 12
-      integrationids:
-        alias: "Integration IDs"
-        index: 13
-      ipv6:
-        alias: "IPv6"
-        index: 14
+        required: true
+        description: "Identifiers of checks to modify in bulk. For example checkids=1234,5678"
+        index: 1
       name:
         alias: "Name"
-        index: 15
-      notifyagainevery:
-        alias: "Notify Again Every"
-        index: 16
-      notifywhenbackup:
-        alias: "Notify When Backup"
-        index: 17
-      paused:
-        alias: "Paused?"
-        index: 18
-      port:
-        alias: "Port"
-        index: 19
-      postdata:
-        alias: "Post Data"
-        index: 20
-      probe_filters:
-        alias: "Probe Filters"
-        index: 21
-      requestheaders:
-        alias: "Request Headers"
-        index: 22
+        description: "Check name"
+        index: 2
       resolution:
         alias: "Resolution"
-        index: 23
-      responsetime_threshold:
-        alias: "Response Time Threshold"
-        index: 24
+        default: 5
+        description: "How often should the check be tested? (minutes)"
+        index: 3
       sendnotificationwhendown:
-        alias: "Send Notification When Down"
-        index: 25
-      shouldcontain:
-        alias: "Should Contain"
-        index: 26
-      shouldnotcontain:
-        alias: "Should Not Contain"
-        index: 27
+        alias: "Sendnotificationwhendown"
+        default: 2
+        description: "Send notification when down X times"
+        index: 4
+      host:
+        alias: "Host"
+        description: "Target host"
+        index: 5
+      url:
+        alias: "URL"
+        description: "Path to target on server"
+        index: 6
+      requestheaders:
+        alias: "Requestheaders"
+        description: "Custom HTTP header. The entry value should contain a one-element string array. The element should contain `headerName` and `headerValue` colon-separated. To add more than one header send other parameters named `requestheaders{number}`."
+        index: 7
+      encryption:
+        alias: "Encryption"
+        description: "Connection encryption"
+        index: 8
+      verify_certificate:
+        alias: "Verify Certificate"
+        default: true
+        description: "Treat target site as down if an invalid/unverifiable certificate is found."
+        index: 9
+      port:
+        alias: "Port"
+        description: "Target port"
+        index: 10
       ssl_down_days_before:
         alias: "SSL Down Days Before"
-        index: 28
-      stringtoexpect:
-        alias: "String To Expect"
-        index: 29
+        default: 0
+        description: "Treat the target site as down if a certificate expires within the given number of days. This parameter will be ignored if `verify_certificate` is set to `false`."
+        index: 11
+      notifyagainevery:
+        alias: "Notifyagainevery"
+        default: 0
+        description: "Notify again every n result. 0 means that no extra notifications will be sent."
+        index: 12
+      auth:
+        alias: "Auth"
+        description: "Username and password, colon separated."
+        index: 13
+      paused:
+        alias: "Paused"
+        default: false
+        index: 14
       tags:
         alias: "Tags"
-        index: 30
-      teamids:
-        alias: "Team IDs"
-        index: 31
+        description: "List of tags for check. The maximum length of a tag is 64 characters."
+        index: 15
       userids:
-        alias: "User IDs"
-        index: 32
-      verify_certificate:
-        alias: "Verify Certificate?"
-        index: 33
-
-  UpdateContact:
-    alias: UpdateContact
-    parameters:
-      contactid:
-        alias: "Contact ID"
-        index: 1
-        required: true
-      name:
-        alias: "Name"
-        index: 2
-        required: true
-      notification_targets:
-        alias: "Notification Targets"
-        index: 3
-        required: true
-      paused:
-        alias: "Paused?"
-        index: 4
-        required: true
-
-  UpdateMaintenanceOccurrence:
-    alias: UpdateMaintenanceOccurrence
+        alias: "Userids"
+        description: "User identifiers. For example userids=154325,465231,765871"
+        index: 16
+      responsetime_threshold:
+        alias: "Responsetime Threshold"
+        default: 30000
+        description: "Triggers a down alert if the response time exceeds threshold specified in ms (Not available for Starter and Free plans.)"
+        index: 17
+      probe_filters:
+        alias: "Probe Filters"
+        description: "Filters used for probe selections. Overwrites previous filters for check. To remove all filters from a check, use an empty value. Comma separated key:value pairs. Currently only region is supported. Possible values are &amp;amp;amp;amp;#39;EU&amp;amp;amp;amp;#39;, &amp;amp;amp;amp;#39;NA&amp;amp;amp;amp;#39;, &amp;amp;amp;amp;#39;APAC&amp;amp;amp;amp;#39; and &amp;amp;amp;amp;#39;LATAM&amp;amp;amp;amp;#39;. For example, &amp;amp;amp;amp;#34;region: NA&amp;amp;amp;amp;#34;."
+        index: 18
+      integrationids:
+        alias: "Integrationids"
+        description: "Integration identifiers. For example integrationids:[1,2,3]."
+        index: 19
+      addtags:
+        alias: "Addtags"
+        description: "Check tags to add in addition to current check tags"
+        index: 20
+      postdata:
+        alias: "Postdata"
+        description: "Data that should be posted to the web page, for example submission data for a sign-up or login form. The data needs to be formatted in the same way as a web browser would send it to the web server"
+        index: 21
+      teamids:
+        alias: "Teamids"
+        description: "Teams to alert. Comma separated Integers."
+        index: 22
+      custom_message:
+        alias: "Custom Message"
+        description: "Custom message that will be added to email and webhook alerts."
+        index: 23
+      shouldcontain:
+        alias: "Shouldcontain"
+        description: "Target site should contain this string. Note! This parameter cannot be used together with the parameter “shouldnotcontain”, use only one of them in your request."
+        index: 24
+      shouldnotcontain:
+        alias: "Shouldnotcontain"
+        description: "Target site should NOT contain this string. Note! This parameter cannot be used together with the parameter “shouldcontain”, use only one of them in your request."
+        index: 25
+      notifywhenbackup:
+        alias: "Notifywhenbackup"
+        default: true
+        description: "Notify when back up again"
+        index: 26
+      ipv6:
+        alias: "Ipv6"
+        description: "Use ipv6 instead of ipv4, if an IP address is provided as host this will be overrided by the IP address version"
+        index: 27
+  UpdateMaintenaceOccurrence:
+    alias: UpdateMaintenaceOccurrence
     parameters:
       id:
         alias: "ID"
-        index: 1
         required: true
+        index: 1
       from:
         alias: "From"
+        description: "Beginning of the maintenance occurrence. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
         index: 2
       to:
         alias: "To"
+        description: "End of the maintenance occurrence. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
         index: 3
-
   UpdateMaintenanceWindow:
     alias: UpdateMaintenanceWindow
     parameters:
       id:
         alias: "ID"
-        index: 1
         required: true
+        description: "id of maintenance window"
+        index: 1
+      to:
+        alias: "To"
+        description: "Initial maintenance window end. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
+        index: 2
+      uptimeids:
+        alias: "Uptimeids"
+        description: "Identifiers of uptime checks to assign to the maintenance window - Comma separated Integers"
+        index: 3
       description:
         alias: "Description"
-        index: 2
+        description: "Description"
+        index: 4
       effectiveto:
-        alias: "Effective To"
-        index: 3
+        alias: "Effectiveto"
+        description: "Recurrence end. Format UNIX time. Default: equal to `to`. (Only future allowed. Use 1 for the current timestamp.)"
+        index: 5
       from:
         alias: "From"
-        index: 4
-      recurrencetype:
-        alias: "Recurrence Type"
-        index: 5
+        description: "Initial maintenance window start. Format UNIX time. (Only future allowed. Use 1 for the current timestamp.)"
+        index: 6
       repeatevery:
-        alias: "Repeat Every"
-        index: 6
+        alias: "Repeatevery"
+        default: 0
+        description: "Repeat every n-th day/week/month"
+        index: 7
       tmsids:
-        alias: "Tms IDs"
-        index: 7
-      to:
-        alias: "To"
+        alias: "Tmsids"
+        description: "Identifiers of transaction checks to assign to the maintenance window - Comma separated Integers"
         index: 8
-      uptimeids:
-        alias: "Uptime IDs"
+      recurrencetype:
+        alias: "Recurrencetype"
+        description: "Type of recurrence"
         index: 9
-
-  UpdateMultipleChecks:
-    alias: UpdateMultipleChecks
+  getCheckReportStatus:
+    alias: GetCheckReportStatus
     parameters:
-      checkids:
-        alias: "Check IDs"
-        index: 1
-      paused:
-        alias: "Paused?"
-        index: 2
-      resolution:
-        alias: "Resolution"
-        index: 3
-
-  UpdateTeam:
-    alias: UpdateTeam
-    parameters:
-      teamid:
-        alias: "Team ID"
-        index: 1
-      member_ids:
-        alias: "Member IDs"
-        index: 2
-      name:
-        alias: "Name"
-        index: 3
-
-  UpdateTransactionCheck:
-    alias: UpdateTransactionCheck
-    parameters:
-      cid:
-        alias: "Check ID"
-        index: 1
-        required: true
-      metadata__authentications__httpAuthentications:
-        alias: "HTTP Authentications"
-        index: 2
-        required: true
-      metadata__disableWebSecurity:
-        alias: "Disable Web Security?"
-        index: 3
-        required: true
-      metadata__height:
-        alias: "Height"
-        index: 4
-        required: true
-      metadata__width:
-        alias: "Width"
-        index: 5
-        required: true
-      active:
-        alias: "Active?"
-        index: 6
-      contact_ids:
-        alias: "Contact IDs"
-        index: 7
-      custom_message:
-        alias: "Custom Message"
-        index: 8
-      integration_ids:
-        alias: "Integration IDs"
-        index: 9
-      interval:
-        alias: "Interval"
-        index: 10
-      name:
-        alias: "Name"
-        index: 11
-      region:
-        alias: "Region"
-        index: 12
-      send_notification_when_down:
-        alias: "Send Notification When Down"
-        index: 13
-      severity_level:
-        alias: "Severity Level"
-        index: 14
-      steps:
-        alias: "Steps"
-        index: 15
-      tags:
-        alias: "Tags"
-        index: 16
-      team_ids:
-        alias: "Team IDs"
-        index: 17
-
-  listStatusChanges:
-    alias: ListStatusChanges
-    parameters:
-      checkid:
-        alias: "Check ID"
-        index: 1
-        required: true
-      from:
-        alias: "From"
-        index: 2
       order:
         alias: "Order"
+        default: asc
+        description: "Sorting order of outages. Ascending or descending"
+        index: 1
+      check_id:
+        alias: "Check ID"
+        required: true
+        description: "Specifies the id of the check for which the status change report will be fetched" 
+        type: int64
+        index: 2
+      from:
+        alias: "From"
+        description: "Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is one week earlier than `to`" 
+        type: date_time
         index: 3
       to:
         alias: "To"
+        description: "End time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is the current time" 
+        type: date_time
         index: 4
+  getCheckReportStatusAll:
+    alias: ListStatusReports
+    parameters:
+      limit:
+        alias: "Limit"
+        default: 100
+        description: "Limit of returned checks"
+        index: 1
+      offset:
+        alias: "Offset"
+        default: 0
+        description: "Offset of returned checks"
+        index: 2
+      omit_empty:
+        alias: "Omit Empty"
+        default: false
+        description: "Omits checks without any results within specified time"
+        index: 3
+      from:
+        alias: "From"
+        description: "Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is one week earlier than `to`" 
+        type: date_time
+        index: 4
+      to:
+        alias: "To"
+        description: "End time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is the current time" 
+        type: date_time
+        index: 5
+      order:
+        alias: "Order"
+        default: asc
+        description: "Sorting order of outages. Ascending or descending"
+        index: 6
+  getPerformanceReport:
+    alias: GetPerformanceReport
+    parameters:
+      include_uptime:
+        alias: "Include Uptime"
+        default: false
+        description: "Include uptime information. Adds field downtime, uptime, and unmonitored to the interval array objects."
+        index: 1
+      check_id:
+        alias: "Check ID"
+        required: true
+        description: "Specifies the id of the check for which the performance report will be fetched" 
+        type: int64
+        index: 2
+      from:
+        alias: "From"
+        description: "Start time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is 10 times the resolution (10 hours, 10 day, 10 weeks) earlier than `to`. The value is extended to the nearest hour, day or week, depending on the &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#39;resolution&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#39; parameter and configured time zone of the account." 
+        type: date_time
+        index: 3
+      to:
+        alias: "To"
+        description: "End time of period. The format is `RFC 3339` (properly URL-encoded!). The default value is the current time. The value is extended to the nearest hour, day or week, depending on the &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#39;resolution&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#39; parameter and configured time zone of the account." 
+        type: date_time
+        index: 4
+      order:
+        alias: "Order"
+        default: asc
+        description: "Sorting order of outages. Ascending or descending"
+        index: 5
+      resolution:
+        alias: "Resolution"
+        default: hour
+        description: "Size of an interval for which the results are calculated. For the `hour` resolution, the max allowed period is one week and 1 day. For the `day` resolution, the max allowed period is 6 months and 1 day."
+        index: 6
+  traceroute:
+    alias: Traceroute
+    parameters:
+      host:
+        alias: "Host"
+        required: true
+        description: "Target host."
+        index: 1
+      probeid:
+        alias: "Probeid"
+        description: "Probe identifier."
+        index: 2

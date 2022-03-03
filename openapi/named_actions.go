@@ -13,11 +13,11 @@ import (
 )
 
 type NamedActionsGroup struct {
-	Name                  string                            `yaml:"name"`
-	Connections           map[string]connections.Connection `yaml:"connection_types"`
-	IconUri               string                            `yaml:"icon_uri"`
-	IsConnectionOptional  bool                              `yaml:"is_connection_optional"`
-	Actions               []NamedAction                     `yaml:"actions"`
+	Name                 string                            `yaml:"name"`
+	Connections          map[string]connections.Connection `yaml:"connection_types"`
+	IconUri              string                            `yaml:"icon_uri"`
+	IsConnectionOptional bool                              `yaml:"is_connection_optional"`
+	Actions              []NamedAction                     `yaml:"actions"`
 }
 
 type NamedAction struct {
@@ -34,12 +34,17 @@ type NamedAction struct {
 func (o ParsedOpenApi) getNamedActionsGroup() NamedActionsGroup {
 	var namedActions []NamedAction
 	for _, action := range o.actions {
-		if len(o.mask.Actions) > 0 && o.mask.GetAction(action.Name) == nil {
+		maskedAction := o.mask.GetAction(action.Name)
+		if len(o.mask.Actions) > 0 && maskedAction == nil {
 			continue
+		}
+		name := action.Name
+		if maskedAction != nil {
+			name = maskedAction.Alias
 		}
 		opDefinition := o.operations[action.Name]
 		namedActions = append(namedActions, NamedAction{
-			Name:                   action.Name,
+			Name:                   name,
 			DisplayName:            getDisplayName(action.Name),
 			Description:            action.Description,
 			Enabled:                true,
@@ -52,11 +57,11 @@ func (o ParsedOpenApi) getNamedActionsGroup() NamedActionsGroup {
 		namedActions = append(namedActions, namedAction)
 	}
 	group := NamedActionsGroup{
-		Name:                  o.mask.Name,
-		Connections:           o.mask.Connections,
-		IconUri:               o.mask.IconUri,
-		IsConnectionOptional:  o.mask.IsConnectionOptional,
-		Actions:               namedActions,
+		Name:                 o.mask.Name,
+		Connections:          o.mask.Connections,
+		IconUri:              o.mask.IconUri,
+		IsConnectionOptional: o.mask.IsConnectionOptional,
+		Actions:              namedActions,
 	}
 	return group
 }
@@ -140,7 +145,7 @@ func getBodyTemplate(action plugin.Action, body *ops.RequestBodyDefinition) stri
 		return ""
 	}
 	requestBody := map[string]interface{}{}
-	for paramName, _ := range action.Parameters {
+	for paramName := range action.Parameters {
 		mapKeys := strings.Split(paramName, consts.BodyParamDelimiter)
 		buildRequestBody(mapKeys, body.Schema.OApiSchema, paramName, requestBody)
 	}
@@ -186,7 +191,7 @@ func buildRequestBody(mapKeys []string, propertySchema *openapi3.Schema, paramNa
 	key := mapKeys[0]
 
 	// Keep recursion going until leaf node is found
-	if len(mapKeys) == 1 && propertySchema != nil{
+	if len(mapKeys) == 1 && propertySchema != nil {
 		subPropertySchema := ops.GetPropertyByName(key, propertySchema)
 
 		if subPropertySchema != nil {
