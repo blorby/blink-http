@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"github.com/blinkops/blink-http/plugins/aws-sso"
 	"github.com/blinkops/blink-http/plugins/azure"
 	"github.com/blinkops/blink-http/plugins/azure-devops"
 	"github.com/blinkops/blink-http/plugins/bitbucket"
@@ -18,11 +19,12 @@ import (
 	"github.com/blinkops/blink-http/plugins/prometheus"
 	"github.com/blinkops/blink-http/plugins/slack"
 	"github.com/blinkops/blink-http/plugins/types"
-	virus_total "github.com/blinkops/blink-http/plugins/virus-total"
+	"github.com/blinkops/blink-http/plugins/virus-total"
 	"github.com/blinkops/blink-http/plugins/wiz"
 )
 
 var Plugins = map[string]types.Plugin{
+	"aws-sso":       aws_sso.GetNewAwsSsoPlugin(),
 	"azure":         azure.GetNewAzurePlugin(),
 	"azure-devops":  azure_devops.GetNewAzureDevopsPlugin(),
 	"bitbucket":     bitbucket.GetNewBitbucketPlugin(),

@@ -2,8 +2,13 @@ name: "GetUserByEmail"
 display_name: "Get User By Email"
 description: "Get information about a user by their email."
 enabled: true
+collection_name: "aws-sso"
+connection_types:
+  aws-sso:
+    name: aws-sso
 parameters:
   "Email":
+    display_name: Email
     type: "string"
     description: "The email of the user to get."
     required: true

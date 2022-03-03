@@ -2,18 +2,25 @@ name: "AddUsersToGroup"
 display_name: "Add Users To Group"
 description: "Add one or more users to a group in AWS SSO."
 enabled: true
+collection_name: "aws-sso"
+connection_types:
+  aws-sso:
+    name: aws-sso
 parameters:
   "Group Name":
+    display_name: Group Name
     type: "string"
     description: "The name of the AWS SSO group to add users to."
     required: true
     index: 1
   "Users":
+    display_name: Users
     type: "string"
     description: "Users JSON containing email, first name and last name (if you'd like the users to be created if they don't exist), or comma separated emails of the users to add to the group."
     required: true
     index: 2
   "Create users if they don't exist":
+    display_name: Create users if they don't exist
     type: "bool"
     description: "Whether to create users in AWS SSO if they don't already exist."
     required: true

@@ -2,8 +2,13 @@ name: "GetGroupByDisplayName"
 display_name: "Get Group By Display Name"
 description: "Get information about a group by its display name."
 enabled: true
+collection_name: "aws-sso"
+connection_types:
+  aws-sso:
+    name: aws-sso
 parameters:
   "Group Name":
+    display_name: Group Name
     type: "string"
     description: "The name of the group to get."
     required: true
