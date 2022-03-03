@@ -19,6 +19,10 @@ func (p JiraPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (b
 	return false, []byte("Test connection failed, Jira is not yet supported by the http plugin")
 }
 
+func (p JiraPlugin) GetDefaultRequestUrl() string {
+	return ".atlassian.net"
+}
+
 func GetNewJiraPlugin() JiraPlugin {
 	return JiraPlugin{}
 }

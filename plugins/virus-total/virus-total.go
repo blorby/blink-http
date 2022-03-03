@@ -17,6 +17,10 @@ func (p VirusTotalPlugin) TestConnection(connection *blink_conn.ConnectionInstan
 	return false, []byte("Test connection failed, VirusTotal is not yet supported by the http plugin")
 }
 
+func (p VirusTotalPlugin) GetDefaultRequestUrl() string {
+	return "https://www.virustotal.com"
+}
+
 func GetNewVirusTotalPlugin() VirusTotalPlugin {
 	return VirusTotalPlugin{}
 }

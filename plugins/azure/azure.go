@@ -64,6 +64,10 @@ func (p AzurePlugin) TestConnection(connection *blink_conn.ConnectionInstance) (
 	return false, []byte("Test connection failed, Azure is not yet supported by the http plugin")
 }
 
+func (p AzurePlugin) GetDefaultRequestUrl() string {
+	return "https://management.azure.com"
+}
+
 func GetNewAzurePlugin() AzurePlugin {
 	return AzurePlugin{}
 }

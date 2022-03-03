@@ -31,6 +31,10 @@ func (p PagerdutyPlugin) TestConnection(connection *blink_conn.ConnectionInstanc
 	return false, []byte("Test connection failed, Pagerduty is not yet supported by the http plugin")
 }
 
+func (p PagerdutyPlugin) GetDefaultRequestUrl() string {
+	return "https://api.pagerduty.com"
+}
+
 func GetNewPagerdutyPlugin() PagerdutyPlugin {
 	return PagerdutyPlugin{}
 }

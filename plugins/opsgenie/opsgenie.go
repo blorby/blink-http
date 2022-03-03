@@ -18,6 +18,10 @@ func (p OpsgeniePlugin) TestConnection(connection *blink_conn.ConnectionInstance
 	return false, []byte("Test connection failed, Opsgenie is not yet supported by the http plugin")
 }
 
+func (p OpsgeniePlugin) GetDefaultRequestUrl() string {
+	return "https://api.opsgenie.com"
+}
+
 func GetNewOpsgeniePlugin() OpsgeniePlugin {
 	return OpsgeniePlugin{}
 }

@@ -16,6 +16,10 @@ func (p OktaPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (b
 	return false, []byte("Test connection failed, Okta is not yet supported by the http plugin")
 }
 
+func (p OktaPlugin) GetDefaultRequestUrl() string {
+	return ".okta.com"
+}
+
 func GetNewOktaPlugin() OktaPlugin {
 	return OktaPlugin{}
 }

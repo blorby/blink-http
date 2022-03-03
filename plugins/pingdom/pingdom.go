@@ -19,6 +19,10 @@ func (p PingdomPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	return false, []byte("Test connection failed, Pingdom is not yet supported by the http plugin")
 }
 
+func (p PingdomPlugin) GetDefaultRequestUrl() string {
+	return "https://api.pingdom.com/api/3.1"
+}
+
 func GetNewPingdomPlugin() PingdomPlugin {
 	return PingdomPlugin{}
 }

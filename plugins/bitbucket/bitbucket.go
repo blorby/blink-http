@@ -33,6 +33,10 @@ func (p BitbucketPlugin) TestConnection(connection *blink_conn.ConnectionInstanc
 	return false, []byte("Test connection failed, Bitbucket is not yet supported by the http plugin")
 }
 
+func (p BitbucketPlugin) GetDefaultRequestUrl() string {
+	return "https://api.bitbucket.org/2.0"
+}
+
 func GetNewBitbucketPlugin() BitbucketPlugin {
 	return BitbucketPlugin{}
 }
