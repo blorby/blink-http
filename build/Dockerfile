@@ -8,7 +8,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY .. .
 
-RUN go build -tags netgo -ldflags '-w -extldflags "-static"' -o /go/bin/blink-http ./plugin.go
+RUN go build -tags netgo -ldflags '-w -extldflags "-static"' -o /go/bin/blink-http ./cmd/main
 
 FROM alpine:3.14.0 AS plugin
 

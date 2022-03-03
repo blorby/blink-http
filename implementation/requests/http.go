@@ -151,10 +151,8 @@ func checkSubdomains(apiAddress *url.URL, requestedURL *url.URL) error {
 
 func validateURL(connection map[string]string, requestedURL *url.URL, plugin types.Plugin) error {
 	// try to get the request url from the connection
-	apiAddressString, ok := connection[consts.RequestUrlKey]
-	if !ok {
-		apiAddressString, ok = connection[consts.ApiAddressKey]
-		if !ok {
+	apiAddressString, ok := connection[consts.RequestUrlKey]; if !ok {
+		apiAddressString, ok = connection[consts.ApiAddressKey]; if !ok {
 			// if there's no api address defined, make sure the request is being sent
 			// to the default request url of the connection type
 			if plugin != nil && plugin.GetDefaultRequestUrl() != "" {

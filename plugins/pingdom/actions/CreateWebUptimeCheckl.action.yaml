@@ -1,0 +1,14 @@
+name: "CreateWebUptimeCheck"
+display_name: "Create Web Uptime Check"
+description: ""
+enabled: true
+collection_name: "pingdom"
+parameters:
+    "Name":
+      type: "string"
+      description: "The name of the check"
+      required: true
+    "URL":
+      type: "string"
+      description: ""
+      required: true
