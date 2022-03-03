@@ -35,6 +35,10 @@ func (p PingdomPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 	return true, body
 }
 
+func (p PingdomPlugin) GetDefaultRequestUrl() string {
+	return "https://api.pingdom.com/api/3.1"
+}
+
 func GetNewPingdomPlugin() PingdomPlugin {
 	return PingdomPlugin{}
 }

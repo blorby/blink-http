@@ -57,6 +57,9 @@ func SendRequest(ctx *plugin.ActionContext, plugin types.Plugin, method string, 
 	}
 
 	for connName, connInstance := range ctx.GetAllConnections() {
+		if err = validateURL(connInstance.Data, request.URL, plugin); err != nil {
+			return nil, err
+		}
 		if err = handleAuth(connName, connInstance, request, plugin); err != nil {
 			return nil, err
 		}
@@ -91,9 +94,6 @@ func handleAuth(connName string, connInstance *connections.ConnectionInstance, r
 }
 
 func handleBasicAuth(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
-		return err
-	}
 	uname, ok := connection[consts.UsernameKey]
 	if !ok {
 		return errors.New("basic-auth connection does not contain a username attribute or the username is not a string")
@@ -107,9 +107,6 @@ func handleBasicAuth(connection map[string]string, req *http.Request) error {
 }
 
 func handleBearerToken(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
-		return err
-	}
 	token, ok := connection[consts.TokenKey]
 	if !ok {
 		return errors.New("bearer-token connection does not contain a token attribute or the token is not a string")
@@ -119,9 +116,6 @@ func handleBearerToken(connection map[string]string, req *http.Request) error {
 }
 
 func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
-	if err := validateURL(connection, req.URL); err != nil {
-		return err
-	}
 	for i := 1; i <= 3; i++ {
 		h, ok1 := connection["Header "+fmt.Sprint(i)]
 		v, ok2 := connection["Value "+fmt.Sprint(i)]
@@ -132,11 +126,39 @@ func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
 	return nil
 }
 
-func validateURL(connection map[string]string, requestedURL *url.URL) error {
-	apiAddressString, ok := connection[consts.ApiAddressKey]
-	// if there's no api address defined, any url will be allowed
-	if !ok {
+func checkSubdomains(apiAddress *url.URL, requestedURL *url.URL) error {
+	// we need to make sure all of the subdomains in the api address are in the subdomains of the requested url
+	validSubdomains := "." + apiAddress.Host + apiAddress.Path
+	requestedSubdomains := "." + requestedURL.Host + requestedURL.Path
+
+	// remove paths, we're only checking the domain
+	if strings.Index(validSubdomains, "/") > 0 {
+		validSubdomains = validSubdomains[:strings.Index(validSubdomains, "/")]
+	}
+	if strings.Index(requestedSubdomains, "/") > 0 {
+		requestedSubdomains = requestedSubdomains[:strings.Index(requestedSubdomains, "/")]
+	}
+
+	if validSubdomains == "." {
 		return nil
+	}
+	if !strings.HasSuffix(requestedSubdomains, validSubdomains) {
+		return errors.New("invalid url")
+	}
+
+	return nil
+}
+
+func validateURL(connection map[string]string, requestedURL *url.URL, plugin types.Plugin) error {
+	// try to get the request url from the connection
+	apiAddressString, ok := connection[consts.RequestUrlKey]; if !ok {
+		apiAddressString, ok = connection[consts.ApiAddressKey]; if !ok {
+			// if there's no api address defined, make sure the request is being sent
+			// to the default request url of the connection type
+			if plugin != nil && plugin.GetDefaultRequestUrl() != "" {
+				apiAddressString = plugin.GetDefaultRequestUrl()
+			}
+		}
 	}
 	apiAddressString = strings.Replace(apiAddressString, "www.", "", 1)
 	apiAddress, err := url.Parse(apiAddressString)
@@ -147,7 +169,9 @@ func validateURL(connection map[string]string, requestedURL *url.URL) error {
 	if err != nil {
 		return err
 	}
-	if !strings.HasPrefix(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
+
+	err = checkSubdomains(apiAddress, requestedURL)
+	if err != nil || !strings.Contains(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
 		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
 	}
 	return nil

@@ -29,6 +29,10 @@ func (p GcpPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bo
 	return false, []byte("Test connection failed, Gcp is not yet supported by the http plugin")
 }
 
+func (p GcpPlugin) GetDefaultRequestUrl() string {
+	return ".googleapis.com"
+}
+
 func GetNewGcpPlugin() GcpPlugin {
 	return GcpPlugin{}
 }

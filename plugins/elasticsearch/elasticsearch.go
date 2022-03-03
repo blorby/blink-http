@@ -18,6 +18,10 @@ func (p ElasticSearchPlugin) TestConnection(connection *blink_conn.ConnectionIns
 	return false, []byte("Test connection failed, Elasticsearch is not yet supported by the http plugin")
 }
 
+func (p ElasticSearchPlugin) GetDefaultRequestUrl() string {
+	return ""
+}
+
 func GetNewElasticSearchPlugin() ElasticSearchPlugin {
 	return ElasticSearchPlugin{}
 }

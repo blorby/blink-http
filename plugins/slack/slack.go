@@ -19,6 +19,9 @@ func (p SlackPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (
 	return false, []byte("Test connection failed, Slack is not yet supported by the http plugin")
 }
 
+func (p SlackPlugin) GetDefaultRequestUrl() string {
+	return "https://slack.com/api"
+}
 func GetNewSlackPlugin() SlackPlugin {
 	return SlackPlugin{}
 }

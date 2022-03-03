@@ -19,6 +19,9 @@ func (p GitlabPlugin) TestConnection(connection *blink_conn.ConnectionInstance) 
 	return false, []byte("Test connection failed, Gitlab is not yet supported by the http plugin")
 }
 
+func (p GitlabPlugin) GetDefaultRequestUrl() string {
+	return "https://gitlab.com/api/v4"
+}
 func GetNewGitlabPlugin() GitlabPlugin {
 	return GitlabPlugin{}
 }

@@ -16,6 +16,10 @@ func (p PrometheusPlugin) TestConnection(connection *blink_conn.ConnectionInstan
 	return false, []byte("Test connection failed, Prometheus is not yet supported by the http plugin")
 }
 
+func (p PrometheusPlugin) GetDefaultRequestUrl() string {
+	return "http://localhost:3000/api/v1"
+}
+
 func GetNewPrometheusPlugin() PrometheusPlugin {
 	return PrometheusPlugin{}
 }
