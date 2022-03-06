@@ -1,0 +1,929 @@
+name: azure-devops
+connection_types:
+  azure-devops:
+    name: azure-devops
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: GetArtifacts
+  display_name: Get Artifacts
+  description: Get a specific artifact from a pipeline run
+  enabled: true
+  parameters:
+    $expand:
+      display_name: $Expand
+      type: dropdown
+      description: Expand options. Default is None.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - none
+      - signedContent
+      index: 7
+      format: ""
+      is_multi: false
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    artifactName:
+      display_name: Artifact Name
+      type: string
+      description: Name of the artifact.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: ID of the pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    runId:
+      display_name: Run ID
+      type: integer
+      description: ID of the run of that pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int32
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs/'' + params.runId + ''/artifacts''}}{{''?artifactName=''
+      + params.artifactName + ''&$expand='' + params.$expand + ''&api-version='' +
+      params.api-version}}'
+  is_connection_optional: ""
+- name: GetLog
+  display_name: Get Logs
+  description: Get a specific log from a pipeline run
+  enabled: true
+  parameters:
+    $expand:
+      display_name: $Expand
+      type: dropdown
+      description: Expand options. Default is None.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - none
+      - signedContent
+      index: 7
+      format: ""
+      is_multi: false
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    logId:
+      display_name: Log ID
+      type: integer
+      description: ID of the log.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: ID of the pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    runId:
+      display_name: Run ID
+      type: integer
+      description: ID of the run of that pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: int32
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs/'' + params.runId + ''/logs/''
+      + params.logId}}{{''?$expand='' + params.$expand + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: GetRun
+  display_name: Get Run
+  description: Gets a run for a particular pipeline.
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: The pipeline id
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    runId:
+      display_name: Run ID
+      type: integer
+      description: The run id
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int32
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs/'' + params.runId}}{{''?api-version=''
+      + params.api-version}}'
+  is_connection_optional: ""
+- name: ListLogs
+  display_name: List Logs
+  description: Get a list of logs from a pipeline run.
+  enabled: true
+  parameters:
+    $expand:
+      display_name: $Expand
+      type: dropdown
+      description: Expand options. Default is None.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - none
+      - signedContent
+      index: 6
+      format: ""
+      is_multi: false
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: ID of the pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    runId:
+      display_name: Run ID
+      type: integer
+      description: ID of the run of that pipeline.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int32
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs/'' + params.runId + ''/logs''}}{{''?$expand=''
+      + params.$expand + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: CreatePipeline
+  display_name: Pipelines Create
+  description: Create a pipeline.
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    folder:
+      display_name: Folder
+      type: string
+      description: Folder of the pipeline.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: Name of the pipeline.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"configuration":{"path":"{{params.configuration__path}}","repository":{"id":"{{params.configuration__repository__id}}","name":"{{params.configuration__repository__name}}","type":"{{params.configuration__repository__type}}"},"type":"{{params.configuration__type}}"},"folder":"{{params.folder}}","name":"{{params.name}}"}'
+    contentType: application/json
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines''}}{{''?api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: GetPipeline
+  display_name: Pipelines Get
+  description: Gets a pipeline, optionally at the specified version
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: The pipeline ID
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    pipelineVersion:
+      display_name: Pipeline Version
+      type: integer
+      description: The pipeline version
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId}}{{''?pipelineVersion='' + params.pipelineVersion
+      + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: ListPipelines
+  display_name: Pipelines List
+  description: Get a list of pipelines.
+  enabled: true
+  parameters:
+    $top:
+      display_name: Maximum Results
+      type: integer
+      description: The maximum number of pipelines to return
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: int32
+      is_multi: false
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    continuationToken:
+      display_name: Continuation Token
+      type: string
+      description: A continuation token from a previous request, to retrieve the next
+        page of results
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    orderBy:
+      display_name: Order By
+      type: string
+      description: A sort expression. Defaults to "name asc"
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines''}}{{''?orderBy='' + params.orderBy + ''&$top='' + params.$top
+      + ''&continuationToken='' + params.continuationToken + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: PreviewRun
+  display_name: Preview Preview
+  description: Queues a dry run of the pipeline and returns an object containing the
+    final yaml.
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: The pipeline ID.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    pipelineVersion:
+      display_name: Pipeline Version
+      type: integer
+      description: The pipeline version.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: int32
+      is_multi: false
+    previewRun:
+      display_name: Preview Run
+      type: bool
+      description: If true, don't actually create a new run. Instead, return the final
+        YAML document after parsing templates.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    stagesToSkip:
+      display_name: Stages To Skip
+      type: array
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    templateParameters:
+      display_name: Template Parameters
+      type: code:json
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    variables:
+      display_name: Variables
+      type: code:json
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    yamlOverride:
+      display_name: Yaml Override
+      type: string
+      description: If you use the preview run option, you may optionally supply different
+        YAML. This allows you to preview the final YAML document without committing
+        a changed file.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"previewRun":"{{bool(params.previewRun)}}","resources":{"builds":"{{obj(params.resources__builds)}}","containers":"{{obj(params.resources__containers)}}","packages":"{{obj(params.resources__packages)}}","pipelines":"{{obj(params.resources__pipelines)}}","repositories":"{{obj(params.resources__repositories)}}"},"stagesToSkip":["{{arr(params.stagesToSkip)}}"],"templateParameters":"{{obj(params.templateParameters)}}","variables":"{{obj(params.variables)}}","yamlOverride":"{{params.yamlOverride}}"}'
+    contentType: application/json
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/preview''}}{{''?pipelineVersion=''
+      + params.pipelineVersion + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: RunPipeline
+  display_name: Run Pipeline
+  description: Runs a pipeline.
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: The pipeline ID.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    pipelineVersion:
+      display_name: Pipeline Version
+      type: integer
+      description: The pipeline version.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: int32
+      is_multi: false
+    previewRun:
+      display_name: Preview Run
+      type: bool
+      description: If true, don't actually create a new run. Instead, return the final
+        YAML document after parsing templates.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    stagesToSkip:
+      display_name: Stages To Skip
+      type: array
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    templateParameters:
+      display_name: Template Parameters
+      type: code:json
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    variables:
+      display_name: Variables
+      type: code:json
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    yamlOverride:
+      display_name: Yaml Override
+      type: string
+      description: If you use the preview run option, you may optionally supply different
+        YAML. This allows you to preview the final YAML document without committing
+        a changed file.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"previewRun":"{{bool(params.previewRun)}}","resources":{"builds":"{{obj(params.resources__builds)}}","containers":"{{obj(params.resources__containers)}}","packages":"{{obj(params.resources__packages)}}","pipelines":"{{obj(params.resources__pipelines)}}","repositories":"{{obj(params.resources__repositories)}}"},"stagesToSkip":["{{arr(params.stagesToSkip)}}"],"templateParameters":"{{obj(params.templateParameters)}}","variables":"{{obj(params.variables)}}","yamlOverride":"{{params.yamlOverride}}"}'
+    contentType: application/json
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs''}}{{''?pipelineVersion=''
+      + params.pipelineVersion + ''&api-version='' + params.api-version}}'
+  is_connection_optional: ""
+- name: ListRuns
+  display_name: Runs List
+  description: Gets top 10000 runs for a particular pipeline.
+  enabled: true
+  parameters:
+    api-version:
+      display_name: API Version
+      type: string
+      description: Version of the API to use.  This should be set to '6.1-preview.1'
+        to use this version of the api.
+      placeholder: ""
+      required: true
+      default: 6.1-preview.1
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    organization:
+      display_name: Organization
+      type: string
+      description: The name of the Azure DevOps organization.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    pipelineId:
+      display_name: Pipeline ID
+      type: integer
+      description: The pipeline id
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int32
+      is_multi: false
+    project:
+      display_name: Project
+      type: string
+      description: Project ID or project name
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{''https://dev.azure.com'' + ''/'' + params.organization + ''/'' + params.project
+      + ''/_apis/pipelines/'' + params.pipelineId + ''/runs''}}{{''?api-version=''
+      + params.api-version}}'
+  is_connection_optional: ""

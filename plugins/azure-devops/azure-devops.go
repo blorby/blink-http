@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/blinkops/blink-http/consts"
+	"github.com/blinkops/blink-http/plugins/connections"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -31,7 +32,22 @@ func (p AzureDevopsPlugin) HandleAuth(req *http.Request, conn map[string]string)
 }
 
 func (p AzureDevopsPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	return false, []byte("Test connection failed, AzureDevops is not yet supported by the http plugin")
+	organization, ok := connection.Data["Organization"]
+
+	if !ok {
+		return false, []byte("organization name not provided")
+	}
+
+	res, err := connections.SendTestConnectionRequest(fmt.Sprintf("%s/%s/_apis/projects", p.GetDefaultRequestUrl(), organization), http.MethodGet, nil, connection, p.HandleAuth)
+	if err != nil {
+		return false, []byte(err.Error())
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return false, []byte("invalid access token")
+	}
+
+	return true, nil
 }
 
 func (p AzureDevopsPlugin) GetDefaultRequestUrl() string {

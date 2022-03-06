@@ -1,0 +1,270 @@
+name: azure-devops
+connection_types:
+  azure-devops:
+    name: azure-devops
+is_connection_optional: false
+actions:
+  Pipelines_List:
+    alias: ListPipelines
+    display_name: "List Pipelines"
+    parameters:
+      organization:
+        alias: "Organization"
+        index: 1
+      project:
+        alias: "Project"
+        index: 2
+      api-version:
+        alias: "API Version"
+        index: 3
+      $top:
+        alias: "Maximum Results"
+        index: 4
+      continuationToken:
+        alias: "Continuation Token"
+        index: 5
+      orderBy:
+        alias: "Order By"
+        index: 6
+
+  Pipelines_Create:
+    alias: CreatePipeline
+    display_name: "Create Pipeline"
+    parameters:
+      organization:
+        alias: "Organization"
+        index: 1
+      project:
+        alias: "Project"
+        index: 2
+      api-version:
+        alias: "API Version"
+        index: 3
+      configuration.type:
+        alias: "Configuration Type"
+        required: true
+        index: 4
+      configuration.path:
+        alias: "Configuration Path"
+        required: true
+        index: 5
+      configuration.repository.id:
+        alias: "Repository ID"
+        required: true
+        index: 6
+      configuration.repository.name:
+        alias: "Repository Name"
+        required: true
+        index: 7
+      configuration.repository.type:
+        alias: "Repository Type"
+        required: true
+        index: 8
+      name:
+        alias: "Name"
+        index: 9
+      folder:
+        alias: "Folder"
+        index: 10
+
+  Pipelines_Get:
+    alias: GetPipeline
+    display_name: "Get Pipeline"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      organization:
+        alias: "Organization"
+        index: 2
+      project:
+        alias: "Project"
+        index: 3
+      api-version:
+        alias: "API Version"
+        index: 4
+      pipelineVersion:
+        alias: "Pipeline Version"
+        index: 5
+
+  Preview_Preview:
+    alias: PreviewRun
+    display_name: "Preview Run"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      organization:
+        alias: "Organization"
+        index: 2
+      project:
+        alias: "Project"
+        index: 3
+      pipelineVersion:
+        alias: "Pipeline Version"
+        index: 4
+      api-version:
+        alias: "API Version"
+        index: 5
+      previewRun:
+        alias: "Preview Run"
+        index: 6
+      stagesToSkip:
+        alias: "Stages To Skip"
+        index: 7
+      templateParameters:
+        alias: "Template Parameters"
+        index: 8
+      variables:
+        alias: "Variables"
+        index: 9
+      yamlOverride:
+        alias: "Yaml Override"
+        index: 10
+
+  Runs_List:
+    alias: ListRuns
+    display_name: "List Runs"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      organization:
+        alias: "Organization"
+        index: 2
+      project:
+        alias: "Project"
+        index: 3
+      api-version:
+        alias: "API Version"
+        index: 4
+
+  RunPipeline:
+    alias: RunPipeline
+    display_name: "Run Pipeline"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      organization:
+        alias: "Organization"
+        index: 2
+      project:
+        alias: "Project"
+        index: 3
+      api-version:
+        alias: "API Version"
+        index: 4
+      pipelineVersion:
+        alias: "Pipeline Version"
+        index: 5
+      previewRun:
+        alias: "Preview Run"
+        index: 6
+      stagesToSkip:
+        alias: "Stages To Skip"
+        index: 7
+      templateParameters:
+        alias: "Template Parameters"
+        index: 8
+      variables:
+        alias: "Variables"
+        index: 9
+      yamlOverride:
+        alias: "Yaml Override"
+        index: 10
+
+  GetRun:
+    alias: GetRun
+    display_name: "Get Run"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      runId:
+        alias: "Run ID"
+        index: 2
+      organization:
+        alias: "Organization"
+        index: 3
+      project:
+        alias: "Project"
+        index: 4
+      api-version:
+        alias: "API Version"
+        index: 5
+
+  GetArtifacts:
+    alias: GetArtifacts
+    display_name: "Get Artifacts"
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      runId:
+        alias: "Run ID"
+        index: 2
+      artifactName:
+        alias: "Artifact Name"
+        index: 3
+      organization:
+        alias: "Organization"
+        index: 4
+      project:
+        alias: "Project"
+        index: 5
+      api-version:
+        alias: "API Version"
+        index: 6
+      $expand:
+        alias: "$Expand"
+        index: 7
+
+  ListLogs:
+    alias: ListLogs
+    parameters:
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 1
+      runId:
+        alias: "Run ID"
+        index: 2
+      organization:
+        alias: "Organization"
+        index: 3
+      project:
+        alias: "Project"
+        index: 4
+      api-version:
+        alias: "API Version"
+        index: 5
+      $expand:
+        alias: "$Expand"
+        index: 6
+
+  GetLogs:
+    alias: GetLog
+    display_name: "Get Log"
+    parameters:
+      logId:
+        alias: "Log ID"
+        index: 1
+      pipelineId:
+        alias: "Pipeline ID"
+        index: 2
+      runId:
+        alias: "Run ID"
+        index: 3
+      organization:
+        alias: "Organization"
+        index: 4
+      project:
+        alias: "Project"
+        index: 5
+      api-version:
+        alias: "API Version"
+        default: 6.1-preview.1
+        index: 6
+      $expand:
+        alias: "$Expand"
+        index: 7
