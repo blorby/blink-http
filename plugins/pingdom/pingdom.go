@@ -22,21 +22,12 @@ func (p PingdomPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 		return false, []byte(err.Error())
 	}
 
-	body, err := requests.ReadBody(res.Body)
+	_, err = requests.ValidateResponse(res)
 	if err != nil {
 		return false, []byte(err.Error())
 	}
 
-	_, err = requests.ValidateResponse(res.StatusCode, body)
-	if err != nil {
-		return false, []byte(err.Error())
-	}
-
-	return true, body
-}
-
-func (p PingdomPlugin) GetDefaultRequestUrl() string {
-	return "https://api.pingdom.com/api/3.1"
+	return true, res.Body
 }
 
 func (p PingdomPlugin) GetDefaultRequestUrl() string {
