@@ -110,7 +110,7 @@ func (o ParsedOpenApi) getActionParamValues(action plugin.Action, opDefinition *
 }
 
 func (o ParsedOpenApi) getActionUrlTemplate(op *ops.OperationDefinition) string {
-	host := fmt.Sprintf("'%s'", o.requestUrl)
+	host := fmt.Sprintf("'%s'", strings.TrimSuffix(o.requestUrl, "/"))
 	if o.mask.RequestUrl != "" {
 		connTemplate := fmt.Sprintf("connection.%s.%s", o.mask.RequestUrl, consts.RequestUrlKey)
 		host = fmt.Sprintf("(exists(%s) ? %s : '%s'),", connTemplate, connTemplate, o.requestUrl)

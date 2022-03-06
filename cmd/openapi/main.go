@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	app := &cli.App{
 		Commands: []*cli.Command{
 			{
@@ -19,7 +18,7 @@ func main() {
 						Name:    "named-actions",
 						Aliases: []string{"na"},
 						Usage:   "generate named actions from openapi file",
-						Action:  GenerateNamedActions,
+						Action:  generateNamedActions,
 						Flags: []cli.Flag{
 							&cli.StringFlag{
 								Name:     "path",
@@ -54,7 +53,7 @@ func main() {
 	}
 }
 
-func GenerateNamedActions(c *cli.Context) error {
+func generateNamedActions(c *cli.Context) error {
 	return openapi.GenerateNamedActions(
 		c.String("path"),
 		c.String("openapi"),
