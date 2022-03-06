@@ -127,7 +127,7 @@ func handleApiKeyAuth(connection map[string]string, req *http.Request) error {
 }
 
 func checkSubdomains(apiAddress *url.URL, requestedURL *url.URL) error {
-	// we need to make sure all of the subdomains in the api address are in the subdomains of the requested url
+	// we need to make sure all the subdomains in the api address are in the subdomains of the requested url
 	validSubdomains := "." + apiAddress.Host + apiAddress.Path
 	requestedSubdomains := "." + requestedURL.Host + requestedURL.Path
 
@@ -172,7 +172,7 @@ func validateURL(connection map[string]string, requestedURL *url.URL, plugin typ
 
 	err = checkSubdomains(apiAddress, requestedURL)
 	if err != nil || !strings.Contains(requestedURL.Host+requestedURL.Path, apiAddress.Host+apiAddress.Path) {
-		return errors.New("the requested url's host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
+		return errors.New("the requested urls host/path does not match the host/path defined in the connection. this is not allowed in order to prevent sending credentials to unwanted hosts/paths. the allowed host/path is " + apiAddressString)
 	}
 	return nil
 }
