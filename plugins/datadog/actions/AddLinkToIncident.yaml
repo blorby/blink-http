@@ -1,0 +1,26 @@
+name: "AddLinkToIncident"
+description: Adds a link to an incident as an attachment.
+enabled: true
+collection_name: "datadog"
+connection_types:
+  datadog:
+    name: datadog
+parameters:
+  "Incident ID":
+    display_name: Incident ID
+    type: "string"
+    description: "The ID of the incident."
+    required: true
+    index: 1
+  "Title":
+    display_name: Title
+    type: "string"
+    description: "The title to be displayed."
+    required: true
+    index: 2
+  "Link":
+    display_name: Link
+    type: "string"
+    description: "The link to add to the incident."
+    required: true
+    index: 3

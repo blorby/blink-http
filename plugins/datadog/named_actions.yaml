@@ -1,0 +1,472 @@
+name: datadog
+connection_types:
+  datadog:
+    name: datadog
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: ""
+  display_name: Create Monitor
+  description: Create a monitor
+  enabled: true
+  parameters:
+    message:
+      display_name: Message
+      type: string
+      description: A message to include with notifications for this monitor.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: The monitor name.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    priority:
+      display_name: Priority
+      type: integer
+      description: Integer from 1 (high) to 5 (low) indicating alert severity.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: int64
+      is_multi: false
+    query:
+      display_name: Query
+      type: string
+      description: The monitor query.
+      placeholder: 'Example: avg(last_5m):sum:system.net.bytes_rcvd{host:host0} >
+        100'
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    restricted_roles:
+      display_name: Restricted roles
+      type: array
+      description: A list of role identifiers that can be pulled from the Roles API.
+        Cannot be used with `locked` option.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    tags:
+      display_name: Tags
+      type: array
+      description: Tags associated to your monitor.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    type:
+      display_name: Type
+      type: dropdown
+      description: The type of the monitor.
+      placeholder: 'Example: metric alert'
+      required: true
+      default: ""
+      pattern: ""
+      options:
+      - composite
+      - event alert
+      - log alert
+      - metric alert
+      - process alert
+      - query alert
+      - rum alert
+      - service check
+      - synthetics alert
+      - trace-analytics alert
+      - slo alert
+      - event-v2 alert
+      index: 6
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"created":"{{params.created}}","creator":{"email":"{{params.creator__email}}","handle":"{{params.creator__handle}}","name":"{{params.creator__name}}"},"deleted":"{{params.deleted}}","id":"{{int(params.id)}}","message":"{{params.message}}","modified":"{{params.modified}}","multi":"{{bool(params.multi)}}","name":"{{params.name}}","options":{"aggregation":{"group_by":"{{params.options__aggregation__group_by}}","metric":"{{params.options__aggregation__metric}}","type":"{{params.options__aggregation__type}}"},"device_ids":["{{arr(params.options__device_ids)}}"],"enable_logs_sample":"{{bool(params.options__enable_logs_sample)}}","escalation_message":"{{params.options__escalation_message}}","evaluation_delay":"{{int(params.options__evaluation_delay)}}","groupby_simple_monitor":"{{bool(params.options__groupby_simple_monitor)}}","include_tags":"{{bool(params.options__include_tags)}}","locked":"{{bool(params.options__locked)}}","min_failure_duration":"{{int(params.options__min_failure_duration)}}","min_location_failed":"{{int(params.options__min_location_failed)}}","new_host_delay":"{{int(params.options__new_host_delay)}}","no_data_timeframe":"{{int(params.options__no_data_timeframe)}}","notify_audit":"{{bool(params.options__notify_audit)}}","notify_no_data":"{{bool(params.options__notify_no_data)}}","renotify_interval":"{{int(params.options__renotify_interval)}}","require_full_window":"{{bool(params.options__require_full_window)}}","silenced":"{{obj(params.options__silenced)}}","synthetics_check_id":"{{params.options__synthetics_check_id}}","threshold_windows":{"recovery_window":"{{params.options__threshold_windows__recovery_window}}","trigger_window":"{{params.options__threshold_windows__trigger_window}}"},"thresholds":{"critical":"{{int(params.options__thresholds__critical)}}","critical_recovery":"{{int(params.options__thresholds__critical_recovery)}}","ok":"{{int(params.options__thresholds__ok)}}","unknown":"{{int(params.options__thresholds__unknown)}}","warning":"{{int(params.options__thresholds__warning)}}","warning_recovery":"{{int(params.options__thresholds__warning_recovery)}}"},"timeout_h":"{{int(params.options__timeout_h)}}"},"overall_state":"{{params.overall_state}}","priority":"{{int(params.priority)}}","query":"{{params.query}}","restricted_roles":["{{arr(params.restricted_roles)}}"],"state":{"groups":"{{obj(params.state__groups)}}"},"tags":["{{arr(params.tags)}}"],"type":"{{params.type}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/monitor''}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Delete Incident
+  description: Delete an existing incident
+  enabled: true
+  parameters:
+    incident_id:
+      display_name: Incident ID
+      type: string
+      description: The UUID the incident.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v2/incidents/'' + params.incident_id}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Get Incident
+  description: Get the details of an incident
+  enabled: true
+  parameters:
+    incident_id:
+      display_name: Incident ID
+      type: string
+      description: The UUID the incident.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v2/incidents/'' + params.incident_id}}{{''?include=''
+      + params.include}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Get Metric Metadata
+  description: Get metric metadata
+  enabled: true
+  parameters:
+    metric_name:
+      display_name: Name
+      type: string
+      description: Name of the metric for which to get metadata.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/metrics/'' + params.metric_name}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Get Monitor
+  description: Get a monitor's details
+  enabled: true
+  parameters:
+    monitor_id:
+      display_name: Monitor ID
+      type: integer
+      description: The ID of the monitor
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: int64
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/monitor/'' + params.monitor_id}}{{''?group_states=''
+      + params.group_states}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: List Active Metrics
+  description: Get active metrics list
+  enabled: true
+  parameters:
+    from:
+      display_name: Time
+      type: integer
+      description: Seconds since the Unix epoch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int64
+      is_multi: false
+    tag_filter:
+      display_name: Filter
+      type: string
+      description: |-
+        Filter metrics that have been submitted with the given tags. Supports boolean and wildcard expressions.
+        Cannot be combined with other filters.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/metrics''}}{{''?from='' + params.from
+      + ''&host='' + params.host + ''&tag_filter='' + params.tag_filter}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: List Incidents
+  description: Get a list of incidents
+  enabled: true
+  parameters:
+    page[offset]:
+      display_name: Page Offset
+      type: integer
+      description: Specific offset to use as the beginning of the returned page.
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 2
+      format: int64
+      is_multi: false
+    page[size]:
+      display_name: Page Size
+      type: integer
+      description: Size for a given page.
+      placeholder: ""
+      required: false
+      default: "10"
+      pattern: ""
+      options: []
+      index: 1
+      format: int64
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v2/incidents''}}{{''?include='' +
+      params.include + ''&page[size]='' + params.page[size] + ''&page[offset]='' +
+      params.page[offset]}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: List Logs
+  description: Search logs
+  enabled: true
+  parameters: {}
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"filter":{"from":"{{params.filter__from}}","indexes":["{{arr(params.filter__indexes)}}"],"query":"{{params.filter__query}}","to":"{{params.filter__to}}"},"options":{"timeOffset":"{{int(params.options__timeOffset)}}","timezone":"{{params.options__timezone}}"},"page":{"cursor":"{{params.page__cursor}}","limit":"{{int(params.page__limit)}}"},"sort":"{{params.sort}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v2/logs/events/search''}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: List Metrics
+  description: Search metrics
+  enabled: true
+  parameters:
+    q:
+      display_name: Query
+      type: string
+      description: Query string to search metrics upon. Must be prefixed with `metrics:`.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/search''}}{{''?q='' + params.q}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: List Monitors
+  description: Get all monitor details
+  enabled: true
+  parameters:
+    group_states:
+      display_name: Group States
+      type: string
+      description: |-
+        When specified, shows additional information about the group states.
+        Choose one or more from `all`, `alert`, `warn`, and `no data`.
+      placeholder: 'Example: alert'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: A string to filter monitors by name.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/monitor''}}{{''?group_states=''
+      + params.group_states + ''&name='' + params.name + ''&tags='' + params.tags
+      + ''&monitor_tags='' + params.monitor_tags + ''&with_downtimes='' + params.with_downtimes
+      + ''&id_offset='' + params.id_offset + ''&page='' + params.page + ''&page_size=''
+      + params.page_size}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Query Metrics
+  description: Query timeseries points
+  enabled: true
+  parameters:
+    from:
+      display_name: From
+      type: integer
+      description: Start of the queried time period, seconds since the Unix epoch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: int64
+      is_multi: false
+    query:
+      display_name: Query
+      type: string
+      description: Query string. Must end with {*}.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    to:
+      display_name: To
+      type: integer
+      description: End of the queried time period, seconds since the Unix epoch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: int64
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/query''}}{{''?from='' + params.from
+      + ''&to='' + params.to + ''&query='' + params.query}}'
+  is_connection_optional: ""
+- name: ""
+  display_name: Search Monitors
+  description: Monitors search
+  enabled: true
+  parameters:
+    page:
+      display_name: Page
+      type: integer
+      description: Page to start paginating from.
+      placeholder: ""
+      required: false
+      default: "0"
+      pattern: ""
+      options: []
+      index: 2
+      format: int64
+      is_multi: false
+    per_page:
+      display_name: Per Page
+      type: integer
+      description: Number of monitors to return per page.
+      placeholder: ""
+      required: false
+      default: "30"
+      pattern: ""
+      options: []
+      index: 3
+      format: int64
+      is_multi: false
+    query:
+      display_name: Query
+      type: string
+      description: |-
+        After entering a search query in your Manage Monitor page use the query parameter value in the
+        URL of the page as value for this parameter.
+
+        The query can contain any number of space-separated monitor attributes, for instance `query="type:metric status:alert"`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: string
+      description: |-
+        String for sort order, composed of field and sort order separate by a comma, e.g. `name,asc`. Supported sort directions: `asc`, `desc`. Supported fields:
+
+        * `name`
+        * `status`
+        * `tags`
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.datadog.REQUEST_URL) ? connection.datadog.REQUEST_URL
+      : ''https://api.datadoghq.com''), + ''/api/v1/monitor/search''}}{{''?query=''
+      + params.query + ''&page='' + params.page + ''&per_page='' + params.per_page
+      + ''&sort='' + params.sort}}'
+  is_connection_optional: ""

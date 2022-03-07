@@ -1,0 +1,20 @@
+name: "UpdateIncidentTimeline"
+description: Updates incident timeline.
+enabled: true
+collection_name: "datadog"
+connection_types:
+  datadog:
+    name: datadog
+parameters:
+  "Incident ID":
+    display_name: Incident ID
+    type: "string"
+    description: "The ID of the incident."
+    required: true
+    index: 1
+  "Message":
+    display_name: Message
+    type: "string"
+    description: "The message to add to the incident's timeline."
+    required: true
+    index: 2

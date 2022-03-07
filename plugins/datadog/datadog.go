@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"github.com/blinkops/blink-http/plugins/connections"
+	"github.com/blinkops/blink-http/plugins/types"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"net/http"
 )
@@ -18,6 +19,19 @@ func (p DatadogPlugin) TestConnection(connection *blink_conn.ConnectionInstance)
 
 func (p DatadogPlugin) GetDefaultRequestUrl() string {
 	return ""
+}
+
+func (p DatadogPlugin) GetCustomActionHandlers() map[string]types.ActionHandler {
+	return map[string]types.ActionHandler{
+		"CreateIncident":         createIncident,
+		"UpdateIncident":         updateIncident,
+		"UpdateIncidentTimeline": updateIncidentTimeline,
+		"AddLinkToIncident":      addLinkToIncident,
+	}
+}
+
+func (p DatadogPlugin) GetCustomActionsPath() string {
+	return "plugins/datadog/actions"
 }
 
 func GetNewDatadogPlugin() DatadogPlugin {

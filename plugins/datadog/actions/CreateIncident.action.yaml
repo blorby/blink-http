@@ -1,0 +1,44 @@
+name: "CreateIncident"
+description: Create an incident.
+enabled: true
+collection_name: "datadog"
+connection_types:
+  datadog:
+    name: datadog
+parameters:
+  "Title":
+    display_name: Title
+    type: "string"
+    description: "The title of the incident, which summarizes what happened."
+    required: true
+    index: 1
+  "Customer Impacted":
+    display_name: Customer Impacted
+    type: "bool"
+    description: "A flag indicating whether the incident caused customer impact."
+    required: true
+    index: 2
+  "Fields":
+    display_name: Fields
+    type: "code:json"
+    description: "A condensed view of the user-defined fields for which to create initial selections."
+    default: "{\n
+\t\"state\":\n
+\t{\n
+\t\t\"type\": \"dropdown\",\n
+\t\t\"value\": \"resolved\"\n
+\t},\n
+\t\"summary\":\n
+\t{\n
+\t\t\"type\": \"textbox\",\n
+\t\t\"value\": \"TODO: put the summary of the incident here\"\n
+\t}\n
+}"
+    required: false
+    index: 3
+  "Leader User ID":
+    display_name: Leader User ID
+    type: "string"
+    description: "A unique identifier that represents the user."
+    required: false
+    index: 4
