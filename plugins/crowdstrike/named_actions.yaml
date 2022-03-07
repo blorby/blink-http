@@ -1,0 +1,300 @@
+name: crowdstrike
+connection_types:
+  crowdstrike:
+    name: crowdstrike
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: SearchAcrossDevices
+  display_name: Devices Ran On
+  description: Find hosts that have observed a given custom IOC. For details about
+    those hosts, use GET /devices/entities/devices/v1
+  enabled: true
+  parameters:
+    limit:
+      display_name: Limit
+      type: string
+      description: The first process to return, where 0 is the latest offset. Use
+        with the offset parameter to manage pagination of results.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: string
+      description: The first process to return, where 0 is the latest offset. Use
+        with the limit parameter to manage pagination of results.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    type:
+      display_name: Search By
+      type: dropdown
+      description: |2
+
+        The type of the indicator. Valid types include:
+
+        sha256: A hex-encoded sha256 hash string. Length - min: 64, max: 64.
+
+        md5: A hex-encoded md5 hash string. Length - min 32, max: 32.
+
+        domain: A domain name. Length - min: 1, max: 200.
+
+        ipv4: An IPv4 address. Must be a valid IP address.
+
+        ipv6: An IPv6 address. Must be a valid IP address.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options:
+      - sha256
+      - md5
+      - domain
+      - ipv4
+      - ipv6
+      index: 1
+      format: ""
+      is_multi: false
+    value:
+      display_name: Value
+      type: string
+      description: The string representation of the indicator
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.crowdstrike.REQUEST_URL) ? connection.crowdstrike.REQUEST_URL
+      : ''https://api.us-2.crowdstrike.com''), + ''/indicators/queries/devices/v1''}}{{''?type=''
+      + params.type + ''&value='' + params.value + ''&limit='' + params.limit + ''&offset=''
+      + params.offset}}'
+  is_connection_optional: ""
+- name: GetDetection
+  display_name: Get Detect Summaries
+  description: View information about detections
+  enabled: true
+  parameters:
+    ids:
+      display_name: ID
+      type: array
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"ids":["{{arr(params.ids)}}"]}'
+    contentType: application/json
+    url: '{{(exists(connection.crowdstrike.REQUEST_URL) ? connection.crowdstrike.REQUEST_URL
+      : ''https://api.us-2.crowdstrike.com''), + ''/detects/entities/summaries/GET/v1''}}'
+  is_connection_optional: ""
+- name: GetDeviceByID
+  display_name: Get Device Details
+  description: Get details on one or more hosts by providing agent IDs (AID). You
+    can get a host's agent IDs (AIDs) from the /devices/queries/devices/v1 endpoint,
+    the Falcon console or the Streaming API
+  enabled: true
+  parameters:
+    ids:
+      display_name: ID
+      type: array
+      description: The host agentIDs used to get details on
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.crowdstrike.REQUEST_URL) ? connection.crowdstrike.REQUEST_URL
+      : ''https://api.us-2.crowdstrike.com''), + ''/devices/entities/devices/v1''}}{{''?ids=''
+      + params.ids}}'
+  is_connection_optional: ""
+- name: ListDetections
+  display_name: Query Detects
+  description: Search for detection IDs that match a given query
+  enabled: true
+  parameters:
+    filter:
+      display_name: Filter
+      type: string
+      description: "Filter detections using a query in Falcon Query Language (FQL)
+        An asterisk wildcard `*` includes all results. \n\nCommon filter options include:\n\n-
+        `status`\n- `device.device_id`\n- `max_severity`\n\nThe full list of valid
+        filter options is extensive. Review it in our [documentation inside the Falcon
+        console](https://falcon.crowdstrike.com/documentation/45/falcon-query-language-fql)."
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: 'The maximum number of detections to return in this response (default:
+        9999; max: 9999). Use with the `offset` parameter to manage pagination of
+        results.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: The first detection to return, where `0` is the latest detection.
+        Use with the `limit` parameter to manage pagination of results.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: Search all detection metadata for the provided string
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: dropdown
+      description: |-
+        Sort detections using these options:
+
+        - `first_behavior`: Timestamp of the first behavior associated with this detection
+        - `last_behavior`: Timestamp of the last behavior associated with this detection
+        - `max_severity`: Highest severity of the behaviors associated with this detection
+        - `max_confidence`: Highest confidence of the behaviors associated with this detection
+        - `adversary_id`: ID of the adversary associated with this detection, if any
+        - `devices.hostname`: Hostname of the host where this detection was detected
+
+        Sort either `asc` (ascending) or `desc` (descending). For example: `last_behavior|asc`
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - first_behavior|asc
+      - first_behavior|desc
+      - last_behavior|asc
+      - last_behavior|desc
+      - max_severity|asc
+      - max_severity|desc
+      - max_confidence|asc
+      - max_confidence|desc
+      - adversary_id|asc
+      - adversary_id|desc
+      - devices.hostname|asc
+      - devices.hostname|desc
+      index: 5
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.crowdstrike.REQUEST_URL) ? connection.crowdstrike.REQUEST_URL
+      : ''https://api.us-2.crowdstrike.com''), + ''/detects/queries/detects/v1''}}{{''?offset=''
+      + params.offset + ''&limit='' + params.limit + ''&sort='' + params.sort + ''&filter=''
+      + params.filter + ''&q='' + params.q}}'
+  is_connection_optional: ""
+- name: ListDevices
+  display_name: Query Devices By Filter
+  description: Search for hosts in your environment by platform, hostname, IP, and
+    other criteria.
+  enabled: true
+  parameters:
+    filter:
+      display_name: Filter
+      type: string
+      description: The filter expression that should be used to limit the results
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: The maximum records to return. [1-5000]
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    offset:
+      display_name: Offset
+      type: integer
+      description: The offset to start retrieving records from
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: string
+      description: The property to sort by (e.g. status.desc or hostname.asc)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.crowdstrike.REQUEST_URL) ? connection.crowdstrike.REQUEST_URL
+      : ''https://api.us-2.crowdstrike.com''), + ''/devices/queries/devices/v1''}}{{''?offset=''
+      + params.offset + ''&limit='' + params.limit + ''&sort='' + params.sort + ''&filter=''
+      + params.filter}}'
+  is_connection_optional: ""

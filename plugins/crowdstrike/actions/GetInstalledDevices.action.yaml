@@ -1,0 +1,21 @@
+name: "GetInstalledDevices"
+display_name: "Get Installed Devices"
+description: "This action will receive a list of device serials, and return a list of device serials which are installed."
+enabled: true
+collection_name: "crowdstrike"
+connection_types:
+  crowdstrike:
+    name: crowdstrike
+parameters:
+  "Device Serials":
+    display_name: Device Serials
+    type: "string"
+    description: "Comma separated list of device serials."
+    required: true
+    index: 1
+  "Return only active devices":
+    display_name: Return only active devices
+    type: "bool"
+    description: "Whether to return only active devices."
+    required: true
+    index: 2

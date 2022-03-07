@@ -1,0 +1,15 @@
+name: "DeleteDevice"
+display_name: "Delete Device"
+description: "This action will delete a host. After the host is deleted, no new detections for that host will be reported via UI or APIs."
+enabled: true
+collection_name: "crowdstrike"
+connection_types:
+  crowdstrike:
+    name: crowdstrike
+parameters:
+  "Host Agent ID":
+    display_name: Host Agent ID
+    type: "string"
+    description: "The host agent ID (AID) of the host you want to contain. Get an agent ID from a detection, the Falcon console, or the Streaming API."
+    required: true
+    index: 1
