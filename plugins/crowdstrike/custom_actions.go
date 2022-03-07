@@ -30,7 +30,7 @@ type GetDeviceResponse struct {
 func getInstalledDevices(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin) ([]byte, error) {
 	deviceSerials, onlyActiveDevices, err := getGetInstalledDevicesParams(request)
 
-	activeSerialsChan, err := performGetInstalledDevices(ctx, request, deviceSerials, onlyActiveDevices)
+	activeSerialsChan, err := performGetInstalledDevices(ctx, plugin, request, deviceSerials, onlyActiveDevices)
 	if err != nil {
 		return nil, err
 	}
