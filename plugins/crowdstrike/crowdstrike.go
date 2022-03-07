@@ -78,7 +78,7 @@ func (p CrowdStrikePlugin) GetDefaultRequestUrl() string {
 	return ""
 }
 
-func (p CrowdStrikePlugin) GetCustomActionHandlers() map[string] types.ActionHandler {
+func (p CrowdStrikePlugin) GetCustomActionHandlers() map[string]types.ActionHandler {
 	return map[string]types.ActionHandler{
 		"GetInstalledDevices": getInstalledDevices,
 		"DeleteDevice":        deleteDevice,
