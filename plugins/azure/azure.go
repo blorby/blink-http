@@ -3,6 +3,7 @@ package azure
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/blinkops/blink-http/consts"
 	blink_conn "github.com/blinkops/blink-sdk/plugin/connections"
 	"io/ioutil"
 	"net/http"
@@ -55,7 +56,7 @@ func (p AzurePlugin) HandleAuth(req *http.Request, conn map[string]string) error
 	if err != nil {
 		return err
 	}
-	req.Header.Set("AUTHORIZATION", "Bearer "+responseBody.AccessToken)
+	req.Header.Set("AUTHORIZATION", consts.BearerAuthPrefix + responseBody.AccessToken)
 	return nil
 
 }
