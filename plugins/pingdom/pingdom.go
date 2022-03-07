@@ -1,6 +1,7 @@
 package pingdom
 
 import (
+	"fmt"
 	"github.com/blinkops/blink-http/consts"
 	"github.com/blinkops/blink-http/implementation/requests"
 	conns "github.com/blinkops/blink-http/plugins/connections"
@@ -17,7 +18,7 @@ func (p PingdomPlugin) HandleAuth(req *http.Request, conn map[string]string) err
 }
 
 func (p PingdomPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	res, err := conns.SendTestConnectionRequest("https://api.pingdom.com/api/3.1/credits", http.MethodGet, nil, connection, p.HandleAuth)
+	res, err := conns.SendTestConnectionRequest(fmt.Sprintf("%s/credits", p.GetDefaultRequestUrl()), http.MethodGet, nil, connection, p.HandleAuth)
 	if err != nil {
 		return false, []byte(err.Error())
 	}
