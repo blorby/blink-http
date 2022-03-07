@@ -1,17 +1,15 @@
-package actions
+package bitbucket
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/blinkops/blink-openapi-sdk/consts"
-	customact "github.com/blinkops/blink-openapi-sdk/plugin/custom_actions"
+	"github.com/blinkops/blink-http/plugins/types"
 	"github.com/blinkops/blink-sdk/plugin"
 	"strings"
 	"sync"
 )
 
 const (
-	PluginName       = "bitbucket"
 	workspaceIdParam = "Workspace ID"
 	groupSlugParam   = "Group Slug"
 	usersParam       = "Users"
@@ -22,18 +20,7 @@ type AddUserToGroupResponse struct {
 	Status string `json:"status"`
 }
 
-func GetBitbucketCustomActions() customact.CustomActions {
-	actions := map[string]customact.ActionHandler{
-		"AddUsersToGroup": addUsersToGroup,
-	}
-
-	return customact.CustomActions{
-		Actions:           actions,
-		ActionsFolderPath: "custom_actions/actions",
-	}
-}
-
-func addUsersToGroup(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest) (*plugin.ExecuteActionResponse, error) {
+func addUsersToGroup(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin) ([]byte, error) {
 	params, err := request.GetParameters()
 	if err != nil {
 		return nil, errors.New("invalid parameters provided")
@@ -61,7 +48,7 @@ func addUsersToGroup(ctx *plugin.ActionContext, request *plugin.ExecuteActionReq
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			status, err := addUserToGroup(ctx, workspaceId, groupSlug, userVal)
+			status, err := addUserToGroup(ctx, plugin, workspaceId, groupSlug, userVal)
 			statuses <- status
 			if err != nil {
 				errorsChan <- err
@@ -90,5 +77,5 @@ func addUsersToGroup(ctx *plugin.ActionContext, request *plugin.ExecuteActionReq
 		return nil, errors.New("failed to marshal json")
 	}
 
-	return &plugin.ExecuteActionResponse{ErrorCode: consts.OK, Result: marshalledResponse}, nil
+	return marshalledResponse, nil
 }

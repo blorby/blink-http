@@ -1,18 +1,26 @@
 name: "AddUsersToGroup"
+display_name: "Add Users To Group"
 description: Adds one or more users to a group.
 enabled: true
+collection_name: "bitbucket"
+connection_types:
+  bitbucket:
+    name: bitbucket
 parameters:
   "Workspace ID":
+    display_name: Workspace ID
     type: "string"
     description: "The ID of the workspace."
     required: true
     index: 1
   "Group Slug":
+    display_name: Group Slug
     type: "string"
     description: "The slug of the group."
     required: true
     index: 2
   "Users":
+    display_name: Users
     type: "string"
     description: "The list of the users to add to the group. A comma separated emails or usernames list, for example: 'user1@mail.com,user2@mail.com,my_username'"
     required: true
