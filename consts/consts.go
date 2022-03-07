@@ -25,6 +25,8 @@ const (
 	BasicAuthUsername = "USERNAME"
 
 	DefaultTimeout = 30
+
+	TestConnectionFailed   = "Test connection failed - incorrect connection credentials. Please validate your connection details and try again"
 )
 
 // openapi
