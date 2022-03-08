@@ -1,0 +1,127 @@
+name: "ListEntities"
+description: "get list of your entities in ermetic"
+enabled: true
+collection_name: "ermetic"
+connection_types:
+  ermetic:
+    name: ermetic
+parameters:
+  "Cloud Provider":
+    display_name: Cloud Provider
+    type: "dropdown"
+    is_multi: true
+    required: false
+    index: 1
+    options:
+      - AzureAD
+      - AWS
+      - Azure
+      - Okta
+  "Types":
+    display_name: Types
+    type: "dropdown"
+    is_multi: true
+    required: false
+    index: 2
+    options:
+      - AzureAdDirectoryApplication
+      - AzureAdDirectoryRoleDefinition
+      - AzureAdGroup
+      - AzureAdApplicationServicePrincipal
+      - AzureAdManagedIdentityServicePrincipal
+      - AzureAdUser
+      - AwsAutoScalingAutoScalingGroup
+      - AwsBatchJobDefinition
+      - AwsCloudTrailTrail
+      - AwsDynamoDbTable
+      - AwsEc2Image
+      - AwsEc2Instance
+      - AwsEc2InternetGateway
+      - AwsEc2NatGateway
+      - AwsEc2NetworkAcl
+      - AwsEc2NetworkInterface
+      - AwsEc2RouteTable
+      - AwsEc2SecurityGroup
+      - AwsEc2Subnet
+      - AwsEc2Vpc
+      - AwsEc2Snapshot
+      - AwsEc2Volume
+      - AwsEcrRepository
+      - AwsEcsService
+      - AwsEcsTaskDefinition
+      - AwsEksCluster
+      - AwsElasticBeanstalkEnvironment
+      - AwsElbApplicationLoadBalancer
+      - AwsElbClassicLoadBalancer
+      - AwsElbNetworkLoadBalancer
+      - AwsElasticsearchDomain
+      - AwsIamInlinePolicy
+      - AwsIamManagedPolicy
+      - AwsIamGroup
+      - AwsIamRole
+      - AwsIamUser
+      - AwsIamRootUser
+      - AwsKmsKey
+      - AwsLambdaFunctionConfiguration
+      - AwsOrganizationsServiceControlPolicy
+      - AwsRdsAuroraGlobalCluster
+      - AwsRdsCluster
+      - AwsRdsDatabaseInstance
+      - AwsRdsClusterSnapshot
+      - AwsRdsDatabaseInstanceSnapshot
+      - AwsRedshiftCluster
+      - AwsS3Bucket
+      - AwsSecretsManagerSecret
+      - AwsSnsTopic
+      - AwsSqsQueue
+      - AwsSsmParameter
+      - AwsSsoPermissionSet
+      - AwsSsoGroup
+      - AwsSsoUser
+      - AzureRoleDefinition
+      - AzureComputeDisk
+      - AzureComputeVirtualMachine
+      - AzureComputeVirtualMachineScaleSet
+      - AzureKeyVaultVault
+      - AzureManagedIdentitySystemManagedIdentity
+      - AzureManagedIdentityUserManagedIdentity
+      - AzureNetworkApplicationSecurityGroup
+      - AzureNetworkLoadBalancer
+      - AzureNetworkNetworkInterface
+      - AzureNetworkNetworkSecurityGroup
+      - AzureNetworkPublicIpAddress
+      - AzureNetworkPublicIpPrefix
+      - AzureNetworkRouteTable
+      - AzureNetworkVirtualNetworkSubnet
+      - AzureNetworkVirtualNetwork
+      - AzureResourceGroup
+      - AzureSqlServer
+      - AzureStorageStorageAccountBlobContainer
+      - AzureStorageStorageAccount
+      - AzureWebApplication
+      - GoogleWorkspaceDirectoryRole
+      - GoogleWorkspaceGroup
+      - GoogleWorkspaceUser
+      - GcpAssetGenericResource
+      - GcpBigQueryDataset
+      - GcpBigQueryDatasetTable
+      - GcpComputeInstance
+      - GcpIamRole
+      - GcpIamServiceAccount
+      - GcpKmsKey
+      - GcpStorageBucket
+      - OktaGroup
+      - OktaUser
+  "Page":
+    display_name: Page
+    type: "number"
+    required: false
+    index: 3
+    default: 1
+  "Page Size":
+    display_name: Page Size
+    type: "number"
+    description: "How many items you wish to get back (100 max)"
+    required: false
+    index: 4
+    default: 100

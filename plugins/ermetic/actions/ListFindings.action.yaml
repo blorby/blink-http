@@ -1,0 +1,57 @@
+name: "ListFindings"
+description: "get list of all findings"
+enabled: true
+collection_name: "ermetic"
+connection_types:
+  ermetic:
+    name: ermetic
+parameters:
+  "Start Time":
+    display_name: Start Time
+    type: "date"
+    format: "date_time"
+    description: ""
+    required: true
+    index: 1
+  "End Time":
+    display_name: End Time
+    type: "date"
+    format: "date_time"
+    required: true
+    index: 2
+  "Status":
+    display_name: Status
+    type: "dropdown"
+    is_multi: true
+    required: true
+    default: "Open"
+    index: 3
+    options:
+      - Open
+      - Resolved
+      - Snoozed
+  "Severity":
+    display_name: Severity
+    type: "dropdown"
+    is_multi: true
+    required: true
+    default: "High"
+    index: 4
+    options:
+      - Critical
+      - High
+      - Medium
+      - Low
+  "Page":
+    display_name: Page
+    type: "number"
+    required: false
+    index: 5
+    default: 1
+  "Page Size":
+    display_name: Page Size
+    type: "number"
+    description: "How many items you wish to get back (100 max)"
+    required: false
+    index: 6
+    default: 100
