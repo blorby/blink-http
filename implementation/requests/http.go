@@ -262,7 +262,7 @@ func GetRequestUrl(ctx *plugin.ActionContext, provider string) (string, error) {
 
 	requestUrl, ok := connection[consts.RequestUrlKey]
 	if !ok {
-		return "", errors.New("no request url provided")
+		return "", errors.New(consts.RequestUrlMissing)
 	}
 
 	return requestUrl, nil

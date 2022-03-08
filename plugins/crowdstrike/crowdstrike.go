@@ -15,7 +15,10 @@ import (
 type CrowdStrikePlugin struct{}
 
 func (p CrowdStrikePlugin) HandleAuth(req *http.Request, conn map[string]string) error {
-	requestUrl := conn[requestUrlParam]
+	requestUrl, ok := conn[requestUrlParam]
+	if !ok {
+		return errors.New(consts.RequestUrlMissing)
+	}
 
 	queryParams := url.Values{
 		"client_id":     {conn[clientIdParam]},

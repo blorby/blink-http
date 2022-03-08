@@ -51,7 +51,7 @@ func getInstalledDevices(ctx *plugin.ActionContext, request *plugin.ExecuteActio
 func deleteDevice(ctx *plugin.ActionContext, request *plugin.ExecuteActionRequest, plugin types.Plugin) ([]byte, error) {
 	requestUrl, err := requests.GetRequestUrl(ctx, PluginName)
 	if err != nil {
-		return nil, errors.New("no request url provided")
+		return nil, errors.New(consts.RequestUrlMissing)
 	}
 
 	params, err := request.GetParameters()

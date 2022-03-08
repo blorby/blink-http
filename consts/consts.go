@@ -18,7 +18,7 @@ const (
 	ApiAddressKey  = "API Address"
 	RequestUrlKey  = "REQUEST_URL"
 
-	BasicAuthPrefix = "Basic "
+	BasicAuthPrefix  = "Basic "
 	BearerAuthPrefix = "Bearer "
 
 	BasicAuthPassword = "PASSWORD"
@@ -26,7 +26,8 @@ const (
 
 	DefaultTimeout = 30
 
-	TestConnectionFailed   = "Test connection failed - incorrect connection credentials. Please validate your connection details and try again"
+	RequestUrlMissing    = "no request url provided"
+	TestConnectionFailed = "Test connection failed - incorrect connection credentials. Please validate your connection details and try again"
 )
 
 // openapi

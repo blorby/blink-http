@@ -2,7 +2,6 @@ package aws_sso
 
 import (
 	"errors"
-	"fmt"
 	"github.com/blinkops/blink-http/consts"
 	"github.com/blinkops/blink-http/plugins/connections"
 	"github.com/blinkops/blink-http/plugins/types"
@@ -22,7 +21,7 @@ func (p AwsSsoPlugin) HandleAuth(req *http.Request, conn map[string]string) erro
 func (p AwsSsoPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
 	requestUrl, ok := connection.Data[consts.RequestUrlKey]
 	if !ok {
-		return false, []byte("Test connection failed, API Address wasn't provided")
+		return false, []byte(consts.RequestUrlMissing)
 	}
 	if !strings.Contains(requestUrl, "scim.") || !strings.Contains(requestUrl, ".amazonaws.com") {
 		return false, []byte("invalid request url")
@@ -32,7 +31,7 @@ func (p AwsSsoPlugin) TestConnection(connection *blink_conn.ConnectionInstance) 
 		return false, []byte("Test connection failed. " + err.Error())
 	}
 	if res.StatusCode != http.StatusOK {
-		return false, []byte(fmt.Sprintf("Test connection failed. Got status code %v", res.StatusCode))
+		return false, []byte(consts.RequestUrlMissing)
 	}
 
 	return true, nil
