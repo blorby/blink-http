@@ -13,11 +13,11 @@ import (
 )
 
 type ParsedOpenApi struct {
-	requestUrl string
+	requestUrl  string
 	description string
-	actions []plugin.Action
-	operations map[string]*ops.OperationDefinition
-	mask Mask
+	actions     []plugin.Action
+	operations  map[string]*ops.OperationDefinition
+	mask        Mask
 }
 
 func GetNamedActionsFromOpenapi(maskFile string, openApiFile string) ([]byte, error) {
@@ -43,7 +43,7 @@ func parseOpenApiFile(OpenApiFile string) (ParsedOpenApi, error) {
 	var actions []plugin.Action
 
 	openApi, err := loadOpenApi(OpenApiFile)
-	if err != nil || len(openApi.Servers) == 0{
+	if err != nil || len(openApi.Servers) == 0 {
 		return ParsedOpenApi{}, err
 	}
 
@@ -55,7 +55,7 @@ func parseOpenApiFile(OpenApiFile string) (ParsedOpenApi, error) {
 		requestUrl = strings.ReplaceAll(requestUrl, consts.ParamPrefix+urlVariableName+consts.ParamSuffix, urlVariable.Default)
 	}
 
-	operationDefinitions , err := ops.DefineOperations(openApi)
+	operationDefinitions, err := ops.DefineOperations(openApi)
 	if err != nil {
 		return ParsedOpenApi{}, err
 	}
@@ -104,7 +104,7 @@ func parseOpenApiFile(OpenApiFile string) (ParsedOpenApi, error) {
 		description: openApi.Info.Description,
 		requestUrl:  requestUrl,
 		actions:     actions,
-		operations: operationDefinitions,
+		operations:  operationDefinitions,
 	}, nil
 }
 
@@ -174,8 +174,8 @@ func handleBodyParamOfType(action *plugin.Action, paramSchema *openapi3.Schema, 
 }
 
 func parseActionParam(paramSchema *openapi3.SchemaRef, isParamRequired bool, paramDescription string) *plugin.ActionParameter {
-	var isMulti    bool
-	var	paramIndex int64
+	var isMulti bool
+	var paramIndex int64
 
 	paramType := paramSchema.Value.Type
 	paramFormat := paramSchema.Value.Format
@@ -286,9 +286,9 @@ func hasDuplicateSchemas(path string) bool {
 	return false
 }
 
-func convertParamType(paramType string) string{
+func convertParamType(paramType string) string {
 	switch paramType {
-	case consts.TypeObject:
+	case consts.TypeObject, "":
 		return consts.TypeJson
 	case consts.TypeBoolean:
 		return consts.TypeBool
