@@ -73,20 +73,19 @@ func (o ParsedOpenApi) getActionToRun(opDefinition *ops.OperationDefinition) str
 func (o ParsedOpenApi) getActionParams(action plugin.Action) map[string]plugin.ActionParameter {
 	params := map[string]plugin.ActionParameter{}
 	for paramName, param := range action.Parameters {
-		maskedAct := o.mask.Actions[action.Name]
-		if maskedParam, ok := maskedAct.Parameters[paramName]; ok {
-			param.DisplayName = maskedParam.Alias
 
-			if maskedParam.Index != 0 {
-				param.Index = maskedParam.Index
+		if maskedAct, ok := o.mask.Actions[action.Name]; ok {
+			if maskedParam, ok := maskedAct.Parameters[paramName]; ok {
+				param.DisplayName = maskedParam.Alias
+				if maskedParam.Index != 0 {
+					param.Index = maskedParam.Index
+				}
 			}
-
-			if param.Type == "" { // if it's an unrecognized type, let the user put whatever he wants to
-				param.Type = consts.TypeJson
-			}
-
-			params[paramName] = param
+		} else {
+			param.DisplayName = getDisplayName(paramName)
 		}
+
+		params[paramName] = param
 	}
 	return params
 }
