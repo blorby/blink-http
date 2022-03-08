@@ -1,0 +1,3010 @@
+name: gitlab
+connection_types:
+  gitlab:
+    name: gitlab
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: AcceptMergeRequest
+  display_name: Accept MR
+  description: Accept MR
+  enabled: true
+  parameters:
+    Merge commit message:
+      display_name: Merge Commit Message
+      type: string
+      description: Custom merge commit message.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Merge when pipeline succeeds:
+      display_name: Merge When Pipeline Succeeds
+      type: bool
+      description: If true the MR is merged when the pipeline succeeds.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Should remove source branch:
+      display_name: Remove Source Branch
+      type: bool
+      description: If true removes the source branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    Squash:
+      display_name: Squash
+      type: bool
+      description: If true the commits are squashed into a single commit on merge.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    Squash commit message:
+      display_name: Squash Commit Message
+      type: string
+      description: Custom squash commit message.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    merge_request_iid:
+      display_name: Merge Request IID
+      type: integer
+      description: 'The internal ID of the merge request. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests/''
+      + params.merge_request_iid + ''/merge/''}}{{''?Merge commit message='' + params.Merge
+      commit message + ''&Squash commit message='' + params.Squash commit message
+      + ''&Squash='' + params.Squash + ''&Should remove source branch='' + params.Should
+      remove source branch + ''&Merge when pipeline succeeds='' + params.Merge when
+      pipeline succeeds}}'
+  is_connection_optional: ""
+- name: AddMemberToGroup
+  display_name: Add Member To Group
+  description: Add a member to a group.
+  enabled: true
+  parameters:
+    access_level:
+      display_name: Access Level
+      type: dropdown
+      description: A valid access level
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - "0"
+      - "5"
+      - "10"
+      - "20"
+      - "30"
+      - "40"
+      index: 4
+      format: ""
+      is_multi: false
+    areas_of_focus:
+      display_name: Areas Of Focus
+      type: string
+      description: Areas the inviter wants the member to focus upon.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    expires_at:
+      display_name: Expires At
+      type: string
+      description: A date string in the format YEAR-MONTH-DAY
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    id:
+      display_name: Group ID
+      type: string
+      description: 'The ID or path of the group owned by the authenticated user '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    invite_source:
+      display_name: Invite Source
+      type: string
+      description: The source of the invitation that starts the member creation process.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    user_id:
+      display_name: User ID
+      type: string
+      description: The user ID of the new member or multiple IDs separated by commas
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"access_level":"{{int(params.access_level)}}","areas_of_focus":"{{params.areas_of_focus}}","expires_at":"{{params.expires_at}}","invite_source":"{{params.invite_source}}","user_id":"{{params.user_id}}"}'
+    contentType: application/x-www-form-urlencoded
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/groups/'' + params.id + ''/members/''}}'
+  is_connection_optional: ""
+- name: AddMemberToProject
+  display_name: Add Member To Project
+  description: Add a member to a project
+  enabled: true
+  parameters:
+    access_level:
+      display_name: Access Level
+      type: dropdown
+      description: A valid access level
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - "0"
+      - "5"
+      - "10"
+      - "20"
+      - "30"
+      - "40"
+      index: 4
+      format: ""
+      is_multi: false
+    areas_of_focus:
+      display_name: Areas Of Focus
+      type: string
+      description: Areas the inviter wants the member to focus upon.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    expires_at:
+      display_name: Expires At
+      type: string
+      description: A date string in the format YEAR-MONTH-DAY
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    invite_source:
+      display_name: Invite Source
+      type: string
+      description: The source of the invitation that starts the member creation process.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    user_id:
+      display_name: User ID
+      type: string
+      description: The user ID of the new member or multiple IDs separated by commas
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"access_level":"{{int(params.access_level)}}","areas_of_focus":"{{params.areas_of_focus}}","expires_at":"{{params.expires_at}}","invite_source":"{{params.invite_source}}","user_id":"{{params.user_id}}"}'
+    contentType: application/x-www-form-urlencoded
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/members/''}}'
+  is_connection_optional: ""
+- name: CancelPipelineJobs
+  display_name: Cancel Pipeline Jobs
+  description: Cancel a pipeline’s jobs
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pipeline_id:
+      display_name: Pipeline ID
+      type: integer
+      description: The ID of a pipeline
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''
+      + params.pipeline_id + ''/cancel/''}}'
+  is_connection_optional: ""
+- name: CreateBranch
+  display_name: Create Branch
+  description: Create repository branch
+  enabled: true
+  parameters:
+    branch:
+      display_name: Branch Name
+      type: string
+      description: Name of the branch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'ID or path of the project owned by the authenticated user. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    ref:
+      display_name: Ref
+      type: string
+      description: 'Branch name or commit SHA to create branch from. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/repository/branches/''}}{{''?ref=''
+      + params.ref + ''&branch='' + params.branch}}'
+  is_connection_optional: ""
+- name: CreateMergeRequest
+  display_name: Create MR
+  description: Create MR
+  enabled: true
+  parameters:
+    Add labels:
+      display_name: Add Labels
+      type: string
+      description: 'Comma-separated label names to add to a merge request. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    Allow collaboration:
+      display_name: Allow Collaboration
+      type: bool
+      description: 'Allow commits from members who can merge to the target branch. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    Assignee ID:
+      display_name: Assignee ID
+      type: integer
+      description: The ID of the user to assign the merge request to. Set to 0 or
+        provide an empty value to unassign all assignees.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    Assignee IDs:
+      display_name: Assignee IDs
+      type: array
+      description: The ID of the user(s) to assign the MR to. Set to 0 or provide
+        an empty value to unassign all assignees.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    Description:
+      display_name: Description
+      type: string
+      description: Description of MR.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    Discussion locked:
+      display_name: Discussion Locked
+      type: bool
+      description: Flag indicating if the merge request’s discussion is locked. If
+        the discussion is locked only project members can add, edit or resolve comments.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    Labels:
+      display_name: Labels
+      type: string
+      description: Comma-separated label names for a merge request. Set to an empty
+        string to unassign all labels.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    Milestone ID:
+      display_name: Milestone ID
+      type: integer
+      description: The global ID of a milestone to assign the merge request to. Set
+        to 0 or provide an empty value to unassign a milestone.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    Remove labels:
+      display_name: Remove Labels
+      type: string
+      description: Comma-separated label names to remove from a merge request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    Remove source branch:
+      display_name: Remove Source Branch
+      type: bool
+      description: 'Flag indicating if a merge request should remove the source branch
+        when merging. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    Reviewer IDs:
+      display_name: Reviewer IDs
+      type: array
+      description: The ID of the user(s) set as a reviewer to the MR. Set the value
+        to 0 or provide an empty value to unset all reviewers.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    Source branch:
+      display_name: Source Branch
+      type: string
+      description: The source branch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Squash:
+      display_name: Squash
+      type: bool
+      description: 'Squash commits into a single commit when merging. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    State Event:
+      display_name: State Event
+      type: string
+      description: New state (close/reopen).
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    Target branch:
+      display_name: Target Branch
+      type: string
+      description: The target branch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Title:
+      display_name: Title
+      type: string
+      description: 'Title of MR. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests''}}{{''?Target
+      branch='' + params.Target branch + ''&Source branch='' + params.Source branch
+      + ''&Title='' + params.Title + ''&Assignee ID='' + params.Assignee ID + ''&Assignee
+      IDs='' + params.Assignee IDs + ''&Reviewer IDs='' + params.Reviewer IDs + ''&Milestone
+      ID='' + params.Milestone ID + ''&Labels='' + params.Labels + ''&Add labels=''
+      + params.Add labels + ''&Remove labels='' + params.Remove labels + ''&Description=''
+      + params.Description + ''&State Event='' + params.State Event + ''&Remove source
+      branch='' + params.Remove source branch + ''&Squash='' + params.Squash + ''&Discussion
+      locked='' + params.Discussion locked + ''&Allow collaboration='' + params.Allow
+      collaboration}}'
+  is_connection_optional: ""
+- name: CreatePipeline
+  display_name: Create Pipeline
+  description: Create a new pipeline
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    ref:
+      display_name: Ref
+      type: string
+      description: 'Reference to commit '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    variables:
+      display_name: Variables
+      type: array
+      description: variables
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''}}{{''?ref=''
+      + params.ref + ''&variables='' + params.variables}}'
+  is_connection_optional: ""
+- name: CreateProjectTrigger
+  display_name: Create Project Trigger
+  description: Create a project trigger
+  enabled: true
+  parameters:
+    description:
+      display_name: Description
+      type: string
+      description: The trigger name
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: integer
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"description":"{{params.description}}"}'
+    contentType: application/multipart/form-data
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/triggers/''}}'
+  is_connection_optional: ""
+- name: DeleteBranch
+  display_name: Delete Branch
+  description: Delete repository branch
+  enabled: true
+  parameters:
+    branch:
+      display_name: Branch Name
+      type: string
+      description: Name of the branch.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'ID or path of the project owned by the authenticated user. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/repository/branches/''
+      + params.branch + ''/''}}'
+  is_connection_optional: ""
+- name: DeleteMergeRequest
+  display_name: Delete MR
+  description: Delete a merge request
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    merge_request_iid:
+      display_name: Merge Request IID
+      type: integer
+      description: 'The ID of a merge request. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests/''
+      + params.merge_request_iid}}'
+  is_connection_optional: ""
+- name: DeleteMergedBranches
+  display_name: Delete Merged Branches
+  description: Delete merged branches
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project or group owned by the authenticated
+        user. For example: user/my-project'
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/repository/merged_branches''}}'
+  is_connection_optional: ""
+- name: DeletePipeline
+  display_name: Delete Pipeline
+  description: Delete a pipeline
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pipeline_id:
+      display_name: Pipeline ID
+      type: integer
+      description: 'The ID of a pipeline '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''
+      + params.pipeline_id + ''/test_report_summary/''}}'
+  is_connection_optional: ""
+- name: GetTestFullReport
+  display_name: Get Test Full Report
+  description: Get a pipeline’s test report
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pipeline_id:
+      display_name: Pipeline ID
+      type: integer
+      description: 'The ID of a pipeline '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''
+      + params.pipeline_id + ''/test_report''}}'
+  is_connection_optional: ""
+- name: GetTestReportSummary
+  display_name: Get Test Report Summary
+  description: Get a pipeline’s test report summary
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pipeline_id:
+      display_name: Pipeline ID
+      type: integer
+      description: 'The ID of a pipeline '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''
+      + params.pipeline_id + ''/test_report_summary/''}}'
+  is_connection_optional: ""
+- name: GetTriggerDetails
+  display_name: Get Trigger Details
+  description: Get trigger details
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: integer
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    trigger_id:
+      display_name: Trigger ID
+      type: integer
+      description: 'The trigger ID '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/triggers/''
+      + params.trigger_id}}'
+  is_connection_optional: ""
+- name: GetUserInfo
+  display_name: Get User Info
+  description: Get info about user.
+  enabled: true
+  parameters:
+    Username:
+      display_name: Username
+      type: code:json
+      description: Username
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 999
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/users''}}{{''?Username='' + params.Username}}'
+  is_connection_optional: ""
+- name: ListBranches
+  display_name: List Branches
+  description: ListRepositoryBranches
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'ID or path of the project owned by the authenticated user. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/repository/branches/''}}{{''?search
+      ='' + params.search }}'
+  is_connection_optional: ""
+- name: ListCommits
+  display_name: List Commits
+  description: List repository commits
+  enabled: true
+  parameters:
+    all:
+      display_name: All
+      type: string
+      description: Retrieve every commit from the repository
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    first_parent:
+      display_name: First Parent
+      type: string
+      description: 'Follow only the first parent commit upon seeing a merge commit '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    order:
+      display_name: Order
+      type: string
+      description: 'List commits in order. Possible values: default, topo. Defaults
+        to default, the commits are shown in reverse chronological order.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    path:
+      display_name: Path
+      type: string
+      description: The file path
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    ref_name:
+      display_name: Ref Name
+      type: string
+      description: The name of a repository branch, tag or revision range, or if not
+        given the default branch
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    since:
+      display_name: Since
+      type: string
+      description: Only commits after or on this date are returned in ISO 8601 format
+        YYYY-MM-DDTHH:MM:SSZ
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    trailers:
+      display_name: Trailers
+      type: string
+      description: 'Parse and include Git trailers for every commit '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    until:
+      display_name: Until
+      type: string
+      description: "\tOnly commits before or on this date are returned in ISO 8601
+        format YYYY-MM-DDTHH:MM:SSZ"
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    with_stats:
+      display_name: With Stats
+      type: string
+      description: 'Stats about each commit are added to the response '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/repository/commits/''}}{{''?ref_name=''
+      + params.ref_name + ''&since='' + params.since + ''&until='' + params.until
+      + ''&path='' + params.path + ''&all='' + params.all + ''&with_stats='' + params.with_stats
+      + ''&first_parent='' + params.first_parent + ''&order='' + params.order + ''&trailers=''
+      + params.trailers}}'
+  is_connection_optional: ""
+- name: ListGroupMergeRequests
+  display_name: List Group MRs
+  description: List project merge requests.
+  enabled: true
+  parameters:
+    Assignee ID:
+      display_name: Assignee ID
+      type: integer
+      description: Returns merge requests assigned to the given user id. None returns
+        unassigned merge requests. Any returns merge requests with an assignee.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    Author ID:
+      display_name: Author ID
+      type: integer
+      description: Returns merge requests created by the given user id. Mutually exclusive
+        with author_username. Combine with scope=all or scope=assigned_to_me.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    Author Username:
+      display_name: Author Username
+      type: string
+      description: Returns merge requests created by the given username. Mutually
+        exclusive with author_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Created after:
+      display_name: Created After
+      type: string
+      description: Return merge requests created on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Created before:
+      display_name: Created Before
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    Deployed after:
+      display_name: Deployed After
+      type: string
+      description: Return merge requests deployed after the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    Deployed before:
+      display_name: Deployed Before
+      type: string
+      description: Return merge requests deployed before the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    Environment:
+      display_name: Environment
+      type: string
+      description: Returns merge requests deployed to the given environment. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    In:
+      display_name: In
+      type: string
+      description: Modify the scope of the search attribute. title, description, or
+        a string joining them with comma. Default is title,description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    Labels:
+      display_name: Labels
+      type: string
+      description: Return merge requests matching a comma separated list of labels.
+        None lists all merge requests with no labels. Any lists all merge requests
+        with at least one label. No+Label (Deprecated) lists all merge requests with
+        no labels. Predefined names are case-insensitive.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    Milestone:
+      display_name: Milestone
+      type: string
+      description: Return merge requests for a specific milestone. None returns merge
+        requests with no milestone. Any returns merge requests that have an assigned
+        milestone.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    My reaction emoji:
+      display_name: My Reaction Emoji
+      type: string
+      description: Return merge requests reacted by the authenticated user by the
+        given emoji. None returns issues not given a reaction. Any returns issues
+        given at least one reaction.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    Not:
+      display_name: Not
+      type: string
+      description: 'Return merge requests that do not match the parameters supplied.
+        Accepts: labels, milestone, author_id, author_username, assignee_id, assignee_username,
+        reviewer_id, reviewer_username, my_reaction_emoji.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    Order by:
+      display_name: Order By
+      type: string
+      description: 'Return requests ordered by created_at or updated_at fields. Default
+        is created_at. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    Reviewer ID:
+      display_name: Reviewer ID
+      type: integer
+      description: Returns merge requests which have the user as a reviewer with the
+        given user id. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_username.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    Reviewer username:
+      display_name: Reviewer Username
+      type: string
+      description: Returns merge requests which have the user as a reviewer with the
+        given username. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    Scope:
+      display_name: Scope
+      type: string
+      description: 'Return merge requests for the given scope: created_by_me, assigned_to_me
+        or all. Defaults to created_by_me For versions before 11.0, use the now deprecated
+        created-by-me or assigned-to-me scopes instead.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 18
+      format: ""
+      is_multi: false
+    Search:
+      display_name: Search
+      type: string
+      description: Search merge requests against their title and description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 19
+      format: ""
+      is_multi: false
+    Sort:
+      display_name: Sort
+      type: string
+      description: 'Return requests sorted in asc or desc order. Default is desc. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 20
+      format: ""
+      is_multi: false
+    Source branch:
+      display_name: Source Branch
+      type: string
+      description: Return merge requests with the given source branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 21
+      format: ""
+      is_multi: false
+    State:
+      display_name: State
+      type: string
+      description: 'Return all merge requests or just those that are opened, closed,
+        locked, or merged. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 22
+      format: ""
+      is_multi: false
+    Target branch:
+      display_name: Target Branch
+      type: string
+      description: Return merge requests with the given target branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 23
+      format: ""
+      is_multi: false
+    Updated after:
+      display_name: Updated After
+      type: string
+      description: Return merge requests updated on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 24
+      format: ""
+      is_multi: false
+    Updated before:
+      display_name: Updated Before
+      type: string
+      description: Return merge requests updated on or before the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 25
+      format: ""
+      is_multi: false
+    View:
+      display_name: View
+      type: string
+      description: If simple, returns the iid, URL, title, description, and basic
+        state of merge request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 26
+      format: ""
+      is_multi: false
+    WIP:
+      display_name: WIP
+      type: string
+      description: Filter merge requests against their wip status. yes to return only
+        draft merge requests, no to return non-draft merge requests.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 27
+      format: ""
+      is_multi: false
+    With labels details:
+      display_name: With Labels Details
+      type: bool
+      description: 'If true, response returns more details for each label in labels
+        field: :name, :color, :description, :description_html, :text_color. Default
+        is false.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 28
+      format: ""
+      is_multi: false
+    id:
+      display_name: Group ID
+      type: string
+      description: 'The ID or path of the group owned by the authenticated user. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/groups/'' + params.id + ''/merge_requests''}}{{''?State=''
+      + params.State + ''&Order by='' + params.Order by + ''&Sort='' + params.Sort
+      + ''&Milestone='' + params.Milestone + ''&View='' + params.View + ''&Labels=''
+      + params.Labels + ''&With labels details='' + params.With labels details + ''&Created
+      after='' + params.Created after + ''&Created before='' + params.Created before
+      + ''&Updated after='' + params.Updated after + ''&Updated before='' + params.Updated
+      before + ''&Scope='' + params.Scope + ''&Author ID='' + params.Author ID + ''&Author
+      Username='' + params.Author Username + ''&Assignee ID='' + params.Assignee ID
+      + ''&Reviewer ID='' + params.Reviewer ID + ''&Reviewer username='' + params.Reviewer
+      username + ''&My reaction emoji='' + params.My reaction emoji + ''&Source branch=''
+      + params.Source branch + ''&Target branch='' + params.Target branch + ''&Search=''
+      + params.Search + ''&In='' + params.In + ''&WIP='' + params.WIP + ''&Not=''
+      + params.Not + ''&Environment='' + params.Environment + ''&Deployed before=''
+      + params.Deployed before + ''&Deployed after='' + params.Deployed after}}'
+  is_connection_optional: ""
+- name: ListGroupMembers
+  display_name: List Group Members
+  description: ListGroupMembers
+  enabled: true
+  parameters:
+    id:
+      display_name: Group ID
+      type: string
+      description: 'The ID or path of the group owned by the authenticated user '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    query:
+      display_name: Query
+      type: string
+      description: 'A query string to search for members '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    user_ids:
+      display_name: User Ids
+      type: array
+      description: 'Filter the results on the given user IDs '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/groups/'' + params.id + ''/members/''}}{{''?query=''
+      + params.query + ''&user_ids='' + params.user_ids}}'
+  is_connection_optional: ""
+- name: ListMergeRequestPipelines
+  display_name: List MRPipelines
+  description: List MR pipelines
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    merge_request_iid:
+      display_name: Merge Request IID
+      type: integer
+      description: 'The internal ID of the merge request. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests/''
+      + params.merge_request_iid + ''/pipelines''}}'
+  is_connection_optional: ""
+- name: ListMergeRequests
+  display_name: List MRs
+  description: List merge requests
+  enabled: true
+  parameters:
+    Assignee ID:
+      display_name: Assignee ID
+      type: integer
+      description: Returns merge requests assigned to the given user id. None returns
+        unassigned merge requests. Any returns merge requests with an assignee.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    Author ID:
+      display_name: Author ID
+      type: integer
+      description: Returns merge requests created by the given user id. Mutually exclusive
+        with author_username. Combine with scope=all or scope=assigned_to_me.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    Author Username:
+      display_name: Author Username
+      type: string
+      description: Returns merge requests created by the given username. Mutually
+        exclusive with author_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Created after:
+      display_name: Created After
+      type: string
+      description: Return merge requests created on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    Created before:
+      display_name: Created Before
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    Deployed after:
+      display_name: Deployed After
+      type: string
+      description: Return merge requests deployed after the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    Deployed before:
+      display_name: Deployed Before
+      type: string
+      description: Return merge requests deployed before the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    Environment:
+      display_name: Environment
+      type: string
+      description: Returns merge requests deployed to the given environment. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    In:
+      display_name: In
+      type: string
+      description: Modify the scope of the search attribute. title, description, or
+        a string joining them with comma. Default is title,description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    Labels:
+      display_name: Labels
+      type: string
+      description: Return merge requests matching a comma separated list of labels.
+        None lists all merge requests with no labels. Any lists all merge requests
+        with at least one label. No+Label (Deprecated) lists all merge requests with
+        no labels. Predefined names are case-insensitive.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    Milestone:
+      display_name: Milestone
+      type: string
+      description: Return merge requests for a specific milestone. None returns merge
+        requests with no milestone. Any returns merge requests that have an assigned
+        milestone.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    My reaction emoji:
+      display_name: My Reaction Emoji
+      type: string
+      description: Return merge requests reacted by the authenticated user by the
+        given emoji. None returns issues not given a reaction. Any returns issues
+        given at least one reaction.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    Not:
+      display_name: Not
+      type: string
+      description: 'Return merge requests that do not match the parameters supplied.
+        Accepts: labels, milestone, author_id, author_username, assignee_id, assignee_username,
+        reviewer_id, reviewer_username, my_reaction_emoji.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Order by:
+      display_name: Order By
+      type: string
+      description: 'Return requests ordered by created_at or updated_at fields. Default
+        is created_at. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    Reviewer ID:
+      display_name: Reviewer ID
+      type: integer
+      description: Returns merge requests which have the user as a reviewer with the
+        given user id. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_username.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 18
+      format: ""
+      is_multi: false
+    Reviewer username:
+      display_name: Reviewer Username
+      type: string
+      description: Returns merge requests which have the user as a reviewer with the
+        given username. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 19
+      format: ""
+      is_multi: false
+    Scope:
+      display_name: Scope
+      type: string
+      description: 'Return merge requests for the given scope: created_by_me, assigned_to_me
+        or all. Defaults to created_by_me For versions before 11.0, use the now deprecated
+        created-by-me or assigned-to-me scopes instead.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 20
+      format: ""
+      is_multi: false
+    Search:
+      display_name: Search
+      type: string
+      description: Search merge requests against their title and description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    Sort:
+      display_name: Sort
+      type: string
+      description: 'Return requests sorted in asc or desc order. Default is desc. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    Source branch:
+      display_name: Source Branch
+      type: string
+      description: Return merge requests with the given source branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 21
+      format: ""
+      is_multi: false
+    State:
+      display_name: State
+      type: string
+      description: 'Return all merge requests or just those that are opened, closed,
+        locked, or merged. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    Target branch:
+      display_name: Target Branch
+      type: string
+      description: Return merge requests with the given target branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 22
+      format: ""
+      is_multi: false
+    Updated after:
+      display_name: Updated After
+      type: string
+      description: Return merge requests updated on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 23
+      format: ""
+      is_multi: false
+    Updated before:
+      display_name: Updated Before
+      type: string
+      description: Return merge requests updated on or before the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 24
+      format: ""
+      is_multi: false
+    View:
+      display_name: View
+      type: string
+      description: If simple, returns the iid, URL, title, description, and basic
+        state of merge request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 25
+      format: ""
+      is_multi: false
+    WIP:
+      display_name: WIP
+      type: string
+      description: Filter merge requests against their wip status. yes to return only
+        draft merge requests, no to return non-draft merge requests.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 26
+      format: ""
+      is_multi: false
+    With labels details:
+      display_name: With Labels Details
+      type: bool
+      description: 'If true, response returns more details for each label in labels
+        field: :name, :color, :description, :description_html, :text_color. Default
+        is false.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 27
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/merge_requests''}}{{''?State='' + params.State
+      + ''&Order by='' + params.Order by + ''&Sort='' + params.Sort + ''&Milestone=''
+      + params.Milestone + ''&View='' + params.View + ''&Labels='' + params.Labels
+      + ''&With labels details='' + params.With labels details + ''&Created after=''
+      + params.Created after + ''&Created before='' + params.Created before + ''&Updated
+      after='' + params.Updated after + ''&Updated before='' + params.Updated before
+      + ''&Scope='' + params.Scope + ''&Author ID='' + params.Author ID + ''&Author
+      Username='' + params.Author Username + ''&Assignee ID='' + params.Assignee ID
+      + ''&Reviewer ID='' + params.Reviewer ID + ''&Reviewer username='' + params.Reviewer
+      username + ''&My reaction emoji='' + params.My reaction emoji + ''&Source branch=''
+      + params.Source branch + ''&Target branch='' + params.Target branch + ''&Search=''
+      + params.Search + ''&In='' + params.In + ''&WIP='' + params.WIP + ''&Not=''
+      + params.Not + ''&Environment='' + params.Environment + ''&Deployed before=''
+      + params.Deployed before + ''&Deployed after='' + params.Deployed after}}'
+  is_connection_optional: ""
+- name: ListPipelines
+  display_name: List Pipelines
+  description: List project pipelines
+  enabled: true
+  parameters:
+    id:
+      display_name: ID
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    order_by:
+      display_name: Order By
+      type: string
+      description: 'Order pipelines by id, status, ref, updated_at or user_id (default:
+        id) '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    ref:
+      display_name: Ref
+      type: string
+      description: 'The ref of pipelines '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    scope:
+      display_name: Scope
+      type: string
+      description: 'The scope of pipelines, one of: running, pending, finished, branches,
+        tags'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    sha:
+      display_name: Sha
+      type: string
+      description: 'The SHA of pipelines '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: string
+      description: 'Sort pipelines in asc or desc order (default: desc)'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    status:
+      display_name: Status
+      type: string
+      description: 'The status of pipelines, one of: created, waiting_for_resource,
+        preparing, pending, running, success, failed, canceled, skipped, manual, scheduled'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    updated_after:
+      display_name: Updated After
+      type: string
+      description: Return pipelines updated after the specified date. Expected in
+        ISO 8601 format (2019-03-15T08:00:00Z).
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    updated_before:
+      display_name: Updated Before
+      type: string
+      description: Return pipelines updated before the specified date. Expected in
+        ISO 8601 format (2019-03-15T08:00:00Z).
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    username:
+      display_name: Username
+      type: string
+      description: 'The username of the user who triggered pipelines '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    yaml_errors:
+      display_name: Yaml Errors
+      type: bool
+      description: 'Returns pipelines with invalid configurations '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''}}{{''?scope=''
+      + params.scope + ''&status='' + params.status + ''&ref='' + params.ref + ''&sha=''
+      + params.sha + ''&yaml_errors='' + params.yaml_errors + ''&username='' + params.username
+      + ''&updated_after='' + params.updated_after + ''&updated_before='' + params.updated_before
+      + ''&order_by='' + params.order_by + ''&sort='' + params.sort}}'
+  is_connection_optional: ""
+- name: ListProjectMRs
+  display_name: List Project MRs
+  description: List project merge requests
+  enabled: true
+  parameters:
+    Assignee ID:
+      display_name: Assignee ID
+      type: integer
+      description: Returns merge requests assigned to the given user id. None returns
+        unassigned merge requests. Any returns merge requests with an assignee.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    Author ID:
+      display_name: Author ID
+      type: integer
+      description: Returns merge requests created by the given user id. Mutually exclusive
+        with author_username. Combine with scope=all or scope=assigned_to_me.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    Author Username:
+      display_name: Author Username
+      type: string
+      description: Returns merge requests created by the given username. Mutually
+        exclusive with author_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    Created after:
+      display_name: Created After
+      type: string
+      description: Return merge requests created on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    Created before:
+      display_name: Created Before
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    Deployed after:
+      display_name: Deployed After
+      type: string
+      description: Return merge requests deployed after the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    Deployed before:
+      display_name: Deployed Before
+      type: string
+      description: Return merge requests deployed before the given date/time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    Environment:
+      display_name: Environment
+      type: string
+      description: Returns merge requests deployed to the given environment. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    In:
+      display_name: In
+      type: string
+      description: Modify the scope of the search attribute. title, description, or
+        a string joining them with comma. Default is title,description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 19
+      format: ""
+      is_multi: false
+    Labels:
+      display_name: Labels
+      type: string
+      description: Return merge requests matching a comma separated list of labels.
+        None lists all merge requests with no labels. Any lists all merge requests
+        with at least one label. No+Label (Deprecated) lists all merge requests with
+        no labels. Predefined names are case-insensitive.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 20
+      format: ""
+      is_multi: false
+    Milestone:
+      display_name: Milestone
+      type: string
+      description: Return merge requests for a specific milestone. None returns merge
+        requests with no milestone. Any returns merge requests that have an assigned
+        milestone.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 21
+      format: ""
+      is_multi: false
+    My reaction emoji:
+      display_name: My Reaction Emoji
+      type: string
+      description: Return merge requests reacted by the authenticated user by the
+        given emoji. None returns issues not given a reaction. Any returns issues
+        given at least one reaction.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 22
+      format: ""
+      is_multi: false
+    Not:
+      display_name: Not
+      type: string
+      description: 'Return merge requests that do not match the parameters supplied.
+        Accepts: labels, milestone, author_id, author_username, assignee_id, assignee_username,
+        reviewer_id, reviewer_username, my_reaction_emoji.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 23
+      format: ""
+      is_multi: false
+    Order by:
+      display_name: Order By
+      type: string
+      description: 'Return requests ordered by created_at or updated_at fields. Default
+        is created_at. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Reviewer ID:
+      display_name: Reviewer ID
+      type: integer
+      description: Returns merge requests which have the user as a reviewer with the
+        given user id. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_username.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    Reviewer username:
+      display_name: Reviewer Username
+      type: string
+      description: Returns merge requests which have the user as a reviewer with the
+        given username. None returns merge requests with no reviewers. Any returns
+        merge requests with any reviewer. Mutually exclusive with reviewer_id.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    Scope:
+      display_name: Scope
+      type: string
+      description: 'Return merge requests for the given scope: created_by_me, assigned_to_me
+        or all. Defaults to created_by_me For versions before 11.0, use the now deprecated
+        created-by-me or assigned-to-me scopes instead.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 24
+      format: ""
+      is_multi: false
+    Search:
+      display_name: Search
+      type: string
+      description: Search merge requests against their title and description.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    Sort:
+      display_name: Sort
+      type: string
+      description: 'Return requests sorted in asc or desc order. Default is desc. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    Source branch:
+      display_name: Source Branch
+      type: string
+      description: Return merge requests with the given source branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 25
+      format: ""
+      is_multi: false
+    State:
+      display_name: State
+      type: string
+      description: 'Return all merge requests or just those that are opened, closed,
+        locked, or merged. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Target branch:
+      display_name: Target Branch
+      type: string
+      description: Return merge requests with the given target branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 26
+      format: ""
+      is_multi: false
+    Updated after:
+      display_name: Updated After
+      type: string
+      description: Return merge requests updated on or after the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    Updated before:
+      display_name: Updated Before
+      type: string
+      description: Return merge requests updated on or before the given time. Expected
+        in ISO 8601 format (2019-03-15T08:00:00Z)
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 18
+      format: ""
+      is_multi: false
+    View:
+      display_name: View
+      type: string
+      description: If simple, returns the iid, URL, title, description, and basic
+        state of merge request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 27
+      format: ""
+      is_multi: false
+    WIP:
+      display_name: WIP
+      type: string
+      description: Filter merge requests against their wip status. yes to return only
+        draft merge requests, no to return non-draft merge requests.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 28
+      format: ""
+      is_multi: false
+    With labels details:
+      display_name: With Labels Details
+      type: bool
+      description: 'If true, response returns more details for each label in labels
+        field: :name, :color, :description, :description_html, :text_color. Default
+        is false.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 29
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    iids[]:
+      display_name: IIDs[]
+      type: array
+      description: 'Return the request having the given iid. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests''}}{{''?iids[]=''
+      + params.iids[] + ''&State='' + params.State + ''&Order by='' + params.Order
+      by + ''&Sort='' + params.Sort + ''&Milestone='' + params.Milestone + ''&View=''
+      + params.View + ''&Labels='' + params.Labels + ''&With labels details='' + params.With
+      labels details + ''&Created after='' + params.Created after + ''&Created before=''
+      + params.Created before + ''&Updated after='' + params.Updated after + ''&Updated
+      before='' + params.Updated before + ''&Scope='' + params.Scope + ''&Author ID=''
+      + params.Author ID + ''&Author Username='' + params.Author Username + ''&Assignee
+      ID='' + params.Assignee ID + ''&Reviewer ID='' + params.Reviewer ID + ''&Reviewer
+      username='' + params.Reviewer username + ''&My reaction emoji='' + params.My
+      reaction emoji + ''&Source branch='' + params.Source branch + ''&Target branch=''
+      + params.Target branch + ''&Search='' + params.Search + ''&In='' + params.In
+      + ''&WIP='' + params.WIP + ''&Not='' + params.Not + ''&Environment='' + params.Environment
+      + ''&Deployed before='' + params.Deployed before + ''&Deployed after='' + params.Deployed
+      after}}'
+  is_connection_optional: ""
+- name: ListProjectMembers
+  display_name: List Project Members
+  description: ListProjectMembers
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    query:
+      display_name: Query
+      type: string
+      description: 'A query string to search for members '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    user_ids:
+      display_name: User Ids
+      type: array
+      description: 'Filter the results on the given user IDs '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/members/''}}{{''?query=''
+      + params.query + ''&user_ids='' + params.user_ids}}'
+  is_connection_optional: ""
+- name: ListProjectTriggers
+  display_name: List Project Triggers
+  description: List project triggers
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: integer
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/triggers/''}}'
+  is_connection_optional: ""
+- name: RebaseMergeRequest
+  display_name: Rebase MR
+  description: Rebase a merge request
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    merge_request_iid:
+      display_name: Merge Request IID
+      type: integer
+      description: 'The internal ID of the merge request. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    skip_ci:
+      display_name: Skip CI
+      type: bool
+      description: 'Set to true to skip creating a CI pipeline. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests/''
+      + params.merge_request_iid + ''/rebase/''}}{{''?skip_ci='' + params.skip_ci}}'
+  is_connection_optional: ""
+- name: RemoveMemberFromGroup
+  display_name: Remove Member From Group
+  description: Remove a member from a group
+  enabled: true
+  parameters:
+    id:
+      display_name: Group ID
+      type: string
+      description: 'The ID or path of the group owned by the authenticated user '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    user_id:
+      display_name: User ID
+      type: integer
+      description: 'The user ID of the member '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/groups/'' + params.id + ''/members/''
+      + params.user_id}}'
+  is_connection_optional: ""
+- name: RemoveMemberFromProject
+  display_name: Remove Member From Project
+  description: Remove a member from a project
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    user_id:
+      display_name: User ID
+      type: integer
+      description: 'The user ID of the member '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/members/''
+      + params.user_id}}'
+  is_connection_optional: ""
+- name: RemoveTrigger
+  display_name: Remove Trigger
+  description: Remove a project trigger
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: integer
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    trigger_id:
+      display_name: Trigger ID
+      type: integer
+      description: 'The trigger ID '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/triggers/''
+      + params.trigger_id}}'
+  is_connection_optional: ""
+- name: RetryPipelineJobs
+  display_name: Retry Pipeline Jobs
+  description: Retry jobs in a pipeline
+  enabled: true
+  parameters:
+    id:
+      display_name: Project's Slug
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pipeline_id:
+      display_name: Pipeline ID
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/pipelines/''
+      + params.pipeline_id + ''/retry/''}}'
+  is_connection_optional: ""
+- name: UpdateMergeRequest
+  display_name: Update MR
+  description: Update MR
+  enabled: true
+  parameters:
+    Add labels:
+      display_name: Add Labels
+      type: string
+      description: 'Comma-separated label names to add to a merge request. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    Allow collaboration:
+      display_name: Allow Collaboration
+      type: bool
+      description: 'Allow commits from members who can merge to the target branch. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    Assignee ID:
+      display_name: Assignee ID
+      type: integer
+      description: The ID of the user to assign the merge request to. Set to 0 or
+        provide an empty value to unassign all assignees.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    Assignee IDs:
+      display_name: Assignee IDs
+      type: array
+      description: The ID of the user(s) to assign the MR to. Set to 0 or provide
+        an empty value to unassign all assignees.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    Description:
+      display_name: Description
+      type: string
+      description: 'Description of MR. Limited to 1,048,576 characters. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    Discussion locked:
+      display_name: Discussion Locked
+      type: bool
+      description: Flag indicating if the merge request’s discussion is locked. If
+        the discussion is locked only project members can add, edit or resolve comments.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    Labels:
+      display_name: Labels
+      type: string
+      description: Comma-separated label names for a merge request. Set to an empty
+        string to unassign all labels.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    Milestone ID:
+      display_name: Milestone ID
+      type: integer
+      description: The global ID of a milestone to assign the merge request to. Set
+        to 0 or provide an empty value to unassign a milestone.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    Remove labels:
+      display_name: Remove Labels
+      type: string
+      description: Comma-separated label names to remove from a merge request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    Remove source branch:
+      display_name: Remove Source Branch
+      type: bool
+      description: 'Flag indicating if a merge request should remove the source branch
+        when merging. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    Reviewer IDs:
+      display_name: Reviewer IDs
+      type: array
+      description: The ID of the user(s) set as a reviewer to the MR. Set the value
+        to 0 or provide an empty value to unset all reviewers.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    Squash:
+      display_name: Squash
+      type: bool
+      description: 'Squash commits into a single commit when merging. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    State Event:
+      display_name: State Event
+      type: string
+      description: New state (close/reopen).
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    Target branch:
+      display_name: Target Branch
+      type: string
+      description: The target branch.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    Title:
+      display_name: Title
+      type: string
+      description: 'Title of MR. '
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    id:
+      display_name: Project's Slug
+      type: string
+      description: 'The ID or path of the project owned by the authenticated user.
+        For example: user/my-project '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    merge_request_iid:
+      display_name: Merge Request IID
+      type: integer
+      description: 'The ID of a merge request. '
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    url: '{{(exists(connection.gitlab.REQUEST_URL) ? connection.gitlab.REQUEST_URL
+      : ''https://gitlab.com/api/v4''), + ''/projects/'' + params.id + ''/merge_requests/''
+      + params.merge_request_iid}}{{''?Target branch='' + params.Target branch + ''&Title=''
+      + params.Title + ''&Assignee ID='' + params.Assignee ID + ''&Assignee IDs=''
+      + params.Assignee IDs + ''&Reviewer IDs='' + params.Reviewer IDs + ''&Milestone
+      ID='' + params.Milestone ID + ''&Labels='' + params.Labels + ''&Add labels=''
+      + params.Add labels + ''&Remove labels='' + params.Remove labels + ''&Description=''
+      + params.Description + ''&State Event='' + params.State Event + ''&Remove source
+      branch='' + params.Remove source branch + ''&Squash='' + params.Squash + ''&Discussion
+      locked='' + params.Discussion locked + ''&Allow collaboration='' + params.Allow
+      collaboration}}'
+  is_connection_optional: ""

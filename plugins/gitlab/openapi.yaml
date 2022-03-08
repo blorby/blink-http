@@ -1,0 +1,1767 @@
+openapi: 3.0.0
+info:
+  title: GitLab API
+  version: v4
+  description: |
+    An OpenAPI definition for the GitLab REST API.
+  termsOfService: 'https://about.gitlab.com/terms/'
+  license:
+    name: CC BY-SA 4.0
+    url: 'https://gitlab.com/gitlab-org/gitlab/-/blob/master/LICENSE'
+servers:
+  -
+    url: 'https://gitlab.com/api/v4'
+paths:
+  '/projects/{id}/repository/commits/':
+    get:
+      tags:
+        - Branchs
+      parameters:
+        -
+          name: ref_name
+          description: >-
+            The name of a repository branch, tag or revision range, or if not given the default
+            branch
+          schema:
+            type: string
+          in: query
+        -
+          name: since
+          description: >-
+            Only commits after or on this date are returned in ISO 8601 format
+            YYYY-MM-DDTHH:MM:SSZ
+          schema:
+            type: string
+          in: query
+        -
+          name: until
+          description: "\tOnly commits before or on this date are returned in ISO 8601 format YYYY-MM-DDTHH:MM:SSZ"
+          schema:
+            type: string
+          in: query
+        -
+          name: path
+          description: The file path
+          schema:
+            type: string
+          in: query
+        -
+          name: all
+          description: Retrieve every commit from the repository
+          schema:
+            type: string
+          in: query
+        -
+          name: with_stats
+          description: 'Stats about each commit are added to the response '
+          schema:
+            type: string
+          in: query
+        -
+          name: first_parent
+          description: 'Follow only the first parent commit upon seeing a merge commit '
+          schema:
+            type: string
+          in: query
+        -
+          name: order
+          description: >-
+            List commits in order. Possible values: default, topo. Defaults to default, the
+            commits are shown in reverse chronological order.
+          schema:
+            type: string
+          in: query
+        -
+          name: trailers
+          description: 'Parse and include Git trailers for every commit '
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListCommits
+      summary: List repository commits
+      description: Get a list of repository commits in a project.
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/repository/branches/{branch}/':
+    delete:
+      tags:
+        - Branchs
+      responses:
+        '200':
+          description: OK
+      operationId: DeleteBranch
+      summary: Delete repository branch
+      description: 'Delete a branch from the repository. '
+    parameters:
+      -
+        name: id
+        description: 'ID or path of the project owned by the authenticated user. '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: branch
+        description: 'Name of the branch.'
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/repository/merged_branches':
+    delete:
+      tags:
+        - Branchs
+      responses:
+        '200':
+          description: OK
+      operationId: DeleteMergedBranches
+      summary: Delete merged branches
+      description: Deletes all branches that are merged into the project’s default branch.
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project or group owned by the authenticated user. For example: user/my-project'
+        schema:
+          type: string
+        in: path
+        required: true
+  '/groups/{id}/members/{user_id}':
+    delete:
+      tags:
+        - Members
+      responses:
+        '200':
+          description: OK
+      operationId: RemoveMemberFromGroup
+      summary: Remove a member from a group
+      description: 'Removes a user from a group. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the group owned by the authenticated user '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: user_id
+        description: 'The user ID of the member '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/members/{user_id}':
+    delete:
+      tags:
+        - Members
+      responses:
+        '200':
+          description: OK
+      operationId: RemoveMemberFromProject
+      summary: Remove a member from a project
+      description: 'Removes a user from a project. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: user_id
+        description: 'The user ID of the member '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/members/':
+    get:
+      tags:
+        - Members
+      parameters:
+        -
+          name: query
+          description: 'A query string to search for members '
+          schema:
+            type: string
+          in: query
+        -
+          name: user_ids
+          description: 'Filter the results on the given user IDs '
+          schema:
+            type: array
+            items: {}
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListProjectMembers
+      summary: ListProjectMembers
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - access_level
+                - user_id
+              type: object
+              properties:
+                access_level:
+                  description: A valid access level
+                  enum:
+                    - '0'
+                    - '5'
+                    - '10'
+                    - '20'
+                    - '30'
+                    - '40'
+                  type: integer
+                user_id:
+                  description: The user ID of the new member or multiple IDs separated by commas
+                  type: string
+                expires_at:
+                  description: A date string in the format YEAR-MONTH-DAY
+                  type: string
+                invite_source:
+                  description: The source of the invitation that starts the member creation process.
+                  type: string
+                areas_of_focus:
+                  description: Areas the inviter wants the member to focus upon.
+                  type: string
+      tags:
+        - Members
+      responses:
+        '200':
+          description: OK
+      operationId: AddMemberToProject
+      summary: Add a member to a project
+      description: 'Adds a member to a project. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/groups/{id}/members/':
+    get:
+      tags:
+        - Members
+      parameters:
+        -
+          name: query
+          description: 'A query string to search for members '
+          schema:
+            type: string
+          in: query
+        -
+          name: user_ids
+          description: 'Filter the results on the given user IDs '
+          schema:
+            type: array
+            items: {}
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListGroupMembers
+      summary: ListGroupMembers
+    post:
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - access_level
+                - user_id
+              type: object
+              properties:
+                access_level:
+                  description: A valid access level
+                  enum:
+                    - '0'
+                    - '5'
+                    - '10'
+                    - '20'
+                    - '30'
+                    - '40'
+                  type: integer
+                user_id:
+                  description: The user ID of the new member or multiple IDs separated by commas
+                  type: string
+                expires_at:
+                  description: A date string in the format YEAR-MONTH-DAY
+                  type: string
+                invite_source:
+                  description: The source of the invitation that starts the member creation process.
+                  type: string
+                areas_of_focus:
+                  description: Areas the inviter wants the member to focus upon.
+                  type: string
+      tags:
+        - Members
+      responses:
+        '200':
+          description: ok
+      operationId: AddMemberToGroup
+      summary: Add a member to a group.
+      description: 'Adds a member to a group. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the group owned by the authenticated user '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/triggers/{trigger_id}':
+    get:
+      tags:
+        - Pipeline_triggers
+      responses:
+        '200':
+          description: OK
+      operationId: GetTriggerDetails
+      summary: Get trigger details
+      description: Get details of project’s build trigger.
+    delete:
+      tags:
+        - Pipeline_triggers
+      responses:
+        '200':
+          description: OK
+      operationId: RemoveTrigger
+      summary: Remove a project trigger
+      description: 'Remove a project’s build trigger. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: integer
+        in: path
+        required: true
+      -
+        name: trigger_id
+        description: 'The trigger ID '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/triggers/':
+    get:
+      tags:
+        - Pipeline_triggers
+      responses:
+        '200':
+          description: OK
+      operationId: ListProjectTriggers
+      summary: List project triggers
+      description: 'Get a list of project’s build triggers. '
+    post:
+      requestBody:
+        content:
+          application/multipart/form-data:
+            schema:
+              required:
+                - description
+              type: object
+              properties:
+                description:
+                  description: The trigger name
+                  type: string
+      tags:
+        - Pipeline_triggers
+      responses:
+        '200':
+          description: OK
+      operationId: CreateProjectTrigger
+      summary: Create a project trigger
+      description: 'Create a trigger for a project. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/pipelines/{pipeline_id}/test_report':
+    get:
+      tags:
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: GetTestFullReport
+      summary: Get a pipeline’s test report
+      description: Get a pipeline’s test report
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: pipeline_id
+        description: 'The ID of a pipeline '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/pipelines/':
+    get:
+      tags:
+        - pipelines
+      parameters:
+        -
+          name: scope
+          description: 'The scope of pipelines, one of: running, pending, finished, branches, tags'
+          schema:
+            type: string
+          in: query
+        -
+          name: status
+          description: >-
+            The status of pipelines, one of: created, waiting_for_resource, preparing, pending,
+            running, success, failed, canceled, skipped, manual, scheduled
+          schema:
+            type: string
+          in: query
+        -
+          name: ref
+          description: 'The ref of pipelines '
+          schema:
+            type: string
+          in: query
+        -
+          name: sha
+          description: 'The SHA of pipelines '
+          schema:
+            type: string
+          in: query
+        -
+          name: yaml_errors
+          description: 'Returns pipelines with invalid configurations '
+          schema:
+            type: boolean
+          in: query
+        -
+          name: username
+          description: 'The username of the user who triggered pipelines '
+          schema:
+            type: string
+          in: query
+        -
+          name: updated_after
+          description: >-
+            Return pipelines updated after the specified date. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z).
+          schema:
+            type: string
+          in: query
+        -
+          name: updated_before
+          description: >-
+            Return pipelines updated before the specified date. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z).
+          schema:
+            type: string
+          in: query
+        -
+          name: order_by
+          description: 'Order pipelines by id, status, ref, updated_at or user_id (default: id) '
+          schema:
+            type: string
+          in: query
+        -
+          name: sort
+          description: 'Sort pipelines in asc or desc order (default: desc)'
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListPipelines
+      summary: List project pipelines
+      description: List project pipelines
+    post:
+      tags:
+        - pipelines
+      parameters:
+        -
+          name: ref
+          description: 'Reference to commit '
+          schema:
+            type: string
+          in: query
+        -
+          name: variables
+          description: variables
+          schema:
+            type: array
+            items:
+              type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: CreatePipeline
+      summary: Create a new pipeline
+      description: Create a new pipeline
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/repository/branches/':
+    get:
+      tags:
+        - Branchs
+      parameters:
+        -
+          name: 'search '
+          description: >-
+            Return list of branches containing the search string. You can use ^term and term$ to
+            find branches that begin and end with term respectively.
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListBranches
+      summary: ListRepositoryBranches
+      description: 'Get a list of repository branches from a project, sorted by name alphabetically. '
+    post:
+      tags:
+        - Branchs
+      parameters:
+        -
+          name: ref
+          description: 'Branch name or commit SHA to create branch from. '
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          name: branch
+          description: 'Name of the branch.'
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          description: OK
+      operationId: CreateBranch
+      summary: Create repository branch
+      description: 'Create a new branch in the repository. '
+    parameters:
+      -
+        name: id
+        description: 'ID or path of the project owned by the authenticated user. '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/pipelines/{pipeline_id}/retry/':
+    post:
+      tags:
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: RetryPipelineJobs
+      summary: Retry jobs in a pipeline
+      description: Retry jobs in a pipeline
+    parameters:
+      -
+        name: id
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: pipeline_id
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/pipelines/{pipeline_id}/cancel/':
+    post:
+      tags:
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: CancelPipelineJobs
+      summary: Cancel a pipeline’s jobs
+      description: Cancel a pipeline’s jobs
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: pipeline_id
+        description: The ID of a pipeline
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/pipelines/{pipeline_id}/test_report_summary/':
+    get:
+      tags:
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: GetTestReportSummary
+      summary: Get a pipeline’s test report summary
+      description: Get a pipeline’s test report summary
+    delete:
+      tags:
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: DeletePipeline
+      summary: Delete a pipeline
+      description: Delete a pipeline
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: pipeline_id
+        description: 'The ID of a pipeline '
+        schema:
+          type: integer
+        in: path
+        required: true
+  /merge_requests:
+    get:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: State
+          description: 'Return all merge requests or just those that are opened, closed, locked, or merged. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Order by
+          description: 'Return requests ordered by created_at or updated_at fields. Default is created_at. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Sort
+          description: 'Return requests sorted in asc or desc order. Default is desc. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Milestone
+          description: >-
+            Return merge requests for a specific milestone. None returns merge requests with no
+            milestone. Any returns merge requests that have an assigned milestone.
+          schema:
+            type: string
+          in: query
+        -
+          name: View
+          description: 'If simple, returns the iid, URL, title, description, and basic state of merge request.'
+          schema:
+            type: string
+          in: query
+        -
+          name: Labels
+          description: >-
+            Return merge requests matching a comma separated list of labels. None lists all merge
+            requests with no labels. Any lists all merge requests with at least one label.
+            No+Label (Deprecated) lists all merge requests with no labels. Predefined names are
+            case-insensitive.
+          schema:
+            type: string
+          in: query
+        -
+          name: With labels details
+          description: >-
+            If true, response returns more details for each label in labels field: :name, :color,
+            :description, :description_html, :text_color. Default is false.
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Created after
+          description: >-
+            Return merge requests created on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Created before
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated after
+          description: >-
+            Return merge requests updated on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated before
+          description: >-
+            Return merge requests updated on or before the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Scope
+          description: >-
+            Return merge requests for the given scope: created_by_me, assigned_to_me or all.
+            Defaults to created_by_me For versions before 11.0, use the now deprecated
+            created-by-me or assigned-to-me scopes instead.
+          schema:
+            type: string
+          in: query
+        -
+          name: Author ID
+          description: >-
+            Returns merge requests created by the given user id. Mutually exclusive with
+            author_username. Combine with scope=all or scope=assigned_to_me.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Author Username
+          description: >-
+            Returns merge requests created by the given username. Mutually exclusive with
+            author_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: Assignee ID
+          description: >-
+            Returns merge requests assigned to the given user id. None returns unassigned merge
+            requests. Any returns merge requests with an assignee.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer ID
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given user id. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_username.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer username
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given username. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: My reaction emoji
+          description: >-
+            Return merge requests reacted by the authenticated user by the given emoji. None
+            returns issues not given a reaction. Any returns issues given at least one reaction.
+          schema:
+            type: string
+          in: query
+        -
+          name: Source branch
+          description: Return merge requests with the given source branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Target branch
+          description: Return merge requests with the given target branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Search
+          description: Search merge requests against their title and description.
+          schema:
+            type: string
+          in: query
+        -
+          name: In
+          description: >-
+            Modify the scope of the search attribute. title, description, or a string joining them
+            with comma. Default is title,description.
+          schema:
+            type: string
+          in: query
+        -
+          name: WIP
+          description: >-
+            Filter merge requests against their wip status. yes to return only draft merge
+            requests, no to return non-draft merge requests.
+          schema:
+            type: string
+          in: query
+        -
+          name: Not
+          description: >-
+            Return merge requests that do not match the parameters supplied. Accepts: labels,
+            milestone, author_id, author_username, assignee_id, assignee_username, reviewer_id,
+            reviewer_username, my_reaction_emoji.
+          schema:
+            type: string
+          in: query
+        -
+          name: Environment
+          description: >-
+            Returns merge requests deployed to the given environment. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed before
+          description: >-
+            Return merge requests deployed before the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed after
+          description: >-
+            Return merge requests deployed after the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListMRs
+      summary: List merge requests
+      description: List merge requests
+  '/groups/{id}/merge_requests':
+    get:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: State
+          description: 'Return all merge requests or just those that are opened, closed, locked, or merged. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Order by
+          description: 'Return requests ordered by created_at or updated_at fields. Default is created_at. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Sort
+          description: 'Return requests sorted in asc or desc order. Default is desc. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Milestone
+          description: >-
+            Return merge requests for a specific milestone. None returns merge requests with no
+            milestone. Any returns merge requests that have an assigned milestone.
+          schema:
+            type: string
+          in: query
+        -
+          name: View
+          description: 'If simple, returns the iid, URL, title, description, and basic state of merge request.'
+          schema:
+            type: string
+          in: query
+        -
+          name: Labels
+          description: >-
+            Return merge requests matching a comma separated list of labels. None lists all merge
+            requests with no labels. Any lists all merge requests with at least one label.
+            No+Label (Deprecated) lists all merge requests with no labels. Predefined names are
+            case-insensitive.
+          schema:
+            type: string
+          in: query
+        -
+          name: With labels details
+          description: >-
+            If true, response returns more details for each label in labels field: :name, :color,
+            :description, :description_html, :text_color. Default is false.
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Created after
+          description: >-
+            Return merge requests created on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Created before
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated after
+          description: >-
+            Return merge requests updated on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated before
+          description: >-
+            Return merge requests updated on or before the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Scope
+          description: >-
+            Return merge requests for the given scope: created_by_me, assigned_to_me or all.
+            Defaults to created_by_me For versions before 11.0, use the now deprecated
+            created-by-me or assigned-to-me scopes instead.
+          schema:
+            type: string
+          in: query
+        -
+          name: Author ID
+          description: >-
+            Returns merge requests created by the given user id. Mutually exclusive with
+            author_username. Combine with scope=all or scope=assigned_to_me.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Author Username
+          description: >-
+            Returns merge requests created by the given username. Mutually exclusive with
+            author_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: Assignee ID
+          description: >-
+            Returns merge requests assigned to the given user id. None returns unassigned merge
+            requests. Any returns merge requests with an assignee.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer ID
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given user id. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_username.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer username
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given username. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: My reaction emoji
+          description: >-
+            Return merge requests reacted by the authenticated user by the given emoji. None
+            returns issues not given a reaction. Any returns issues given at least one reaction.
+          schema:
+            type: string
+          in: query
+        -
+          name: Source branch
+          description: Return merge requests with the given source branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Target branch
+          description: Return merge requests with the given target branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Search
+          description: Search merge requests against their title and description.
+          schema:
+            type: string
+          in: query
+        -
+          name: In
+          description: >-
+            Modify the scope of the search attribute. title, description, or a string joining them
+            with comma. Default is title,description.
+          schema:
+            type: string
+          in: query
+        -
+          name: WIP
+          description: >-
+            Filter merge requests against their wip status. yes to return only draft merge
+            requests, no to return non-draft merge requests.
+          schema:
+            type: string
+          in: query
+        -
+          name: Not
+          description: >-
+            Return merge requests that do not match the parameters supplied. Accepts: labels,
+            milestone, author_id, author_username, assignee_id, assignee_username, reviewer_id,
+            reviewer_username, my_reaction_emoji.
+          schema:
+            type: string
+          in: query
+        -
+          name: Environment
+          description: >-
+            Returns merge requests deployed to the given environment. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed before
+          description: >-
+            Return merge requests deployed before the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed after
+          description: >-
+            Return merge requests deployed after the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListGroupMRs
+      summary: List project merge requests.
+      description: >-
+        Get all merge requests for this group and its subgroups. The state parameter can be used to
+        get only merge requests with a given state (opened, closed, locked, or merged) or all of them
+        (all). The pagination parameters page and per_page can be used to restrict the list of merge
+        requests.
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the group owned by the authenticated user. '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/merge_requests/{merge_request_iid}/pipelines':
+    get:
+      tags:
+        - Merge requests
+        - pipelines
+      responses:
+        '200':
+          description: OK
+      operationId: ListMRPipelines
+      summary: List MR pipelines
+      description: 'Get a list of merge request pipelines. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: merge_request_iid
+        description: 'The internal ID of the merge request. '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/merge_requests/{merge_request_iid}':
+    put:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: Target branch
+          description: The target branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Title
+          description: 'Title of MR. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Assignee ID
+          description: >-
+            The ID of the user to assign the merge request to. Set to 0 or provide an empty value
+            to unassign all assignees.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Assignee IDs
+          description: >-
+            The ID of the user(s) to assign the MR to. Set to 0 or provide an empty value to
+            unassign all assignees.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+        -
+          name: Reviewer IDs
+          description: >-
+            The ID of the user(s) set as a reviewer to the MR. Set the value to 0 or provide an
+            empty value to unset all reviewers.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+        -
+          name: Milestone ID
+          description: >-
+            The global ID of a milestone to assign the merge request to. Set to 0 or provide an
+            empty value to unassign a milestone.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Labels
+          description: >-
+            Comma-separated label names for a merge request. Set to an empty string to unassign
+            all labels.
+          schema:
+            type: string
+          in: query
+        -
+          name: Add labels
+          description: 'Comma-separated label names to add to a merge request. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Remove labels
+          description: Comma-separated label names to remove from a merge request.
+          schema:
+            type: string
+          in: query
+        -
+          name: Description
+          description: 'Description of MR. Limited to 1,048,576 characters. '
+          schema:
+            type: string
+          in: query
+        -
+          name: State Event
+          description: New state (close/reopen).
+          schema:
+            type: string
+          in: query
+        -
+          name: Remove source branch
+          description: 'Flag indicating if a merge request should remove the source branch when merging. '
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Squash
+          description: 'Squash commits into a single commit when merging. '
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Discussion locked
+          description: >-
+            Flag indicating if the merge request’s discussion is locked. If the discussion is
+            locked only project members can add, edit or resolve comments.
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Allow collaboration
+          description: 'Allow commits from members who can merge to the target branch. '
+          schema:
+            type: boolean
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: UpdateMR
+      summary: Update MR
+      description: >-
+        Updates an existing merge request. You can change the target branch, title, or even close the
+        MR.
+    delete:
+      tags:
+        - Merge requests
+      responses:
+        '200':
+          description: OK
+      operationId: DeleteMR
+      summary: Delete a merge request
+      description: Only for administrators and project owners. Deletes the merge request in question.
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: merge_request_iid
+        description: 'The ID of a merge request. '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/merge_requests':
+    get:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: 'iids[]'
+          description: 'Return the request having the given iid. '
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+        -
+          name: State
+          description: 'Return all merge requests or just those that are opened, closed, locked, or merged. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Order by
+          description: 'Return requests ordered by created_at or updated_at fields. Default is created_at. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Sort
+          description: 'Return requests sorted in asc or desc order. Default is desc. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Milestone
+          description: >-
+            Return merge requests for a specific milestone. None returns merge requests with no
+            milestone. Any returns merge requests that have an assigned milestone.
+          schema:
+            type: string
+          in: query
+        -
+          name: View
+          description: 'If simple, returns the iid, URL, title, description, and basic state of merge request.'
+          schema:
+            type: string
+          in: query
+        -
+          name: Labels
+          description: >-
+            Return merge requests matching a comma separated list of labels. None lists all merge
+            requests with no labels. Any lists all merge requests with at least one label.
+            No+Label (Deprecated) lists all merge requests with no labels. Predefined names are
+            case-insensitive.
+          schema:
+            type: string
+          in: query
+        -
+          name: With labels details
+          description: >-
+            If true, response returns more details for each label in labels field: :name, :color,
+            :description, :description_html, :text_color. Default is false.
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Created after
+          description: >-
+            Return merge requests created on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Created before
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated after
+          description: >-
+            Return merge requests updated on or after the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Updated before
+          description: >-
+            Return merge requests updated on or before the given time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Scope
+          description: >-
+            Return merge requests for the given scope: created_by_me, assigned_to_me or all.
+            Defaults to created_by_me For versions before 11.0, use the now deprecated
+            created-by-me or assigned-to-me scopes instead.
+          schema:
+            type: string
+          in: query
+        -
+          name: Author ID
+          description: >-
+            Returns merge requests created by the given user id. Mutually exclusive with
+            author_username. Combine with scope=all or scope=assigned_to_me.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Author Username
+          description: >-
+            Returns merge requests created by the given username. Mutually exclusive with
+            author_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: Assignee ID
+          description: >-
+            Returns merge requests assigned to the given user id. None returns unassigned merge
+            requests. Any returns merge requests with an assignee.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer ID
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given user id. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_username.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Reviewer username
+          description: >-
+            Returns merge requests which have the user as a reviewer with the given username. None
+            returns merge requests with no reviewers. Any returns merge requests with any
+            reviewer. Mutually exclusive with reviewer_id.
+          schema:
+            type: string
+          in: query
+        -
+          name: My reaction emoji
+          description: >-
+            Return merge requests reacted by the authenticated user by the given emoji. None
+            returns issues not given a reaction. Any returns issues given at least one reaction.
+          schema:
+            type: string
+          in: query
+        -
+          name: Source branch
+          description: Return merge requests with the given source branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Target branch
+          description: Return merge requests with the given target branch.
+          schema:
+            type: string
+          in: query
+        -
+          name: Search
+          description: Search merge requests against their title and description.
+          schema:
+            type: string
+          in: query
+        -
+          name: In
+          description: >-
+            Modify the scope of the search attribute. title, description, or a string joining them
+            with comma. Default is title,description.
+          schema:
+            type: string
+          in: query
+        -
+          name: WIP
+          description: >-
+            Filter merge requests against their wip status. yes to return only draft merge
+            requests, no to return non-draft merge requests.
+          schema:
+            type: string
+          in: query
+        -
+          name: Not
+          description: >-
+            Return merge requests that do not match the parameters supplied. Accepts: labels,
+            milestone, author_id, author_username, assignee_id, assignee_username, reviewer_id,
+            reviewer_username, my_reaction_emoji.
+          schema:
+            type: string
+          in: query
+        -
+          name: Environment
+          description: >-
+            Returns merge requests deployed to the given environment. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed before
+          description: >-
+            Return merge requests deployed before the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+        -
+          name: Deployed after
+          description: >-
+            Return merge requests deployed after the given date/time. Expected in ISO 8601 format
+            (2019-03-15T08:00:00Z)
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: ListProjectMRs
+      summary: List project merge requests
+      description: List project merge requests
+    post:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: Target branch
+          description: The target branch.
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          name: Source branch
+          description: The source branch.
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          name: Title
+          description: 'Title of MR. '
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          name: Assignee ID
+          description: >-
+            The ID of the user to assign the merge request to. Set to 0 or provide an empty value
+            to unassign all assignees.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Assignee IDs
+          description: >-
+            The ID of the user(s) to assign the MR to. Set to 0 or provide an empty value to
+            unassign all assignees.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+        -
+          name: Reviewer IDs
+          description: >-
+            The ID of the user(s) set as a reviewer to the MR. Set the value to 0 or provide an
+            empty value to unset all reviewers.
+          schema:
+            type: array
+            items:
+              type: integer
+          in: query
+        -
+          name: Milestone ID
+          description: >-
+            The global ID of a milestone to assign the merge request to. Set to 0 or provide an
+            empty value to unassign a milestone.
+          schema:
+            type: integer
+          in: query
+        -
+          name: Labels
+          description: >-
+            Comma-separated label names for a merge request. Set to an empty string to unassign
+            all labels.
+          schema:
+            type: string
+          in: query
+        -
+          name: Add labels
+          description: 'Comma-separated label names to add to a merge request. '
+          schema:
+            type: string
+          in: query
+        -
+          name: Remove labels
+          description: Comma-separated label names to remove from a merge request.
+          schema:
+            type: string
+          in: query
+        -
+          name: Description
+          description: Description of MR.
+          schema:
+            type: string
+          in: query
+          required: false
+        -
+          name: State Event
+          description: New state (close/reopen).
+          schema:
+            type: string
+          in: query
+        -
+          name: Remove source branch
+          description: 'Flag indicating if a merge request should remove the source branch when merging. '
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Squash
+          description: 'Squash commits into a single commit when merging. '
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Discussion locked
+          description: >-
+            Flag indicating if the merge request’s discussion is locked. If the discussion is
+            locked only project members can add, edit or resolve comments.
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Allow collaboration
+          description: 'Allow commits from members who can merge to the target branch. '
+          schema:
+            type: boolean
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: CreateMR
+      summary: Create MR
+      description: 'Creates a new merge request. '
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+  '/projects/{id}/merge_requests/{merge_request_iid}/rebase/':
+    put:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: skip_ci
+          description: 'Set to true to skip creating a CI pipeline. '
+          schema:
+            type: boolean
+          in: query
+          required: false
+      responses:
+        '200':
+          description: OK
+      operationId: RebaseMR
+      summary: Rebase a merge request
+      description: Automatically rebase the source_branch of the merge request against its target_branch.
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: merge_request_iid
+        description: 'The internal ID of the merge request. '
+        schema:
+          type: integer
+        in: path
+        required: true
+  '/projects/{id}/merge_requests/{merge_request_iid}/merge/':
+    put:
+      tags:
+        - Merge requests
+      parameters:
+        -
+          name: Merge commit message
+          description: 'Custom merge commit message.'
+          schema:
+            type: string
+          in: query
+        -
+          name: Squash commit message
+          description: 'Custom squash commit message.'
+          schema:
+            type: string
+          in: query
+        -
+          name: Squash
+          description: 'If true the commits are squashed into a single commit on merge.'
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Should remove source branch
+          description: 'If true removes the source branch.'
+          schema:
+            type: boolean
+          in: query
+        -
+          name: Merge when pipeline succeeds
+          description: 'If true the MR is merged when the pipeline succeeds.'
+          schema:
+            type: boolean
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: AcceptMR
+      summary: Accept MR
+      description: Merge changes submitted with MR
+    parameters:
+      -
+        name: id
+        description: 'The ID or path of the project owned by the authenticated user. For example: user/my-project '
+        schema:
+          type: string
+        in: path
+        required: true
+      -
+        name: merge_request_iid
+        description: 'The internal ID of the merge request. '
+        schema:
+          type: integer
+        in: path
+        required: true
+  /users:
+    get:
+      tags:
+        - Members
+      parameters:
+        -
+          name: Username
+          description: 'Username'
+          schema: {}
+          in: query
+      responses:
+        '200':
+          description: OK
+      operationId: GetUserInfo
+      description: 'Get info about the given username.'
+      summary: 'Get info about user.'
+components:
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+security:
+  -
+    BearerAuth: []
+tags:
+  -
+    name: Members
+    description: Group and project members API
+  -
+    name: Branchs
+    description: Branches API
+  -
+    name: Pipeline_triggers
+    description: Pipeline triggers API
+  -
+    name: pipelines
+    description: ''
+  -
+    name: Merge requests
+    description: ''

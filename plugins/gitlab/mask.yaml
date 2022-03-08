@@ -1,0 +1,771 @@
+name: gitlab
+connection_types:
+  gitlab:
+    name: gitlab
+is_connection_optional: false
+request_url_conn_type: gitlab
+actions:
+  AcceptMR:
+    alias: AcceptMergeRequest
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      merge_request_iid:
+        alias: "Merge Request IID"
+        index: 2
+      Squash:
+        alias: "Squash"
+        index: 3
+      Merge commit message:
+        alias: "Merge Commit Message"
+        index: 4
+      Merge when pipeline succeeds:
+        alias: "Merge When Pipeline Succeeds"
+        index: 5
+      Should remove source branch:
+        alias: "Remove Source Branch"
+        index: 6
+      Squash commit message:
+        alias: "Squash Commit Message"
+        index: 7
+
+  AddMemberToGroup:
+    alias: AddMemberToGroup
+    parameters:
+      id:
+        alias: "Group ID"
+        index: 1
+      user_id:
+        alias: "User ID"
+        index: 2
+      expires_at:
+        alias: "Expires At"
+        index: 3
+      access_level:
+        alias: "Access Level"
+        index: 4
+      areas_of_focus:
+        alias: "Areas Of Focus"
+        index: 5
+      invite_source:
+        alias: "Invite Source"
+        index: 6
+
+  AddMemberToProject:
+    alias: AddMemberToProject
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      user_id:
+        alias: "User ID"
+        index: 2
+      expires_at:
+        index: 3
+        alias: "Expires At"
+      access_level:
+        index: 4
+        alias: "Access Level"
+      areas_of_focus:
+        index: 5
+        alias: "Areas Of Focus"
+      invite_source:
+        index: 6
+        alias: "Invite Source"
+
+  CancelPipelineJobs:
+    alias: CancelPipelineJobs
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      pipeline_id:
+        alias: "Pipeline ID"
+        index: 2
+
+  CreateBranch:
+    alias: CreateBranch
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      ref:
+        alias: "Ref"
+        index: 2
+      branch:
+        alias: "Branch Name"
+        index: 3
+
+  CreateMR:
+    alias: CreateMergeRequest
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      Title:
+        alias: "Title"
+        index: 2
+      Description:
+        alias: "Description"
+        index: 3
+      Source branch:
+        alias: "Source Branch"
+        index: 4
+      Target branch:
+        alias: "Target Branch"
+        index: 5
+      Squash:
+        alias: "Squash"
+        index: 6
+      Add labels:
+        alias: "Add Labels"
+        index: 7
+      Allow collaboration:
+        alias: "Allow Collaboration"
+        index: 8
+      Assignee ID:
+        alias: "Assignee ID"
+        index: 9
+      Assignee IDs:
+        alias: "Assignee IDs"
+        index: 10
+      Discussion locked:
+        alias: "Discussion Locked"
+        index: 11
+      Labels:
+        alias: "Labels"
+        index: 12
+      Milestone ID:
+        alias: "Milestone ID"
+        index: 13
+      Remove labels:
+        alias: "Remove Labels"
+        index: 14
+      Remove source branch:
+        alias: "Remove Source Branch"
+        index: 15
+      Reviewer IDs:
+        alias: "Reviewer IDs"
+        index: 16
+      State Event:
+        alias: "State Event"
+        index: 17
+
+  CreatePipeline:
+    alias: CreatePipeline
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      ref:
+        alias: "Ref"
+        index: 2
+      variables:
+        alias: "Variables"
+        index: 3
+
+  CreateProjectTrigger:
+    alias: CreateProjectTrigger
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      description:
+        alias: "Description"
+        index: 2
+
+  DeleteBranch:
+    alias: DeleteBranch
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      branch:
+        alias: "Branch Name"
+        index: 2
+
+  DeleteMR:
+    alias: DeleteMergeRequest
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      merge_request_iid:
+        alias: "Merge Request IID"
+        index: 2
+
+  DeleteMergedBranches:
+    alias: DeleteMergedBranches
+    parameters:
+      id:
+        alias: "Project's Slug"
+
+  DeletePipeline:
+    alias: DeletePipeline
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      pipeline_id:
+        alias: "Pipeline ID"
+        index: 2
+
+  GetTestFullReport:
+    alias: GetTestFullReport
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      pipeline_id:
+        alias: "Pipeline ID"
+        index: 2
+
+  GetTestReportSummary:
+    alias: GetTestReportSummary
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      pipeline_id:
+        alias: "Pipeline ID"
+        index: 2
+
+  GetTriggerDetails:
+    alias: GetTriggerDetails
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      trigger_id:
+        alias: "Trigger ID"
+        index: 2
+
+  GetUserInfo:
+    alias: GetUserInfo
+    parameters:
+      Username:
+        alias: "Username"
+
+  ListBranches:
+    alias: ListBranches
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      search:
+        alias: "Search"
+        index: 2
+
+  ListCommits:
+    alias: ListCommits
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      all:
+        alias: "All"
+        index: 2
+      first_parent:
+        alias: "First Parent"
+        index: 3
+      order:
+        alias: "Order"
+        index: 4
+      path:
+        alias: "Path"
+        index: 5
+      ref_name:
+        alias: "Ref Name"
+        index: 6
+      since:
+        alias: "Since"
+        type: date_time
+        index: 7
+      trailers:
+        alias: "Trailers"
+        index: 8
+      until:
+        alias: "Until"
+        type: date_time
+        index: 9
+      with_stats:
+        alias: "With Stats"
+        index: 10
+
+  ListGroupMRs:
+    alias: ListGroupMergeRequests
+    parameters:
+      id:
+        alias: "Group ID"
+        index: 1
+      Assignee ID:
+        alias: "Assignee ID"
+        index: 2
+      Author ID:
+        alias: "Author ID"
+        index: 3
+      Author Username:
+        alias: "Author Username"
+        index: 4
+      Created after:
+        alias: "Created After"
+        type: date_time
+        index: 5
+      Created before:
+        alias: "Created Before"
+        type: date_time
+        index: 6
+      Deployed after:
+        alias: "Deployed After"
+        type: date_time
+        index: 7
+      Deployed before:
+        alias: "Deployed Before"
+        type: date_time
+        index: 8
+      Environment:
+        alias: "Environment"
+        type: date_time
+        index: 9
+      In:
+        alias: "In"
+        index: 10
+      Labels:
+        alias: "Labels"
+        index: 11
+      Milestone:
+        alias: "Milestone"
+        index: 12
+      My reaction emoji:
+        alias: "My Reaction Emoji"
+        index: 13
+      Not:
+        alias: "Not"
+        index: 14
+      Order by:
+        alias: "Order By"
+        index: 15
+      Reviewer ID:
+        alias: "Reviewer ID"
+        index: 16
+      Reviewer username:
+        alias: "Reviewer Username"
+        index: 17
+      Scope:
+        alias: "Scope"
+        index: 18
+      Search:
+        alias: "Search"
+        index: 19
+      Sort:
+        alias: "Sort"
+        index: 20
+      Source branch:
+        alias: "Source Branch"
+        index: 21
+      State:
+        alias: "State"
+        index: 22
+      Target branch:
+        alias: "Target Branch"
+        index: 23
+      Updated after:
+        alias: "Updated After"
+        type: date_time
+        index: 24
+      Updated before:
+        alias: "Updated Before"
+        type: date_time
+        index: 25
+      View:
+        alias: "View"
+        index: 26
+      WIP:
+        alias: "WIP"
+        index: 27
+      With labels details:
+        alias: "With Labels Details"
+        index: 28
+
+
+  ListGroupMembers:
+    alias: ListGroupMembers
+    parameters:
+      id:
+        alias: "Group ID"
+        index: 1
+      query:
+        alias: "Query"
+        index: 2
+      user_ids:
+        alias: "User Ids"
+        index: 3
+
+  ListMRPipelines:
+    alias: ListMergeRequestPipelines
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      merge_request_iid:
+        alias: "Merge Request IID"
+        index: 2
+
+  ListMRs:
+    alias: ListMergeRequests
+    parameters:
+      Search:
+        alias: "Search"
+        index: 1
+      Sort:
+        alias: "Sort"
+        index: 2
+      Order by:
+        alias: "Order By"
+        index: 3
+      Not:
+        alias: "Not"
+        index: 4
+      Author Username:
+        alias: "Author Username"
+        index: 5
+      Assignee ID:
+        alias: "Assignee ID"
+        index: 6
+      Author ID:
+        alias: "Author ID"
+        index: 7
+      State:
+        alias: "State"
+        index: 8
+      Created after:
+        alias: "Created After"
+        type: date_time
+        index: 9
+      Created before:
+        alias: "Created Before"
+        type: date_time
+        index: 10
+      Deployed after:
+        alias: "Deployed After"
+        type: date_time
+        index: 11
+      Deployed before:
+        alias: "Deployed Before"
+        type: date_time
+        index: 12
+      Environment:
+        alias: "Environment"
+        type: date_time
+        index: 13
+      In:
+        alias: "In"
+        index: 14
+      Labels:
+        alias: "Labels"
+        index: 15
+      Milestone:
+        alias: "Milestone"
+        index: 16
+      My reaction emoji:
+        alias: "My Reaction Emoji"
+        index: 17
+      Reviewer ID:
+        alias: "Reviewer ID"
+        index: 18
+      Reviewer username:
+        alias: "Reviewer Username"
+        index: 19
+      Scope:
+        alias: "Scope"
+        index: 20
+      Source branch:
+        alias: "Source Branch"
+        index: 21
+      Target branch:
+        alias: "Target Branch"
+        index: 22
+      Updated after:
+        alias: "Updated After"
+        type: date_time
+        index: 23
+      Updated before:
+        alias: "Updated Before"
+        type: date_time
+        index: 24
+      View:
+        alias: "View"
+        index: 25
+      WIP:
+        alias: "WIP"
+        index: 26
+      With labels details:
+        alias: "With Labels Details"
+        index: 27
+
+  ListPipelines:
+    alias: ListPipelines
+    parameters:
+      id:
+        alias: "ID"
+        index: 1
+      sort:
+        alias: "Sort"
+        index: 2
+      order_by:
+        alias: "Order By"
+        index: 3
+      username:
+        alias: "Username"
+        index: 4
+      status:
+        alias: "Status"
+        index: 5
+      updated_after:
+        alias: "Updated After"
+        type: date_time
+        index: 6
+      updated_before:
+        alias: "Updated Before"
+        type: date_time
+        index: 7
+      ref:
+        alias: "Ref"
+        index: 8
+      scope:
+        alias: "Scope"
+        index: 9
+      sha:
+        alias: "Sha"
+        index: 10
+      yaml_errors:
+        alias: "Yaml Errors"
+        index: 11
+
+  ListProjectMRs:
+    alias: ListProjectMRs
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      iids[]:
+        alias: "IIDs[]"
+        index: 2
+      Search:
+        alias: "Search"
+        index: 3
+      State:
+        alias: "State"
+        index: 4
+      Order by:
+        alias: "Order By"
+        index: 5
+      Sort:
+        alias: "Sort"
+        index: 6
+      Assignee ID:
+        alias: "Assignee ID"
+        index: 7
+      Author ID:
+        alias: "Author ID"
+        index: 8
+      Reviewer ID:
+        alias: "Reviewer ID"
+        index: 9
+      Author Username:
+        alias: "Author Username"
+        index: 10
+      Reviewer username:
+        alias: "Reviewer Username"
+        index: 11
+      Environment:
+        alias: "Environment"
+        type: date_time
+        index: 12
+      Created after:
+        alias: "Created After"
+        type: date_time
+        index: 13
+      Created before:
+        alias: "Created Before"
+        type: date_time
+        index: 14
+      Deployed after:
+        alias: "Deployed After"
+        type: date_time
+        index: 15
+      Deployed before:
+        alias: "Deployed Before"
+        type: date_time
+        index: 16
+      Updated after:
+        alias: "Updated After"
+        type: date_time
+        index: 17
+      Updated before:
+        alias: "Updated Before"
+        type: date_time
+        index: 18
+      In:
+        alias: "In"
+        index: 19
+      Labels:
+        alias: "Labels"
+        index: 20
+      Milestone:
+        alias: "Milestone"
+        index: 21
+      My reaction emoji:
+        alias: "My Reaction Emoji"
+        index: 22
+      Not:
+        alias: "Not"
+        index: 23
+      Scope:
+        alias: "Scope"
+        index: 24
+      Source branch:
+        alias: "Source Branch"
+        index: 25
+      Target branch:
+        alias: "Target Branch"
+        index: 26
+      View:
+        alias: "View"
+        index: 27
+      WIP:
+        alias: "WIP"
+        index: 28
+      With labels details:
+        alias: "With Labels Details"
+        index: 29
+
+  ListProjectMembers:
+    alias: ListProjectMembers
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      query:
+        alias: "Query"
+        index: 2
+      user_ids:
+        alias: "User Ids"
+        index: 3
+
+  ListProjectTriggers:
+    alias: ListProjectTriggers
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+
+  RebaseMR:
+    alias: RebaseMergeRequest
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      merge_request_iid:
+        alias: "Merge Request IID"
+        index: 2
+      skip_ci:
+        alias: "Skip CI"
+        index: 3
+
+  RemoveMemberFromGroup:
+    alias: RemoveMemberFromGroup
+    parameters:
+      id:
+        alias: "Group ID"
+        index: 1
+      user_id:
+        alias: "User ID"
+        index: 2
+
+  RemoveMemberFromProject:
+    alias: RemoveMemberFromProject
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      user_id:
+        alias: "User ID"
+        index: 2
+
+  RemoveTrigger:
+    alias: RemoveTrigger
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      trigger_id:
+        alias: "Trigger ID"
+        index: 2
+
+  RetryPipelineJobs:
+    alias: RetryPipelineJobs
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      pipeline_id:
+        alias: "Pipeline ID"
+        index: 2
+
+  UpdateMR:
+    alias: UpdateMergeRequest
+    parameters:
+      id:
+        alias: "Project's Slug"
+        index: 1
+      merge_request_iid:
+        alias: "Merge Request IID"
+        index: 2
+      Title:
+        alias: "Title"
+        index: 3
+      Description:
+        alias: "Description"
+        index: 4
+      Labels:
+        alias: "Labels"
+        index: 5
+      Add labels:
+        alias: "Add Labels"
+        index: 6
+      Squash:
+        alias: "Squash"
+        index: 7
+      Allow collaboration:
+        alias: "Allow Collaboration"
+        index: 8
+      Assignee ID:
+        alias: "Assignee ID"
+        index: 9
+      Assignee IDs:
+        alias: "Assignee IDs"
+        index: 10
+      Discussion locked:
+        alias: "Discussion Locked"
+        index: 11
+      Milestone ID:
+        alias: "Milestone ID"
+        index: 12
+      Remove labels:
+        alias: "Remove Labels"
+        index: 13
+      Remove source branch:
+        alias: "Remove Source Branch"
+        index: 14
+      Reviewer IDs:
+        alias: "Reviewer IDs"
+        index: 15
+      State Event:
+        alias: "State Event"
+        index: 16
+      Target branch:
+        alias: "Target Branch"
+        index: 17
+
