@@ -1,0 +1,82 @@
+actions:
+  AddTeamMember:
+    alias: AddTeamMemberByID
+    parameters:
+      teamId:
+        alias: "Team ID"
+      userId:
+        alias: "User ID"
+
+  InviteOrgMember:
+    parameters:
+      name:
+        alias: "Name"
+      loginOrEmail:
+        alias: "Username/Email"
+      role:
+        alias: "Role"
+      sendEmail:
+        alias: "Send Email"
+
+  RemoveOrgMember:
+    alias: "RemoveOrgMemberByID"
+    parameters:
+      userId:
+        alias: "User ID"
+
+  CreateFolder:
+    parameters:
+      uid:
+        alias: "Folder Unique ID"
+      title:
+        alias: "Folder Title"
+
+  CreateDashboard:
+    alias: "CreateOrUpdateDashboard"
+    parameters:
+      dashboard.uid:
+        alias: "Dashboard Unique ID"
+      dashboard.title:
+        alias: "Dashboard Title"
+      dashboard.tags:
+        alias: "Dashboard Tags"
+      dashboard.timezone:
+        alias: "Dashboard Timezone"
+      dashboard.schemaVersion:
+        alias: "Dashboard Schema Version"
+      dashboard.version:
+        alias: "Dashboard Version"
+      dashboard.refresh:
+        alias: "Dashboard Refresh Interval"
+      folderUid:
+        alias: "Folder Unique ID"
+      message:
+        alias: "Commit Message"
+
+  GetUsers:
+    parameters:
+
+  GetTeams:
+    parameters:
+      perpage:
+        alias: "Teams Per Page"
+      page:
+        alias: "Page"
+      query:
+        alias: "Query"
+      name:
+        alias: "Name"
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -50,7 +50,7 @@ func (o ParsedOpenApi) getNamedActionsGroup() NamedActionsGroup {
 			Enabled:                true,
 			Parameters:             o.getActionParams(action),
 			ActionToRun:            o.getActionToRun(opDefinition),
-			ActionToRunParamValues: o.getActionParamValues(action, opDefinition),
+			ActionToRunParamValues: o.getActionParamValues(action, maskedAction, opDefinition),
 		})
 	}
 	for _, namedAction := range o.mask.NamedActions {
@@ -91,12 +91,12 @@ func (o ParsedOpenApi) getActionParams(action plugin.Action) map[string]plugin.A
 	return params
 }
 
-func (o ParsedOpenApi) getActionParamValues(action plugin.Action, opDefinition *ops.OperationDefinition) map[string]string {
+func (o ParsedOpenApi) getActionParamValues(action plugin.Action, maskedAction *MaskedAction, opDefinition *ops.OperationDefinition) map[string]string {
 	paramValues := map[string]string{}
 
 	paramValues["url"] = o.getActionUrlTemplate(opDefinition)
 
-	body := getBodyTemplate(action, opDefinition.GetDefaultBody())
+	body := getBodyTemplate(action, maskedAction, opDefinition.GetDefaultBody())
 	if body != "" {
 		paramValues["body"] = body
 	}
@@ -141,15 +141,47 @@ func (o ParsedOpenApi) getActionUrlTemplate(op *ops.OperationDefinition) string 
 	return url
 }
 
-func getBodyTemplate(action plugin.Action, body *ops.RequestBodyDefinition) string {
+func isLeaf(currParam string, params map[string]plugin.ActionParameter) bool {
+	for param := range params {
+		if strings.Contains(param, currParam) && param != currParam {
+			return false
+		}
+	}
+
+	return true
+}
+
+func getLeafParams(allParams map[string]plugin.ActionParameter) map[string]plugin.ActionParameter {
+	leafParams := map[string]plugin.ActionParameter{}
+
+	for param := range allParams {
+		if isLeaf(param, allParams) {
+			leafParams[param] = allParams[param]
+		}
+	}
+
+	return leafParams
+}
+
+func getBodyTemplate(action plugin.Action, maskedAction *MaskedAction, body *ops.RequestBodyDefinition) string {
 	if body == nil {
 		return ""
 	}
 	requestBody := map[string]interface{}{}
-	for paramName := range action.Parameters {
-		mapKeys := strings.Split(paramName, consts.BodyParamDelimiter)
-		buildRequestBody(mapKeys, body.Schema.OApiSchema, paramName, requestBody)
+
+	if maskedAction != nil {
+		for paramName := range maskedAction.Parameters {
+			mapKeys := strings.Split(paramName, consts.BodyParamDelimiter)
+			buildRequestBody(mapKeys, body.Schema.OApiSchema, paramName, requestBody)
+		}
+	} else {
+		parameters := getLeafParams(action.Parameters)
+		for paramName := range parameters {
+			mapKeys := strings.Split(paramName, consts.BodyParamDelimiter)
+			buildRequestBody(mapKeys, body.Schema.OApiSchema, paramName, requestBody)
+		}
 	}
+
 	marshaledBody, err := json.Marshal(requestBody)
 	if err != nil {
 		return ""
