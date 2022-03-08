@@ -1,0 +1,482 @@
+name: elasticsearch
+connection_types:
+  elasticsearch:
+    name: elasticsearch
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: AddDocument
+  display_name: Add Document
+  description: Adds a JSON document to the specified data stream or index and makes
+    it searchable.
+  enabled: true
+  parameters:
+    content:
+      display_name: Content
+      type: code:json
+      description: The JSON document content.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    require_alias:
+      display_name: Require Alias
+      type: bool
+      description: If true, the destination must be an index alias. Defaults to false.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    target:
+      display_name: Target Index
+      type: string
+      description: |-
+        Name of the data stream or index to target.
+        If the target doesn’t exist and matches the name or wildcard (*) pattern of an index template with a data_stream definition, this request creates the data stream.
+        If the target doesn’t exist and doesn’t match a data stream template, this request creates the index.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"content":"{{obj(params.content)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.target + ''/_doc/''}}{{''?require_alias=''
+      + params.require_alias}}'
+  is_connection_optional: ""
+- name: CloneIndex
+  display_name: Clone Index
+  description: Clones an existing index.
+  enabled: true
+  parameters:
+    index:
+      display_name: Index
+      type: string
+      description: Name of the source index to clone.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    settings:
+      display_name: Settings
+      type: code:json
+      description: Configuration options for the target index.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    target_index:
+      display_name: Target Index
+      type: string
+      description: |-
+        Name of the target index to create.
+
+        Index names must meet the following criteria:
+
+        - Lowercase only
+        - Cannot include \, /, *, ?, ", <, >, |, ' ' (space character), , (comma), #
+        - Indices prior to 7.0 could contain a colon (:), but that’s been deprecated and won’t be supported in 7.0+
+        - Cannot start with -, _, +
+        - Cannot be . or ..
+        - Cannot be longer than 255 bytes (note it is bytes, so multi-byte characters will count towards the 255 limit faster)
+        - Names starting with . are deprecated, except for hidden indices and internal indices managed by plugins
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"settings":"{{obj(params.settings)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.index + ''/_clone/'' + params.target_index}}'
+  is_connection_optional: ""
+- name: CreateIndex
+  display_name: Create Index
+  description: Creates a new index.
+  enabled: true
+  parameters:
+    index:
+      display_name: Index
+      type: string
+      description: |-
+        Name of the index you wish to create.
+
+        Index names must meet the following criteria:
+
+        - Lowercase only
+        - Cannot include \, /, *, ?, ", <, >, |, ' ' (space character), , (comma), #
+        - Indices prior to 7.0 could contain a colon (:), but that’s been deprecated and won’t be supported in 7.0+
+        - Cannot start with -, _, +
+        - Cannot be . or ..
+        - Cannot be longer than 255 bytes (note it is bytes, so multi-byte characters will count towards the 255 limit faster)
+        - Names starting with . are deprecated, except for hidden indices and internal indices managed by plugins
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    mappings:
+      display_name: Mappings
+      type: code:json
+      description: Mapping for fields in the index. If specified, this mapping can
+        include field names, field data types and mapping parameters.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    settings:
+      display_name: Settings
+      type: code:json
+      description: Configuration options for the index.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    body: '{"mappings":"{{obj(params.mappings)}}","settings":"{{obj(params.settings)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.index}}'
+  is_connection_optional: ""
+- name: CreateUser
+  display_name: Create User
+  description: Adds and updates users in the native realm. These users are commonly
+    referred to as native users.
+  enabled: true
+  parameters:
+    email:
+      display_name: Email
+      type: string
+      description: The email of the user.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    enabled:
+      display_name: Enabled
+      type: bool
+      description: Specifies whether the user is enabled. The default value is true.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    full_name:
+      display_name: Full Name
+      type: string
+      description: The full name of the user.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    metadata:
+      display_name: Metadata
+      type: code:json
+      description: Arbitrary metadata that you want to associate with the user.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    password:
+      display_name: Password
+      type: string
+      description: The user’s password. Passwords must be at least 6 characters long.
+        When adding a user, one of password or password_hash is required.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    password_hash:
+      display_name: Password Hash
+      type: string
+      description: A hash of the user’s password. This must be produced using the
+        same hashing algorithm as has been configured for password storage. Using
+        this parameter allows the client to pre-hash the password for performance
+        and/or confidentiality reasons. The password parameter and the password_hash
+        parameter cannot be used in the same request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    roles:
+      display_name: Roles
+      type: array
+      description: A set of roles the user has. The roles determine the user’s access
+        permissions. To create a user without any roles, specify an empty list ->
+        [].
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    username:
+      display_name: Username
+      type: string
+      description: |-
+        An identifier for the user.
+
+        Usernames must be at least 1 and no more than 1024 characters. They can contain alphanumeric characters (a-z, A-Z, 0-9), spaces, punctuation, and printable symbols in the Basic Latin (ASCII) block. Leading or trailing whitespace is not allowed.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"email":"{{params.email}}","enabled":"{{bool(params.enabled)}}","full_name":"{{params.full_name}}","metadata":"{{obj(params.metadata)}}","password":"{{params.password}}","password_hash":"{{params.password_hash}}","roles":["{{arr(params.roles)}}"]}'
+    contentType: application/json
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/_security/user/'' + params.username}}'
+  is_connection_optional: ""
+- name: DeleteIndex
+  display_name: Delete Index
+  description: Deletes one or more indices.
+  enabled: true
+  parameters:
+    index:
+      display_name: Index
+      type: string
+      description: Comma-separated list of indices to delete. You cannot specify index
+        aliases. To delete all indices, use _all or * .
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.index}}'
+  is_connection_optional: ""
+- name: DeleteUser
+  display_name: Delete User
+  description: Deletes users from the native realm.
+  enabled: true
+  parameters:
+    username:
+      display_name: Username
+      type: string
+      description: An identifier for the user.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/_security/user/'' + params.username}}'
+  is_connection_optional: ""
+- name: GetIndex
+  display_name: Get Index
+  description: Returns information about one or more indices.
+  enabled: true
+  parameters:
+    index:
+      display_name: Index
+      type: string
+      description: Comma-separated list of data streams, indices, and aliases used
+        to limit the request. Supports wildcards (*). To target all data streams and
+        indices, omit this parameter or use * or _all.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.index}}'
+  is_connection_optional: ""
+- name: GetMapping
+  display_name: Get Mapping
+  description: Retrieves mapping definitions for one or more indices.
+  enabled: true
+  parameters:
+    target:
+      display_name: Target Index
+      type: string
+      description: Comma-separated list of data streams, indices, and aliases used
+        to limit the request. Supports wildcards (*). To target all data streams and
+        indices, omit this parameter or use * or _all.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.target + ''/_mapping''}}'
+  is_connection_optional: ""
+- name: Search
+  display_name: Search
+  description: Returns search hits that match the query defined in the request.
+  enabled: true
+  parameters:
+    q:
+      display_name: Query
+      type: string
+      description: |-
+        Query in the Lucene query string syntax.
+        You can use the q parameter to run a query parameter search.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    size:
+      display_name: Size
+      type: integer
+      description: Defines the number of hits to return. Defaults to 10.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    target:
+      display_name: Target Index
+      type: string
+      description: Comma-separated list of data streams, indices, and aliases to search.
+        Supports wildcards (*). To search all data streams and indices, use * or _all.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.target + ''/_search''}}{{''?q=''
+      + params.q + ''&size='' + params.size}}'
+  is_connection_optional: ""
+- name: UpdateMapping
+  display_name: Update Mapping
+  description: Adds new fields to an existing data stream or index.
+  enabled: true
+  parameters:
+    properties:
+      display_name: Properties
+      type: code:json
+      description: Mapping for a field. For new fields, this mapping can include field
+        name, field data type and mapping parameters.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    target:
+      display_name: Target Index
+      type: string
+      description: Comma-separated list of data streams, indices, and aliases used
+        to limit the request. Supports wildcards (*). To target all data streams and
+        indices, omit this parameter or use * or _all.
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    body: '{"properties":"{{obj(params.properties)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.elasticsearch.REQUEST_URL) ? connection.elasticsearch.REQUEST_URL
+      : ''https://api.example.com''), + ''/'' + params.target + ''/_mapping''}}'
+  is_connection_optional: ""
