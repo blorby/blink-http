@@ -1,0 +1,1577 @@
+name: github
+connection_types:
+  github:
+    name: github
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: InviteToOrganization
+  display_name: Orgs/Create-Invitation
+  description: Create an organization invitation
+  enabled: true
+  parameters:
+    email:
+      display_name: Email
+      type: string
+      description: '**Required unless you provide `invitee_id`**. Email address of
+        the person you are inviting, which can be an existing GitHub user.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    role:
+      display_name: Role
+      type: dropdown
+      description: "Specify role for new member. Can be one of:  \n\\* `admin` - Organization
+        owners with full administrative rights to the organization and complete access
+        to all repositories and teams.  \n\\* `direct_member` - Non-owner organization
+        members with ability to see other members and join teams by invitation.  \n\\*
+        `billing_manager` - Non-owner organization members with ability to manage
+        the billing settings of your organization."
+      placeholder: ""
+      required: false
+      default: direct_member
+      pattern: ""
+      options:
+      - admin
+      - direct_member
+      - billing_manager
+      index: 3
+      format: ""
+      is_multi: false
+    team_ids:
+      display_name: Team IDs
+      type: array
+      description: Specify IDs for the teams you want to invite new members to.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"email":"{{params.email}}","invitee_id":"{{int(params.invitee_id)}}","role":"{{params.role}}","team_ids":["{{arr(params.team_ids)}}"]}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/invitations''}}'
+  is_connection_optional: ""
+- name: ListOrgMembers
+  display_name: Orgs/List-Members
+  description: List organization members
+  enabled: true
+  parameters:
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    role:
+      display_name: Role
+      type: dropdown
+      description: "Filter members returned by their role. Can be one of:  \n\\* `all`
+        - All members of the organization, regardless of role.  \n\\* `admin` - Organization
+        owners.  \n\\* `member` - Non-owner organization members."
+      placeholder: ""
+      required: false
+      default: all
+      pattern: ""
+      options:
+      - all
+      - admin
+      - member
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/members''}}{{''?filter=''
+      + params.filter + ''&role='' + params.role + ''&per_page='' + params.per_page
+      + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListPendingInvitations
+  display_name: Orgs/List-Pending-Invitations
+  description: List pending organization invitations
+  enabled: true
+  parameters:
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/invitations''}}{{''?per_page=''
+      + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: RemoveOrgMember
+  display_name: Orgs/Remove-Member
+  description: Remove an organization member
+  enabled: true
+  parameters:
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    username:
+      display_name: Username
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/members/'' + params.username}}'
+  is_connection_optional: ""
+- name: CreatePullRequest
+  display_name: Pulls/Create
+  description: Create a pull request
+  enabled: true
+  parameters:
+    base:
+      display_name: Target Branch
+      type: string
+      description: The name of the branch you want the changes pulled into. This should
+        be an existing branch on the current repository. You cannot submit a pull
+        request to one repository that requests a merge to a base of another repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    body:
+      display_name: Body
+      type: string
+      description: The contents of the pull request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    head:
+      display_name: Source Branch
+      type: string
+      description: 'The name of the branch where your changes are implemented. For
+        cross-repository pull requests in the same network, namespace `head` with
+        a user like this: `username:branch`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    title:
+      display_name: Title
+      type: string
+      description: The title of the new pull request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"base":"{{params.base}}","body":"{{params.body}}","draft":"{{bool(params.draft)}}","head":"{{params.head}}","issue":"{{int(params.issue)}}","maintainer_can_modify":"{{bool(params.maintainer_can_modify)}}","title":"{{params.title}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/pulls''}}'
+  is_connection_optional: ""
+- name: GetPullRequest
+  display_name: Pulls/Get
+  description: Get a pull request
+  enabled: true
+  parameters:
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pull_number:
+      display_name: Pull Number
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/pulls/'' + params.pull_number}}'
+  is_connection_optional: ""
+- name: ListPullRequests
+  display_name: Pulls/List
+  description: List pull requests
+  enabled: true
+  parameters:
+    base:
+      display_name: Target Branch
+      type: string
+      description: 'Filter pulls by base branch name. Example: `gh-pages`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    direction:
+      display_name: Direction
+      type: dropdown
+      description: 'The direction of the sort. Can be either `asc` or `desc`. Default:
+        `desc` when sort is `created` or sort is not specified, otherwise `asc`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 5
+      format: ""
+      is_multi: false
+    head:
+      display_name: Source Branch
+      type: string
+      description: 'Filter pulls by head user or head organization and branch name
+        in the format of `user:ref-name` or `organization:ref-name`. For example:
+        `github:new-script-format` or `octocat:test-branch`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: dropdown
+      description: What to sort results by. Can be either `created`, `updated`, `popularity`
+        (comment count) or `long-running` (age, filtering by pulls updated in the
+        last month).
+      placeholder: ""
+      required: false
+      default: created
+      pattern: ""
+      options:
+      - created
+      - updated
+      - popularity
+      - long-running
+      index: 6
+      format: ""
+      is_multi: false
+    state:
+      display_name: State
+      type: dropdown
+      description: Either `open`, `closed`, or `all` to filter by state.
+      placeholder: ""
+      required: false
+      default: open
+      pattern: ""
+      options:
+      - open
+      - closed
+      - all
+      index: 7
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/pulls''}}{{''?state='' + params.state + ''&head='' + params.head + ''&base=''
+      + params.base + ''&sort='' + params.sort + ''&direction='' + params.direction
+      + ''&per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: UpdatePullRequest
+  display_name: Pulls/Update
+  description: Update a pull request
+  enabled: true
+  parameters:
+    base:
+      display_name: Target Branch
+      type: string
+      description: The name of the branch you want your changes pulled into. This
+        should be an existing branch on the current repository. You cannot update
+        the base branch on a pull request to point to another repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    body:
+      display_name: Body
+      type: string
+      description: The contents of the pull request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    pull_number:
+      display_name: Pull Number
+      type: integer
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    state:
+      display_name: State
+      type: dropdown
+      description: State of this Pull Request. Either `open` or `closed`.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - open
+      - closed
+      index: 6
+      format: ""
+      is_multi: false
+    title:
+      display_name: Title
+      type: string
+      description: The title of the pull request.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+  action_to_run: http.patch
+  action_to_run_param_values:
+    body: '{"base":"{{params.base}}","body":"{{params.body}}","maintainer_can_modify":"{{bool(params.maintainer_can_modify)}}","state":"{{params.state}}","title":"{{params.title}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/pulls/'' + params.pull_number}}'
+  is_connection_optional: ""
+- name: CreateUserRepo
+  display_name: Repos/Create-For-Authenticated-User
+  description: Create a repository for the authenticated user
+  enabled: true
+  parameters:
+    auto_init:
+      display_name: Auto Init
+      type: bool
+      description: Whether the repository is initialized with a minimal README.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    description:
+      display_name: Description
+      type: string
+      description: A short description of the repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    gitignore_template:
+      display_name: Gitignore Template
+      type: string
+      description: The desired language or platform to apply to the .gitignore.
+      placeholder: 'Example: Haskell'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    license_template:
+      display_name: License Template
+      type: string
+      description: The license keyword of the open source license for this repository.
+      placeholder: 'Example: mit'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    name:
+      display_name: New Repo Name
+      type: string
+      description: The name of the repository.
+      placeholder: 'Example: Team Environment'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    private:
+      display_name: Private
+      type: bool
+      description: Whether the repository is private.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"allow_auto_merge":"{{bool(params.allow_auto_merge)}}","allow_merge_commit":"{{bool(params.allow_merge_commit)}}","allow_rebase_merge":"{{bool(params.allow_rebase_merge)}}","allow_squash_merge":"{{bool(params.allow_squash_merge)}}","auto_init":"{{bool(params.auto_init)}}","delete_branch_on_merge":"{{bool(params.delete_branch_on_merge)}}","description":"{{params.description}}","gitignore_template":"{{params.gitignore_template}}","has_downloads":"{{bool(params.has_downloads)}}","has_issues":"{{bool(params.has_issues)}}","has_projects":"{{bool(params.has_projects)}}","has_wiki":"{{bool(params.has_wiki)}}","homepage":"{{params.homepage}}","is_template":"{{bool(params.is_template)}}","license_template":"{{params.license_template}}","name":"{{params.name}}","private":"{{bool(params.private)}}","team_id":"{{int(params.team_id)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/user/repos''}}'
+  is_connection_optional: ""
+- name: CreateOrgRepo
+  display_name: Repos/Create-In-Org
+  description: Create an organization repository
+  enabled: true
+  parameters:
+    auto_init:
+      display_name: Auto Init
+      type: bool
+      description: Pass `true` to create an initial commit with empty README.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    description:
+      display_name: Description
+      type: string
+      description: A short description of the repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    gitignore_template:
+      display_name: Gitignore Template
+      type: string
+      description: Desired language or platform [.gitignore template](https://github.com/github/gitignore)
+        to apply. Use the name of the template without the extension. For example,
+        "Haskell".
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    license_template:
+      display_name: License Template
+      type: string
+      description: Choose an [open source license template](https://choosealicense.com/)
+        that best suits your needs, and then use the [license keyword](https://help.github.com/articles/licensing-a-repository/#searching-github-by-license-type)
+        as the `license_template` string. For example, "mit" or "mpl-2.0".
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    name:
+      display_name: New Repo Name
+      type: string
+      description: The name of the repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    private:
+      display_name: Private
+      type: bool
+      description: Whether the repository is private.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"allow_auto_merge":"{{bool(params.allow_auto_merge)}}","allow_merge_commit":"{{bool(params.allow_merge_commit)}}","allow_rebase_merge":"{{bool(params.allow_rebase_merge)}}","allow_squash_merge":"{{bool(params.allow_squash_merge)}}","auto_init":"{{bool(params.auto_init)}}","delete_branch_on_merge":"{{bool(params.delete_branch_on_merge)}}","description":"{{params.description}}","gitignore_template":"{{params.gitignore_template}}","has_issues":"{{bool(params.has_issues)}}","has_projects":"{{bool(params.has_projects)}}","has_wiki":"{{bool(params.has_wiki)}}","homepage":"{{params.homepage}}","is_template":"{{bool(params.is_template)}}","license_template":"{{params.license_template}}","name":"{{params.name}}","private":"{{bool(params.private)}}","team_id":"{{int(params.team_id)}}","visibility":"{{params.visibility}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/repos''}}'
+  is_connection_optional: ""
+- name: CreateRepoUsingTemplate
+  display_name: Repos/Create-Using-Template
+  description: Create a repository using a template
+  enabled: true
+  parameters:
+    description:
+      display_name: Description
+      type: string
+      description: A short description of the new repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    include_all_branches:
+      display_name: Include All Branches
+      type: bool
+      description: 'Set to `true` to include the directory structure and files from
+        all branches in the template repository, and not just the default branch.
+        Default: `false`.'
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    name:
+      display_name: New Repo Name
+      type: string
+      description: The name of the new repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    owner:
+      display_name: New Repo Owner
+      type: string
+      description: The organization or person who will own the new repository. To
+        create a new repository in an organization, the authenticated user must be
+        a member of the specified organization.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    private:
+      display_name: Private
+      type: bool
+      description: Either `true` to create a new private repository or `false` to
+        create a new public one.
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    template_owner:
+      display_name: Template Owner
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    template_repo:
+      display_name: Template Repo
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"description":"{{params.description}}","include_all_branches":"{{bool(params.include_all_branches)}}","name":"{{params.name}}","owner":"{{params.owner}}","private":"{{bool(params.private)}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.template_owner + ''/''
+      + params.template_repo + ''/generate''}}'
+  is_connection_optional: ""
+- name: CreateWebhook
+  display_name: Repos/Create-Webhook
+  description: Create a repository webhook
+  enabled: true
+  parameters:
+    active:
+      display_name: Active
+      type: bool
+      description: Determines if notifications are sent when the webhook is triggered.
+        Set to `true` to send notifications.
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    events:
+      display_name: Events
+      type: array
+      description: Determines what [events](https://docs.github.com/webhooks/event-payloads)
+        the hook is triggered for.
+      placeholder: ""
+      required: false
+      default: push
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: 'Use `web` to create a webhook. Default: `web`. This parameter
+        only accepts the value `web`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"active":"{{bool(params.active)}}","config":{"content_type":"{{params.config__content_type}}","digest":"{{params.config__digest}}","insecure_ssl":"{{obj(params.config__insecure_ssl)}}","secret":"{{params.config__secret}}","token":"{{params.config__token}}","url":"{{params.config__url}}"},"events":["{{arr(params.events)}}"],"name":"{{params.name}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/hooks''}}'
+  is_connection_optional: ""
+- name: ListBranches
+  display_name: Repos/List-Branches
+  description: List branches
+  enabled: true
+  parameters:
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/branches''}}{{''?protected='' + params.protected + ''&per_page='' + params.per_page
+      + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListCommits
+  display_name: Repos/List-Commits
+  description: List commits
+  enabled: true
+  parameters:
+    author:
+      display_name: Author
+      type: string
+      description: GitHub login or email address by which to filter by commit author.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    path:
+      display_name: Path Contains
+      type: string
+      description: Only commits containing this file path will be returned.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    sha:
+      display_name: Sha Contains
+      type: string
+      description: 'SHA or branch to start listing commits from. Default: the repository’s
+        default branch (usually `master`).'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    since:
+      display_name: Start Time
+      type: string
+      description: 'Only show notifications updated after the given time. This is
+        a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format:
+        `YYYY-MM-DDTHH:MM:SSZ`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: date-time
+      is_multi: false
+    until:
+      display_name: End Time
+      type: string
+      description: 'Only commits before this date will be returned. This is a timestamp
+        in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: date-time
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/commits''}}{{''?sha='' + params.sha + ''&path='' + params.path + ''&author=''
+      + params.author + ''&since='' + params.since + ''&until='' + params.until +
+      ''&per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListOrgRepos
+  display_name: Repos/List-For-Org
+  description: List organization repositories
+  enabled: true
+  parameters:
+    direction:
+      display_name: Direction
+      type: dropdown
+      description: 'Can be one of `asc` or `desc`. Default: when using `full_name`:
+        `asc`, otherwise `desc`'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 1
+      format: ""
+      is_multi: false
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: dropdown
+      description: Can be one of `created`, `updated`, `pushed`, `full_name`.
+      placeholder: ""
+      required: false
+      default: created
+      pattern: ""
+      options:
+      - created
+      - updated
+      - pushed
+      - full_name
+      index: 3
+      format: ""
+      is_multi: false
+    type:
+      display_name: Type
+      type: dropdown
+      description: 'Specifies the types of repositories you want returned. Can be
+        one of `all`, `public`, `private`, `forks`, `sources`, `member`, `internal`.
+        Note: For GitHub AE, can be one of `all`, `private`, `forks`, `sources`, `member`,
+        `internal`. Default: `all`. If your organization is associated with an enterprise
+        account using GitHub Enterprise Cloud or GitHub Enterprise Server 2.20+, `type`
+        can also be `internal`. However, the `internal` value is not yet supported
+        when a GitHub App calls this API with an installation access token.'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - all
+      - public
+      - private
+      - forks
+      - sources
+      - member
+      - internal
+      index: 4
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/repos''}}{{''?type=''
+      + params.type + ''&sort='' + params.sort + ''&direction='' + params.direction
+      + ''&per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListUserRepos
+  display_name: Repos/List-For-User
+  description: List repositories for a user
+  enabled: true
+  parameters:
+    direction:
+      display_name: Direction
+      type: dropdown
+      description: 'Can be one of `asc` or `desc`. Default: `asc` when using `full_name`,
+        otherwise `desc`'
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options:
+      - asc
+      - desc
+      index: 2
+      format: ""
+      is_multi: false
+    page:
+      display_name: Page
+      type: integer
+      description: Page number of the results to fetch.
+      placeholder: ""
+      required: false
+      default: "1"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    per_page:
+      display_name: Per Page
+      type: integer
+      description: Results per page (max 100)
+      placeholder: ""
+      required: false
+      default: "30"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    sort:
+      display_name: Sort
+      type: dropdown
+      description: Can be one of `created`, `updated`, `pushed`, `full_name`.
+      placeholder: ""
+      required: false
+      default: full_name
+      pattern: ""
+      options:
+      - created
+      - updated
+      - pushed
+      - full_name
+      index: 5
+      format: ""
+      is_multi: false
+    type:
+      display_name: Type
+      type: dropdown
+      description: Can be one of `all`, `owner`, `member`.
+      placeholder: ""
+      required: false
+      default: owner
+      pattern: ""
+      options:
+      - all
+      - owner
+      - member
+      index: 6
+      format: ""
+      is_multi: false
+    username:
+      display_name: Username
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/users/'' + params.username + ''/repos''}}{{''?type=''
+      + params.type + ''&sort='' + params.sort + ''&direction='' + params.direction
+      + ''&per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListReleases
+  display_name: Repos/List-Releases
+  description: List releases
+  enabled: true
+  parameters:
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    page:
+      display_name: Page
+      type: integer
+      description: Page number of the results to fetch.
+      placeholder: ""
+      required: false
+      default: "1"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    per_page:
+      display_name: Per Page
+      type: integer
+      description: Results per page (max 100)
+      placeholder: ""
+      required: false
+      default: "30"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/releases''}}{{''?per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: ListWebhooks
+  display_name: Repos/List-Webhooks
+  description: List repository webhooks
+  enabled: true
+  parameters:
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/hooks''}}{{''?per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: Merge
+  display_name: Repos/Merge
+  description: Merge a branch
+  enabled: true
+  parameters:
+    base:
+      display_name: Target Branch
+      type: string
+      description: The name of the base branch that the head will be merged into.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    commit_message:
+      display_name: Commit Message
+      type: string
+      description: Commit message to use for the merge commit. If omitted, a default
+        message will be used.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    head:
+      display_name: Source Branch
+      type: string
+      description: The head to merge. This can be a branch name or a commit SHA1.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"base":"{{params.base}}","commit_message":"{{params.commit_message}}","head":"{{params.head}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo
+      + ''/merges''}}'
+  is_connection_optional: ""
+- name: UpdateRepoSettings
+  display_name: Repos/Update
+  description: Update a repository
+  enabled: true
+  parameters:
+    description:
+      display_name: Description
+      type: string
+      description: A short description of the repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    has_issues:
+      display_name: Has Issues
+      type: bool
+      description: Either `true` to enable issues for this repository or `false` to
+        disable them.
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    has_projects:
+      display_name: Has Projects
+      type: bool
+      description: Either `true` to enable projects for this repository or `false`
+        to disable them. **Note:** If you're creating a repository in an organization
+        that has disabled repository projects, the default is `false`, and if you
+        pass `true`, the API returns an error.
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    has_wiki:
+      display_name: Has Wiki
+      type: bool
+      description: Either `true` to enable the wiki for this repository or `false`
+        to disable it.
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    name:
+      display_name: Name
+      type: string
+      description: The name of the repository.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    owner:
+      display_name: Owner
+      type: string
+      description: The organization or person who owns the repository. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    private:
+      display_name: Private
+      type: bool
+      description: "Either `true` to make the repository private or `false` to make
+        it public. Default: `false`.  \n**Note**: You will get a `422` error if the
+        organization restricts [changing repository visibility](https://help.github.com/articles/repository-permission-levels-for-an-organization#changing-the-visibility-of-repositories)
+        to organization owners and a non-owner tries to change the value of private.
+        **Note**: You will get a `422` error if the organization restricts [changing
+        repository visibility](https://help.github.com/articles/repository-permission-levels-for-an-organization#changing-the-visibility-of-repositories)
+        to organization owners and a non-owner tries to change the value of private."
+      placeholder: ""
+      required: false
+      default: "false"
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    repo:
+      display_name: Repo
+      type: string
+      description: Name of the repository owned by the owner. github.com/{owner}/{repo}
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.patch
+  action_to_run_param_values:
+    body: '{"allow_auto_merge":"{{bool(params.allow_auto_merge)}}","allow_merge_commit":"{{bool(params.allow_merge_commit)}}","allow_rebase_merge":"{{bool(params.allow_rebase_merge)}}","allow_squash_merge":"{{bool(params.allow_squash_merge)}}","archived":"{{bool(params.archived)}}","default_branch":"{{params.default_branch}}","delete_branch_on_merge":"{{bool(params.delete_branch_on_merge)}}","description":"{{params.description}}","has_issues":"{{bool(params.has_issues)}}","has_projects":"{{bool(params.has_projects)}}","has_wiki":"{{bool(params.has_wiki)}}","homepage":"{{params.homepage}}","is_template":"{{bool(params.is_template)}}","name":"{{params.name}}","private":"{{bool(params.private)}}","security_and_analysis":{"advanced_security":{"status":"{{params.security_and_analysis__advanced_security__status}}"},"secret_scanning":{"status":"{{params.security_and_analysis__secret_scanning__status}}"}},"visibility":"{{params.visibility}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/repos/'' + params.owner + ''/'' + params.repo}}'
+  is_connection_optional: ""
+- name: ListTeamRepos
+  display_name: Teams/List-Repos-In-Org
+  description: List team repositories
+  enabled: true
+  parameters:
+    org:
+      display_name: Org
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    team_slug:
+      display_name: Team Slug
+      type: string
+      description: team_slug parameter
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/orgs/'' + params.org + ''/teams/'' + params.team_slug
+      + ''/repos''}}{{''?per_page='' + params.per_page + ''&page='' + params.page}}'
+  is_connection_optional: ""
+- name: AddSSHKey
+  display_name: Users/Create-Public-Ssh-Key-For-Authenticated
+  description: Create a public SSH key for the authenticated user
+  enabled: true
+  parameters:
+    key:
+      display_name: Key
+      type: string
+      description: The public SSH key to add to your GitHub account.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    title:
+      display_name: Title
+      type: string
+      description: A descriptive name for the new key.
+      placeholder: 'Example: Personal MacBook Air'
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"key":"{{params.key}}","title":"{{params.title}}"}'
+    contentType: application/json
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/user/keys''}}'
+  is_connection_optional: ""
+- name: RemoveSSHKey
+  display_name: Users/Delete-Public-Ssh-Key-For-Authenticated
+  description: Delete a public SSH key for the authenticated user
+  enabled: true
+  parameters:
+    key_id:
+      display_name: Key ID
+      type: integer
+      description: key_id parameter
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.delete
+  action_to_run_param_values:
+    url: '{{(exists(connection.github.REQUEST_URL) ? connection.github.REQUEST_URL
+      : ''https://api.github.com''), + ''/user/keys/'' + params.key_id}}'
+  is_connection_optional: ""

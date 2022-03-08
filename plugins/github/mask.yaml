@@ -1,0 +1,547 @@
+name: github
+connection_types:
+  github:
+    name: github
+is_connection_optional: false
+request_url_conn_type: github
+actions:
+  orgs/create-invitation:
+    alias: InviteToOrganization
+    parameters:
+      org:
+        alias: "Org"
+        required: true
+        description: "The name of the organization."
+        index: 1
+      email:
+        alias: "Email"
+        required: true
+        description: "Email address of the person you are inviting, which can be an existing GitHub user."
+        index: 2
+      role:
+        alias: "Role"
+        required: true
+        description: "Specify role for new member"
+        index: 3
+      team_ids:
+        alias: "Team IDs"
+        description: "Specify IDs for the teams you want to invite new members to."
+        index: 4
+  orgs/list-members:
+    alias: ListOrgMembers
+    parameters:
+      org:
+        alias: "Org"
+        required: true
+        description: "The name of the organization."
+        index: 1
+      role:
+        alias: "Role"
+        description: "Filter members returned by their role."
+        index: 2
+  orgs/list-pending-invitations:
+    alias: ListPendingInvitations
+    parameters:
+      org:
+        alias: "Org"
+        required: true
+        description: "The name of the organization."
+        index: 1
+  orgs/remove-member:
+    alias: RemoveOrgMember
+    parameters:
+      org:
+        alias: "Org"
+        required: true
+        description: "The name of the organization."
+        index: 1
+      username:
+        alias: "Username"
+        required: true
+        index: 2
+  pulls/create:
+    alias: CreatePullRequest
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      title:
+        alias: "Title"
+        required: true
+        description: "The title of the new pull request."
+        index: 3
+      base:
+        alias: "Target Branch"
+        required: true
+        description: "The name of the branch you want the changes pulled into. This should be an existing branch on the current repository. You cannot submit a pull request to one repository that requests a merge to a base of another repository."
+        index: 4
+      head:
+        alias: "Source Branch"
+        required: true
+        description: "The name of the branch where your changes are implemented."
+        index: 5
+      body:
+        alias: "Body"
+        description: "The contents of the pull request."
+        index: 6
+  pulls/get:
+    alias: GetPullRequest
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      pull_number:
+        alias: "Pull Number"
+        required: true
+        index: 3
+  pulls/list:
+    alias: ListPullRequests
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      base:
+        alias: "Target Branch"
+        description: "Filter pulls by base branch name. Example: `gh-pages`."
+        index: 3
+      head:
+        alias: "Source Branch"
+        description: "Filter pulls by head user or head organization and branch name in the format of `user:ref-name` or `organization:ref-name`. For example: `github:new-script-format` or `octocat:test-branch`."
+        index: 4
+      direction:
+        alias: "Direction"
+        default: asc
+        description: "The direction of the sort. Can be either `asc` or `desc`. Default: `desc` when sort is `created` or sort is not specified, otherwise `asc`."
+        index: 5
+      sort:
+        alias: "Sort"
+        description: "What to sort results by. Can be either `created`, `updated`, `popularity` (comment count) or `long-running` (age, filtering by pulls updated in the last month)."
+        index: 6
+      state:
+        alias: "State"
+        description: "Either `open`, `closed`, or `all` to filter by state."
+        index: 7
+  pulls/update:
+    alias: UpdatePullRequest
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      base:
+        alias: "Target Branch"
+        description: "The name of the branch you want your changes pulled into. This should be an existing branch on the current repository. You cannot update the base branch on a pull request to point to another repository."
+        index: 3
+      body:
+        alias: "Body"
+        description: "The contents of the pull request."
+        index: 4
+      pull_number:
+        alias: "Pull Number"
+        index: 5
+      state:
+        alias: "State"
+        description: "State of this Pull Request. Either `open` or `closed`."
+        index: 6
+      title:
+        alias: "Title"
+        description: "The title of the pull request."
+        index: 7
+  repos/create-for-authenticated-user:
+    alias: CreateUserRepo
+    parameters:
+      name:
+        alias: "New Repo Name"
+        required: true
+        description: "The name of the repository."
+        index: 1
+      auto_init:
+        alias: "Auto Init"
+        description: "Whether the repository is initialized with a minimal README."
+        index: 2
+      private:
+        alias: "Private"
+        required: true
+        description: "Whether the repository is private."
+        index: 3
+      description:
+        alias: "Description"
+        description: "A short description of the repository."
+        index: 4
+      gitignore_template:
+        alias: "Gitignore Template"
+        description: "The desired language or platform to apply to the .gitignore."
+        index: 5
+      license_template:
+        alias: "License Template"
+        description: "The license keyword of the open source license for this repository."
+        index: 6
+  repos/create-in-org:
+    alias: CreateOrgRepo
+    parameters:
+      name:
+        alias: "New Repo Name"
+        required: true
+        description: "The name of the repository."
+        index: 1
+      org:
+        alias: "Org"
+        required: true
+        index: 2
+      private:
+        alias: "Private"
+        required: true
+        description: "Whether the repository is private."
+        index: 3
+      auto_init:
+        alias: "Auto Init"
+        description: "Pass `true` to create an initial commit with empty README."
+        index: 4
+      description:
+        alias: "Description"
+        description: "A short description of the repository."
+        index: 5
+      gitignore_template:
+        alias: "Gitignore Template"
+        description: "Desired language or platform [.gitignore template](https://github.com/github/gitignore) to apply. Use the name of the template without the extension. For example, &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;Haskell&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;."
+        index: 6
+      license_template:
+        alias: "License Template"
+        description: "Choose an [open source license template](https://choosealicense.com/) that best suits your needs, and then use the [license keyword](https://help.github.com/articles/licensing-a-repository/#searching-github-by-license-type) as the `license_template` string. For example, &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;mit&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34; or &amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;mpl-2.0&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;#34;."
+        index: 7
+  repos/create-using-template:
+    alias: CreateRepoUsingTemplate
+    parameters:
+      template_owner:
+        alias: "Template Owner"
+        required: true
+        description: "The user who owns the template repo."
+        index: 1
+      template_repo:
+        alias: "Template Repo"
+        required: true
+        description: "The name of the template repo"
+        index: 2
+      name:
+        alias: "New Repo Name"
+        required: true
+        description: "The name of the new repository."
+        index: 3
+      owner:
+        alias: "New Repo Owner"
+        required: true
+        description: "The organization or person who will own the new repository. To create a new repository in an organization, the authenticated user must be a member of the specified organization."
+        index: 4
+      private:
+        alias: "Private"
+        required: true
+        description: "Either `true` to create a new private repository or `false` to create a new public one."
+        index: 5
+      description:
+        alias: "Description"
+        description: "A short description of the new repository."
+        index: 6
+      include_all_branches:
+        alias: "Include All Branches"
+        description: "Set to `true` to include the directory structure and files from all branches in the template repository, and not just the default branch. Default: `false`."
+        index: 7
+  repos/create-webhook:
+    alias: CreateWebhook
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      config.url:
+        alias: "Payload URL"
+        required: true
+        description: "The URL to which the payloads will be delivered."
+        type: uri
+        index: 3
+      config.content_type:
+        alias: "Config Content Type"
+        required: true
+        description: "The media type used to serialize the payloads. Supported values include `json` and `form`. The default is `form`."
+        index: 4
+      events:
+        alias: "Events"
+        required: true
+        default: push
+        description: "Determines what events the hook is triggered for."
+        index: 5
+      config.secret:
+        alias: "Config Secret"
+        description: "If provided, the `secret` will be used as the `key` to generate the HMAC hex digest value for."
+        index: 6
+      active:
+        alias: "Active"
+        default: true
+        description: "Determines if notifications are sent when the webhook is triggered. Set to `true` to send notifications."
+        index: 7
+      name:
+        alias: "Name"
+        default: web
+        description: "This parameter only accepts the value `web`."
+        index: 8
+  repos/list-branches:
+    alias: ListBranches
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+  repos/list-commits:
+    alias: ListCommits
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      author:
+        alias: "Author"
+        description: "GitHub login or email address by which to filter by commit author."
+        index: 3
+      path:
+        alias: "Path Contains"
+        description: "Only commits containing this file path will be returned."
+        index: 4
+      sha:
+        alias: "Sha Contains"
+        description: "SHA or branch to start listing commits from. Default: the repository’s default branch (usually `master`)."
+        index: 5
+      since:
+        alias: "Start Time"
+        description: "Only show notifications updated after the given time."
+        type: date_time
+        index: 6
+      until:
+        alias: "End Time"
+        description: "Only commits before this date will be returned."
+        type: date_time
+        index: 7
+  repos/list-for-org:
+    alias: ListOrgRepos
+    parameters:
+      direction:
+        alias: "Direction"
+        default: asc
+        description: "Can be one of `asc` or `desc`."
+        index: 1
+      org:
+        alias: "Org"
+        required: true
+        description: "The name of the organization."
+        index: 2
+      sort:
+        alias: "Sort"
+        description: "Can be one of `created`, `updated`, `pushed`, `full_name`."
+        index: 3
+      type:
+        alias: "Type"
+        description: "Specifies the types of repositories you want returned."
+        index: 4
+  repos/list-for-user:
+    alias: ListUserRepos
+    parameters:
+      username:
+        alias: "Username"
+        required: true
+        index: 1
+      direction:
+        alias: "Direction"
+        description: "Can be one of `asc` or `desc`."
+        index: 2
+      page:
+        alias: "Page"
+        default: 1
+        description: "Page number of the results to fetch."
+        index: 3
+      per_page:
+        alias: "Per Page"
+        default: 30
+        description: "Results per page (max 100)"
+        index: 4
+      sort:
+        alias: "Sort"
+        default: full_name
+        description: "Can be one of `created`, `updated`, `pushed`, `full_name`."
+        index: 5
+      type:
+        alias: "Type"
+        default: owner
+        description: "Can be one of `all`, `owner`, `member`."
+        index: 6
+  repos/list-releases:
+    alias: ListReleases
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      page:
+        alias: "Page"
+        description: "Page number of the results to fetch."
+        index: 3
+      per_page:
+        alias: "Per Page"
+        description: "Results per page (max 100)"
+        index: 4
+  repos/list-webhooks:
+    alias: ListWebhooks
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+  repos/merge:
+    alias: Merge
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      base:
+        alias: "Target Branch"
+        required: true
+        description: "The name of the base branch that the head will be merged into."
+        index: 3
+      head:
+        alias: "Source Branch"
+        required: true
+        description: "The head to merge. This can be a branch name or a commit SHA1."
+        index: 4
+      commit_message:
+        alias: "Commit Message"
+        description: "Commit message to use for the merge commit. If omitted, a default message will be used."
+        index: 5
+  repos/update:
+    alias: UpdateRepoSettings
+    parameters:
+      owner:
+        alias: "Owner"
+        required: true
+        description: "The organization or person who owns the repository. github.com/{owner}/{repo}"
+        index: 1
+      repo:
+        alias: "Repo"
+        required: true
+        description: "Name of the repository owned by the owner. github.com/{owner}/{repo}"
+        index: 2
+      description:
+        alias: "Description"
+        description: "A short description of the repository."
+        index: 3
+      has_issues:
+        alias: "Has Issues"
+        description: "Either `true` to enable issues for this repository or `false` to disable them."
+        index: 4
+      has_projects:
+        alias: "Has Projects"
+        description: "Either `true` to enable projects for this repository or `false` to disable them."
+        index: 5
+      has_wiki:
+        alias: "Has Wiki"
+        description: "Either `true` to enable the wiki for this repository or `false` to disable it."
+        index: 6
+      name:
+        alias: "Name"
+        description: "The name of the repository."
+        index: 7
+      private:
+        alias: "Private"
+        description: "Either `true` to make the repository private or `false` to make it public. Default: `false`. **Note**: You will get a `422` error if the organization restricts [changing repository visibility](https://help.github.com/articles/repository-permission-levels-for-an-organization#changing-the-visibility-of-repositories) to organization owners and a non-owner tries to change the value of private."
+        index: 8
+  teams/list-repos-in-org:
+    alias: ListTeamRepos
+    parameters:
+      org:
+        alias: "Org"
+        required: true
+        index: 1
+      team_slug:
+        alias: "Team Slug"
+        description: "The team slug name"
+        index: 2
+  users/create-public-ssh-key-for-authenticated:
+    alias: AddSSHKey
+    parameters:
+      key:
+        alias: "Key"
+        required: true
+        description: "The public SSH key to add to your GitHub account."
+        index: 1
+      title:
+        alias: "Title"
+        required: true
+        description: "A descriptive name for the new key."
+        index: 2
+  users/delete-public-ssh-key-for-authenticated:
+    alias: RemoveSSHKey
+    parameters:
+      key_id:
+        alias: "Key ID"
+        description: "key_id parameter"
+        index: 1

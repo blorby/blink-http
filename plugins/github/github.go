@@ -16,7 +16,21 @@ func (p GithubPlugin) HandleAuth(req *http.Request, conn map[string]string) erro
 }
 
 func (p GithubPlugin) TestConnection(connection *blink_conn.ConnectionInstance) (bool, []byte) {
-	return false, []byte("Test connection failed, Github is not yet supported by the http plugin")
+	requestUrl, ok := connection.Data[consts.RequestUrlKey]
+	if !ok {
+		requestUrl = p.GetDefaultRequestUrl()
+	}
+
+	res, err := connections.SendTestConnectionRequest(requestUrl+"/user", http.MethodGet, nil, connection, p.HandleAuth)
+	if err != nil {
+		return false, []byte(err.Error())
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return false, []byte(consts.TestConnectionFailed)
+	}
+
+	return true, nil
 }
 
 func (p GithubPlugin) GetDefaultRequestUrl() string {
