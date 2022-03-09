@@ -1,0 +1,251 @@
+---
+name: grafana
+icon_uri: "https://app.dev.blinkops.com/assets/images/Icons/Companies/Company/XL/Grafana.svg"
+connection_types:
+  grafana:
+    name: grafana
+is_connection_optional: false
+actions:
+  - name: AddTeamMemberByID
+    display_name: Add Team Member By ID
+    description: Add member to a team.
+    parameters:
+      UserID:
+        display_name: User ID
+        type: string
+        required: true
+        description: The user ID to be added to the team.
+        index: 1
+      TeamID:
+        display_name: Team ID
+        type: string
+        required: true
+        description: Team ID to add member to
+        index: 2
+    action_to_run: http.post
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/teams/' + params.TeamID + '/members'}}"
+      body: >-
+        {
+          "userId": "{{int(params.UserID)}}"
+        }
+      contentType: application/json
+
+  - name: InviteOrgMember
+    display_name: Invite Org Member
+    description: Invite member to organization.
+    parameters:
+      Name:
+        display_name: Name
+        type: string
+        required: false
+        description: "(Optional) The value in the Name field of the account."
+        index: 1
+      Role:
+        display_name: Role
+        type: dropdown
+        options:
+          - Viewer
+          - Editor
+          - Admin
+        required: true
+        description: The organization role to assign this user
+        index: 2
+      sendEmail:
+        display_name: Send Email
+        type: bool
+        required: false
+        description: Yes - If your organization has SMTP set up, then Grafana sends an
+          email to the user inviting them to log in to Grafana and join your organization.
+          No - The user is not sent an invitation, but they can sign in to the Grafana
+          server with the email or username that you entered.
+        index: 3
+      loginOrEmail:
+        display_name: Username/Email
+        type: string
+        required: true
+        description: Either the email or username that the user will use to sign in to
+          Grafana.
+        index: 4
+    action_to_run: http.post
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/org/invites'}}"
+      body: >-
+        {
+          "name": "{{params.Name}}",
+          "role": "{{params.Role}}",
+          "sendEmail": "{{bool(params.sendEmail)}}",
+          "loginOrEmail": "{{params.loginOrEmail}}"
+        }
+      contentType: application/json
+
+  - name: RemoveOrgMemberByID
+    display_name: Remove Org Member By ID
+    description: Remove user from current organization.
+    parameters:
+      UserID:
+        display_name: User ID
+        type: string
+        required: true
+        description: User ID to remove
+        index: 1
+    action_to_run: http.delete
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/org/users/' + params.UserID}}"
+
+  - name: CreateFolder
+    display_name: Create Folder
+    description: Creates a new folder.
+    parameters:
+      FolderUID:
+        display_name: Folder Unique ID
+        type: string
+        required: false
+        description: The unique identifier (uid) of a folder can be used for uniquely
+          identify folders between multiple Grafana installs. It’s automatically generated
+          if not provided when creating a folder. The uid allows having consistent URLs
+          for accessing folders and when syncing folders between multiple Grafana installs.
+          This means that changing the title of a folder will not break any bookmarked
+          links to that folder.
+        index: 2
+      FolderTitle:
+        display_name: Folder Title
+        type: string
+        required: true
+        index: 1
+    action_to_run: http.post
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/folders'}}"
+      body: >-
+        {
+            "uid": "{{params.FolderUID}}",
+            "title": "{{params.FolderTitle}}"
+        }
+      contentType: application/json
+
+  - name: CreateDashboard
+    display_name: Create Dashboard
+    description: Creates a new dashboard or updates an existing dashboard. When updating
+      existing dashboards, if you do not define the folderId or the folderUid property,
+      then the dashboard(s) are moved to the General folder. (You need to define only
+      one property, not both).
+    parameters:
+      DashboardUniqueID:
+        display_name: Dashboard Unique ID
+        type: string
+        required: false
+        description: Optional unique identifier when creating a dashboard. uid = null
+          will generate a new uid.
+        index: 1
+      DashboardTitle:
+        display_name: Dashboard Title
+        type: string
+        required: true
+        index: 2
+      DashboardTags:
+        display_name: Dashboard Tags
+        type: string
+        description: List of tags, separated by commas
+        required: false
+        index: 3
+      DashboardTimezone:
+        display_name: Dashboard Timezone
+        type: string
+        required: false
+        index: 4
+      DashboardSchemaVersion:
+        display_name: Dashboard Schema Version
+        type: int
+        required: false
+        index: 5
+      DashboardVersion:
+        display_name: Dashboard Version
+        type: int
+        required: false
+        index: 6
+      DashboardRefreshInterval:
+        display_name: Dashboard Refresh Interval
+        type: string
+        description: Set the dashboard refresh interval. If this is lower than the minimum
+          refresh interval, then Grafana will ignore it and will enforce the minimum refresh
+          interval.
+        required: false
+        index: 7
+      FolderUniqueID:
+        display_name: Folder Unique ID
+        description: The UID of the folder to save the dashboard in. Overrides the folderId.
+          When updating existing dashboards, if you do not define the folderId or the
+          folderUid property, then the dashboard(s) are moved to the General folder. (You
+          need to define only one property, not both).
+        type: string
+        required: false
+        index: 8
+      CommitMessage:
+        display_name: Commit Message
+        description: Set a commit message for the version history.
+        type: string
+        required: false
+        index: 9
+    action_to_run: http.post
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/dashboards/db'}}"
+      contentType: application/json
+      body: >-
+        {
+            "dashboard": {
+                "uid": "{{params.DashboardUniqueID}}",
+                "title": "{{params.DashboardTitle}}",
+                "tags": [
+                    "{{params.DashboardTags}}"
+                ],
+                "timezone": "{{params.DashboardTimezone}}",
+                "schemaVersion": "{{int(params.DashboardSchemaVersion)}}",
+                "version": "{{(params.DashboardVersion)}}",
+                "refresh": "{{params.DashboardRefreshInterval}}"
+            },
+            "folderUid": "{{params.FolderUniqueID}}",
+            "message": "{{params.CommitMessage}}"
+        }
+
+  - name: GetUsers
+    display_name: Get Users
+    description: Get all users within the current organization (lookup).
+    action_to_run: http.get
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/org/users/lookup'}}"
+
+  - name: GetTeams
+    display_name: Get Teams
+    description: Team search with paging.
+    parameters:
+      TeamsPerPage:
+        display_name: Teams Per Page
+        type: string
+        required: false
+        description: The number of users to be returned per page. The default value is
+          1000
+        index: 1
+      Page:
+        display_name: Page
+        type: string
+        required: false
+        description: The page number. The default value is 1.
+        index: 2
+      Query:
+        display_name: Query
+        type: string
+        required: false
+        description: The query parameter is optional and it will return results where
+          the query value is contained in the name field. Query values with spaces need
+          to be URL encoded e.g. query=my%20team.
+        index: 3
+      Name:
+        display_name: Name
+        type: string
+        required: false
+        description: The name parameter returns a single team if the parameter matches
+          the name field.
+        index: 4
+    action_to_run: http.get
+    action_to_run_param_values:
+      url: "{{connection.grafana.REQUEST_URL + '/api/teams/search'}}{{'?perpage=' + params.TeamsPerPage + '&page=' + params.Page + '&query' + params.Query + '&name=' + params.Name}}"
