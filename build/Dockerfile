@@ -18,6 +18,10 @@ COPY config.yaml plugin.yaml ./
 COPY actions ./actions
 COPY plugins/wiz/actions ./plugins/wiz/actions
 COPY plugins/aws-sso/actions ./plugins/aws-sso/actions
+COPY plugins/bitbucket/actions ./plugins/bitbucket/actions
+COPY plugins/crowdstrike/actions ./plugins/crowdstrike/actions
+COPY plugins/datadog/actions ./plugins/datadog/actions
+COPY plugins/ermetic/actions ./plugins/ermetic/actions
 
 # Expose the gRPC port.
 EXPOSE 1337
