@@ -17,6 +17,7 @@ COPY --from=builder /go/bin/blink-http .
 COPY config.yaml plugin.yaml ./
 COPY actions ./actions
 COPY plugins/wiz/actions ./plugins/wiz/actions
+COPY plugins/pingdom/actions ./plugins/pingdom/actions
 
 # Expose the gRPC port.
 EXPOSE 1337

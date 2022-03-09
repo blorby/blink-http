@@ -3,6 +3,9 @@ display_name: "Create Web Uptime Check"
 description: ""
 enabled: true
 collection_name: "pingdom"
+connection_types:
+  pingdom:
+    name: pingdom
 parameters:
     "Name":
       type: "string"
