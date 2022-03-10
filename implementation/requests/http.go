@@ -265,5 +265,5 @@ func GetRequestUrl(ctx *plugin.ActionContext, provider string) (string, error) {
 		return "", errors.New(consts.RequestUrlMissing)
 	}
 
-	return requestUrl, nil
+	return strings.TrimSuffix(requestUrl, "/"), nil
 }
