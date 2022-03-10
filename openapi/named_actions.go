@@ -80,6 +80,8 @@ func (o ParsedOpenApi) getActionParams(action plugin.Action) map[string]plugin.A
 				if maskedParam.Index != 0 {
 					param.Index = maskedParam.Index
 				}
+			} else {
+				continue
 			}
 		} else {
 			param.DisplayName = getDisplayName(paramName)
