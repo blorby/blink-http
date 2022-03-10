@@ -1,0 +1,34 @@
+name: "CreateIssue"
+description: "Adds a comment to an issue"
+enabled: true
+parameters:
+  "Summary":
+    type: "string"
+    required: true
+  "Project Key":
+    type: "string"
+    description: "The project's key."
+    required: true
+  "Description":
+    type: "string"
+    required: false
+  "Issue Type":
+    type: "dropdown"
+    options:
+      - Bug
+      - Story
+      - Epic
+      - Improvement
+      - Task
+      - New Feature
+    default: Bug
+    description: "The type of the issue"
+    required: true
+  "Assignee Email":
+    type: "string"
+    description: "The email address of the assignee"
+    required: false
+  "Custom Fields":
+    type: "code:json"
+    description: "Custom fields in JSON form"
+    required: false

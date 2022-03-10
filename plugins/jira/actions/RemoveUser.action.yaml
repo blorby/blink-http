@@ -1,0 +1,8 @@
+name: "RemoveUser"
+description: "Removes a user"
+enabled: true
+parameters:
+  "User Email":
+    type: "string"
+    description: "The email of the user, which uniquely identifies the user across all Atlassian products."
+    required: true

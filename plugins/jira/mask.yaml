@@ -1,0 +1,49 @@
+name: jira
+connection_types:
+  jira:
+    name: jira
+is_connection_optional: false
+request_url_conn_type: jira
+actions:
+  getAllUsers:
+    alias: GetAllUsers
+    parameters:
+      startAt:
+        alias: "Start At"
+        index: 2
+      maxResults:
+        alias: "Max Results"
+        index: 3
+
+  createUser:
+    alias: InviteUser
+    parameters:
+      displayName:
+        alias: "Display Name"
+        index: 1
+      emailAddress:
+        alias: "Email"
+        index: 2
+
+  searchProjects:
+    alias: GetProjects
+    parameters:
+      startAt:
+        alias: Start at
+      maxResults:
+        alias: Max number of results
+
+  getProject:
+    alias: GetProject
+    parameters:
+      projectIdOrKey:
+        alias: Project ID or key
+
+  searchForIssuesUsingJql:
+    alias: ListIssues
+    parameters:
+      jql:
+        alias: Query
+        default: project={my-project-key}
+
+              

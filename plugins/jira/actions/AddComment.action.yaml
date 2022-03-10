@@ -1,0 +1,12 @@
+name: "AddComment"
+description: "Adds a comment to an issue"
+enabled: true
+parameters:
+  "Issue ID Or Key":
+    type: "string"
+    description: "The ID or key of the issue."
+    required: true
+  "Content":
+    type: "string"
+    description: "The content of the comment"
+    required: true
