@@ -20,6 +20,7 @@ const (
 
 	BasicAuthPrefix  = "Basic "
 	BearerAuthPrefix = "Bearer "
+	SswsAuthPrefix   = "SSWS "
 
 	BasicAuthPassword = "PASSWORD"
 	BasicAuthUsername = "USERNAME"
