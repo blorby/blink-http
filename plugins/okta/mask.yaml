@@ -1,0 +1,376 @@
+name: okta
+connection_types:
+  okta:
+    name: okta
+is_connection_optional: false
+request_url_conn_type: okta
+actions:
+  activateUser:
+    alias: ActivateUser
+    parameters:
+      userId:
+        alias: "User ID"
+        required: true
+        description: The user's ID
+        index: 1
+      sendEmail:
+        alias: "Send Email"
+        required: true
+        default: true
+        description: Sends an activation email to the user if true
+        index: 2
+
+  addUserToGroup:
+    alias: AddUserToGroup
+    parameters:
+      userId:
+        alias: "User ID"
+        required: true
+        description: The user's ID
+        index: 1
+      groupId:
+        alias: "Group ID"
+        required: true
+        description: The group's ID
+        index: 2
+
+  createGroup:
+    alias: CreateGroup
+    parameters:
+      profile__name:
+        alias: "Group Name"
+        required: true
+        description: Name of the Group
+        index: 1
+      profile__description:
+        alias: "Group Description"
+        description: Description of the Group
+        index: 2
+
+  createUser:
+    alias: CreateUser
+    parameters:
+      profile__login:
+        alias: "Login Email"
+        required: true
+        description: Unique identifier for the user (email)
+        index: 1
+      profile__email:
+        alias: "Email"
+        required: true
+        description: Primary email address of user
+        index: 2
+      profile__firstName:
+        alias: "First Name"
+        required: true
+        description: Given name of the user
+        index: 3
+      profile__lastName:
+        alias: "Last Name"
+        required: true
+        description: Family name of the user
+        index: 4
+      activate:
+        alias: "Activate"
+        required: true
+        default: true
+        description: Executes activation lifecycle operation when creating the user
+        index: 5
+      nextLogin:
+        alias: "Next Login"
+        description: With activate=true, set nextLogin to changePassword to have the password be EXPIRED, so user must change it the next time they log in
+        index: 6
+      credentials__password__value:
+        alias: "Password"
+        type: password
+        description: The password for the user (or one time password if nextLogin is set to changePassword)
+        index: 7
+      profile__displayName:
+        alias: "Display Name"
+        description: Name of the user, suitable for display to end users
+        index: 8
+      profile__mobilePhone:
+        alias: "Mobile Phone"
+        required: true
+        description: Mobile phone number of the user
+        index: 9
+      profile__organization:
+        alias: "Organization"
+        description: Name of the user's organization
+        index: 10
+      profile__department:
+        alias: "Department"
+        description: Name of the user's department
+        index: 11
+      profile__division:
+        alias: "Division"
+        description: Name of the user's division
+        index: 12
+      profile__employeeNumber:
+        alias: "Employee Number"
+        description: Organization or company assigned unique identifier for the user
+        index: 13
+      profile__managerId:
+        alias: "Manager ID"
+        description: ID of the user's manager
+        index: 14
+      profile__title:
+        alias: "Title"
+        description: User's title, such as "Vice President"
+        index: 15
+      profile__userType:
+        alias: "User Type"
+        description: Used to describe the organization to user relationship such as "Employee" or "Contractor"
+        index: 16
+
+  getLogs:
+    alias: GetLogs
+    parameters:
+      q:
+        alias: "Query"
+        description: Filters the log events results by one or more exact keywords
+        index: 1
+      filter:
+        alias: "Filter"
+        description: Filter Expression that filters the results, for more information visit https://developer.okta.com/docs/reference/api/system-log/#expression-filter
+        index: 2
+      limit:
+        alias: "Limit"
+        default: 100
+        description: Sets the number of results that are returned in the response
+        index: 3
+      since:
+        alias: "Since"
+        type: date_time
+        description: Filters the lower time bound of the log events published property for bounded queries or persistence time for polling queries
+        index: 4
+      until:
+        alias: "Until"
+        type: date_time
+        description: Filters the upper time bound of the log events published property for bounded queries or persistence time for polling queries
+        index: 5
+      sortOrder:
+        alias: "Sort Order"
+        default: ASCENDING
+        description: Filters the log events results by one or more exact keywords
+        index: 6
+
+  getUser:
+    alias: GetUserByEmail
+    parameters:
+      userId:
+        alias: "User Email"
+        required: true
+        description: The user's email address
+        index: 1
+
+  listApplications:
+    alias: ListApplications
+    parameters:
+      q:
+        alias: "Query"
+        description: Searches the name or label property of applications using startsWith that matches what the string starts with to the query
+        index: 1
+      filter:
+        alias: "Filter"
+        description: Filters apps by status, user.id, group.id or credentials.signing.kid expression
+        index: 2
+      limit:
+        alias: "Limit"
+        default: -1
+        description: Specifies the number of results for a page (maximum 200)
+        type: int32
+        index: 3
+      expand:
+        alias: "Expand"
+        description: Traverses users link relationship and optionally embeds Application User resource
+        index: 4
+
+  listApplicationUsers:
+    alias: ListApplicationUsersByID
+    parameters:
+      appId:
+        alias: "Application ID"
+        required: true
+        description: ID of an application
+        index: 1
+      q:
+        alias: "Query"
+        description: "Returns a filtered list of app users. The value is matched against an application user profile's userName and email. Note: This operation only supports startsWith that matches what the string starts with to the query."
+        index: 2
+      limit:
+        alias: "Limit"
+        default: -1
+        description: Specifies the number of results for a page (maximum 500)
+        type: int32
+        index: 3
+
+  listGroups:
+    alias: ListGroups
+    parameters:
+      q:
+        alias: "Query"
+        description: Searches the name property of groups for matching value
+        index: 1
+      search:
+        alias: "Search"
+        description: Filter expression for groups
+        index: 2
+      expand:
+        alias: "Expand"
+        description: If specified, it causes additional metadata to be included in the response.
+        index: 3
+      limit:
+        alias: "Limit"
+        default: 10000
+        description: Specifies the number of group results in a page
+        type: int32
+        index: 4
+
+  listUserGroups:
+    alias: ListUserGroups
+    parameters:
+      userId:
+        alias: "User ID or Email"
+        description: ID, login email, or login shortname (as long as it is unambiguous) of the user
+        required: true
+        index: 1
+
+  listUsers:
+    alias: ListUsers
+    parameters:
+      q:
+        alias: "Query"
+        description: Finds a user that matches firstName, lastName, and email properties
+        index: 1
+      filter:
+        alias: "Filter"
+        description: Filters users with a supported expression for a subset of properties
+        index: 2
+      search:
+        alias: "Search"
+        description: Searches for users with a supported filtering  expression for most properties
+        index: 3
+      limit:
+        alias: "Limit"
+        default: 10
+        description: Specifies the number of results returned
+        type: int32
+        index: 4
+      sortBy:
+        alias: "Sort By"
+        description: Specifies field to sort by (for search queries only)
+        index: 5
+      sortOrder:
+        alias: "Sort Order"
+        description: Specifies sort order asc or desc (for search queries only)
+        index: 6
+
+  suspendUser:
+    alias: SuspendUser
+    parameters:
+      userId:
+        alias: "User ID"
+        required: true
+        description: The user's ID
+        index: 1
+
+  unsuspendUser:
+    alias: UnsuspendUser
+    parameters:
+      userId:
+        alias: "User ID"
+        required: true
+        description: The user's ID
+        index: 1
+
+  partialUpdateUser:
+    alias: UpdateUser
+    parameters:
+      userId:
+        alias: "User ID"
+        required: true
+        description: ID of the user to update
+        index: 1
+      strict:
+        alias: "Strict"
+        description: If true, validates against minimum age and history password policy
+        required: true
+        index: 2
+      credentials__password__value:
+        alias: "Password"
+        type: password
+        description: New password for the user
+        index: 3
+      profile__login:
+        alias: "Login Email"
+        description: Unique identifier for the user (email)
+        index: 4
+      profile__email:
+        alias: "Email"
+        description: Primary email address of user
+        index: 5
+      profile__secondEmail:
+        alias: "Second Email"
+        description: Secondary email address of user typically used for account recovery
+        index: 6
+      profile__firstName:
+        alias: "First Name"
+        description: Given name of the user
+        index: 7
+      profile__middleName:
+        alias: "Middle Name"
+        description: Middle name(s) of the user
+        index: 8
+      profile__lastName:
+        alias: "Last Name"
+        description: Family name of the user
+        index: 9
+      profile__displayName:
+        alias: "Display Name"
+        description: Name of the user, suitable for display to end users
+        index: 10
+      profile__primaryPhone:
+        alias: "Primary Phone"
+        description: Primary phone number of the user such as home number
+        index: 11
+      profile__mobilePhone:
+        alias: "Mobile Phone"
+        description: Mobile phone number of the user
+        index: 12
+      profile__organization:
+        alias: "Organization"
+        description: Name of the user's organization
+        index: 13
+      profile__department:
+        alias: "Department"
+        description: Name of the user's department
+        index: 14
+      profile__division:
+        alias: "Division"
+        description: Name of the user's division
+        index: 15
+      profile__employeeNumber:
+        alias: "Employee Number"
+        description: Organization or company assigned unique identifier for the user
+        index: 16
+      profile__managerId:
+        alias: "Manager ID"
+        description: ID of the user's manager
+        index: 17
+      profile__title:
+        alias: "Title"
+        description: User's title, such as "Vice President"
+        index: 18
+      profile__userType:
+        alias: "User Type"
+        description: Used to describe the organization to user relationship such as "Employee" or "Contractor"
+        index: 19
+      credentials__recovery_question__question:
+        alias: "Recovery Question"
+        description: The user's recovery question
+        index: 20
+      credentials__recovery_question__answer:
+        alias: "Recovery Question Answer"
+        description: The user's recovery question's answer
+        index: 21

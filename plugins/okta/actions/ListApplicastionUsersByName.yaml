@@ -1,0 +1,18 @@
+name: "ListApplicationUsersByName"
+description:
+enabled: true
+parameters:
+  "Application Name":
+    required: true
+    description: "Name of an application"
+    type: "string"
+    index: 1
+  "Query":
+    description: "Returns a filtered list of app users. The value is matched against an application user profile's userName and email. Note: This operation only supports startsWith that matches what the string starts with to the query."
+    type: "string"
+    index: 2
+  "Limit":
+    default: -1
+    description: "Specifies the number of results for a page (maximum 500)"
+    type: "int32"
+    index: 3

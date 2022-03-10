@@ -1,0 +1,1011 @@
+name: okta
+connection_types:
+  okta:
+    name: okta
+    fields: {}
+    reference: ""
+icon_uri: ""
+is_connection_optional: false
+actions:
+- name: ActivateUser
+  display_name: Activate User
+  description: Activate User
+  enabled: true
+  parameters:
+    sendEmail:
+      display_name: Send Email
+      type: bool
+      description: Sends an activation email to the user if true
+      placeholder: ""
+      required: true
+      default: "true"
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    userId:
+      display_name: User ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId + ''/lifecycle/activate''}}{{''?sendEmail=''
+      + params.sendEmail}}'
+  is_connection_optional: ""
+- name: AddUserToGroup
+  display_name: Add User To Group
+  description: Add User to Group
+  enabled: true
+  parameters:
+    groupId:
+      display_name: Group ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    userId:
+      display_name: User ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.put
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/groups/'' + params.groupId + ''/users/'' + params.userId}}'
+  is_connection_optional: ""
+- name: CreateGroup
+  display_name: Create Group
+  description: Add Group
+  enabled: true
+  parameters:
+    profile__description:
+      display_name: Group Description
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    profile__name:
+      display_name: Group Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"profile":{"description":"{{params.profile__description}}","name":"{{params.profile__name}}"}}'
+    contentType: application/json
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/groups''}}'
+  is_connection_optional: ""
+- name: CreateUser
+  display_name: Create User
+  description: Create User
+  enabled: true
+  parameters:
+    activate:
+      display_name: Activate
+      type: bool
+      description: Executes activation lifecycle operation when creating the user
+      placeholder: ""
+      required: false
+      default: "true"
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    credentials__password__value:
+      display_name: Password
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: password
+      is_multi: false
+    nextLogin:
+      display_name: Next Login
+      type: string
+      description: With activate=true, set nextLogin to "changePassword" to have the
+        password be EXPIRED, so user must change it the next time they log in.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    profile__department:
+      display_name: Department
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    profile__displayName:
+      display_name: Display Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    profile__division:
+      display_name: Division
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    profile__email:
+      display_name: Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    profile__employeeNumber:
+      display_name: Employee Number
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    profile__firstName:
+      display_name: First Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    profile__lastName:
+      display_name: Last Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    profile__login:
+      display_name: Login Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    profile__managerId:
+      display_name: Manager ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    profile__mobilePhone:
+      display_name: Mobile Phone
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    profile__organization:
+      display_name: Organization
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    profile__title:
+      display_name: Title
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    profile__userType:
+      display_name: User Type
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"credentials":{"password":{"value":"{{params.credentials__password__value}}"}},"profile":{"department":"{{params.profile__department}}","displayName":"{{params.profile__displayName}}","division":"{{params.profile__division}}","email":"{{params.profile__email}}","employeeNumber":"{{params.profile__employeeNumber}}","firstName":"{{params.profile__firstName}}","lastName":"{{params.profile__lastName}}","login":"{{params.profile__login}}","managerId":"{{params.profile__managerId}}","mobilePhone":"{{params.profile__mobilePhone}}","organization":"{{params.profile__organization}}","title":"{{params.profile__title}}","userType":"{{params.profile__userType}}"}}'
+    contentType: application/json
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users''}}{{''?activate='' + params.activate + ''&provider='' + params.provider
+      + ''&nextLogin='' + params.nextLogin}}'
+  is_connection_optional: ""
+- name: GetLogs
+  display_name: Get Logs
+  description: Fetch a list of events from your Okta organization system log.
+  enabled: true
+  parameters:
+    filter:
+      display_name: Filter
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: ""
+      placeholder: ""
+      required: false
+      default: "100"
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    since:
+      display_name: Since
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: date-time
+      is_multi: false
+    sortOrder:
+      display_name: Sort Order
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ASCENDING
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    until:
+      display_name: Until
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: date-time
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/logs''}}{{''?since='' + params.since + ''&until='' + params.until
+      + ''&filter='' + params.filter + ''&q='' + params.q + ''&limit='' + params.limit
+      + ''&sortOrder='' + params.sortOrder + ''&after='' + params.after}}'
+  is_connection_optional: ""
+- name: GetUserByEmail
+  display_name: Get User
+  description: Get User
+  enabled: true
+  parameters:
+    userId:
+      display_name: User Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId}}'
+  is_connection_optional: ""
+- name: ListApplicationUsersByID
+  display_name: List Application Users
+  description: List Users Assigned to Application
+  enabled: true
+  parameters:
+    appId:
+      display_name: Application ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: specifies the number of results for a page
+      placeholder: ""
+      required: false
+      default: "-1"
+      pattern: ""
+      options: []
+      index: 3
+      format: int32
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/apps/'' + params.appId + ''/users''}}{{''?q='' + params.q + ''&query_scope=''
+      + params.query_scope + ''&after='' + params.after + ''&limit='' + params.limit
+      + ''&filter='' + params.filter + ''&expand='' + params.expand}}'
+  is_connection_optional: ""
+- name: ListApplications
+  display_name: List Applications
+  description: List Applications
+  enabled: true
+  parameters:
+    expand:
+      display_name: Expand
+      type: string
+      description: Traverses users link relationship and optionally embeds Application
+        User resource
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    filter:
+      display_name: Filter
+      type: string
+      description: Filters apps by status, user.id, group.id or credentials.signing.kid
+        expression
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Specifies the number of results for a page
+      placeholder: ""
+      required: false
+      default: "-1"
+      pattern: ""
+      options: []
+      index: 3
+      format: int32
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/apps''}}{{''?q='' + params.q + ''&after='' + params.after + ''&limit=''
+      + params.limit + ''&filter='' + params.filter + ''&expand='' + params.expand
+      + ''&includeNonDeleted='' + params.includeNonDeleted}}'
+  is_connection_optional: ""
+- name: ListGroups
+  display_name: List Groups
+  description: List Groups
+  enabled: true
+  parameters:
+    expand:
+      display_name: Expand
+      type: string
+      description: If specified, it causes additional metadata to be included in the
+        response.
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Specifies the number of group results in a page
+      placeholder: ""
+      required: false
+      default: "10000"
+      pattern: ""
+      options: []
+      index: 4
+      format: int32
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: Searches the name property of groups for matching value
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    search:
+      display_name: Search
+      type: string
+      description: Filter expression for groups
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/groups''}}{{''?q='' + params.q + ''&search='' + params.search +
+      ''&after='' + params.after + ''&limit='' + params.limit + ''&expand='' + params.expand}}'
+  is_connection_optional: ""
+- name: ListUserGroups
+  display_name: List User Groups
+  description: Get Member Groups
+  enabled: true
+  parameters:
+    userId:
+      display_name: User ID or Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId + ''/groups''}}'
+  is_connection_optional: ""
+- name: ListUsers
+  display_name: List Users
+  description: List Users
+  enabled: true
+  parameters:
+    filter:
+      display_name: Filter
+      type: string
+      description: Filters users with a supported expression for a subset of properties
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    limit:
+      display_name: Limit
+      type: integer
+      description: Specifies the number of results returned
+      placeholder: ""
+      required: false
+      default: "10"
+      pattern: ""
+      options: []
+      index: 4
+      format: int32
+      is_multi: false
+    q:
+      display_name: Query
+      type: string
+      description: Finds a user that matches firstName, lastName, and email properties
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+    search:
+      display_name: Search
+      type: string
+      description: Searches for users with a supported filtering  expression for most
+        properties
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: ""
+      is_multi: false
+    sortBy:
+      display_name: Sort By
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    sortOrder:
+      display_name: Sort Order
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+  action_to_run: http.get
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users''}}{{''?q='' + params.q + ''&after='' + params.after + ''&limit=''
+      + params.limit + ''&filter='' + params.filter + ''&search='' + params.search
+      + ''&sortBy='' + params.sortBy + ''&sortOrder='' + params.sortOrder}}'
+  is_connection_optional: ""
+- name: UpdateUser
+  display_name: Partial Update User
+  description: ""
+  enabled: true
+  parameters:
+    credentials__password__value:
+      display_name: Password
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 3
+      format: password
+      is_multi: false
+    credentials__recovery_question__answer:
+      display_name: Recovery Question Answer
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 21
+      format: ""
+      is_multi: false
+    credentials__recovery_question__question:
+      display_name: Recovery Question
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 20
+      format: ""
+      is_multi: false
+    profile__department:
+      display_name: Department
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 14
+      format: ""
+      is_multi: false
+    profile__displayName:
+      display_name: Display Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 10
+      format: ""
+      is_multi: false
+    profile__division:
+      display_name: Division
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 15
+      format: ""
+      is_multi: false
+    profile__email:
+      display_name: Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 5
+      format: ""
+      is_multi: false
+    profile__employeeNumber:
+      display_name: Employee Number
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 16
+      format: ""
+      is_multi: false
+    profile__firstName:
+      display_name: First Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 7
+      format: ""
+      is_multi: false
+    profile__lastName:
+      display_name: Last Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 9
+      format: ""
+      is_multi: false
+    profile__login:
+      display_name: Login Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 4
+      format: ""
+      is_multi: false
+    profile__managerId:
+      display_name: Manager ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 17
+      format: ""
+      is_multi: false
+    profile__middleName:
+      display_name: Middle Name
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 8
+      format: ""
+      is_multi: false
+    profile__mobilePhone:
+      display_name: Mobile Phone
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 12
+      format: ""
+      is_multi: false
+    profile__organization:
+      display_name: Organization
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 13
+      format: ""
+      is_multi: false
+    profile__primaryPhone:
+      display_name: Primary Phone
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 11
+      format: ""
+      is_multi: false
+    profile__secondEmail:
+      display_name: Second Email
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 6
+      format: ""
+      is_multi: false
+    profile__title:
+      display_name: Title
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 18
+      format: ""
+      is_multi: false
+    profile__userType:
+      display_name: User Type
+      type: string
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 19
+      format: ""
+      is_multi: false
+    strict:
+      display_name: Strict
+      type: bool
+      description: ""
+      placeholder: ""
+      required: false
+      default: ""
+      pattern: ""
+      options: []
+      index: 2
+      format: ""
+      is_multi: false
+    userId:
+      display_name: User ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    body: '{"credentials":{"password":{"value":"{{params.credentials__password__value}}"},"recovery_question":{"answer":"{{params.credentials__recovery_question__answer}}","question":"{{params.credentials__recovery_question__question}}"}},"profile":{"department":"{{params.profile__department}}","displayName":"{{params.profile__displayName}}","division":"{{params.profile__division}}","email":"{{params.profile__email}}","employeeNumber":"{{params.profile__employeeNumber}}","firstName":"{{params.profile__firstName}}","lastName":"{{params.profile__lastName}}","login":"{{params.profile__login}}","managerId":"{{params.profile__managerId}}","middleName":"{{params.profile__middleName}}","mobilePhone":"{{params.profile__mobilePhone}}","organization":"{{params.profile__organization}}","primaryPhone":"{{params.profile__primaryPhone}}","secondEmail":"{{params.profile__secondEmail}}","title":"{{params.profile__title}}","userType":"{{params.profile__userType}}"}}'
+    contentType: application/json
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId}}{{''?strict='' + params.strict}}'
+  is_connection_optional: ""
+- name: SuspendUser
+  display_name: Suspend User
+  description: Suspend User
+  enabled: true
+  parameters:
+    userId:
+      display_name: User ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId + ''/lifecycle/suspend''}}'
+  is_connection_optional: ""
+- name: UnsuspendUser
+  display_name: Unsuspend User
+  description: Unsuspend User
+  enabled: true
+  parameters:
+    userId:
+      display_name: User ID
+      type: string
+      description: ""
+      placeholder: ""
+      required: true
+      default: ""
+      pattern: ""
+      options: []
+      index: 1
+      format: ""
+      is_multi: false
+  action_to_run: http.post
+  action_to_run_param_values:
+    url: '{{(exists(connection.okta.REQUEST_URL) ? connection.okta.REQUEST_URL : ''https://your-subdomain.okta.com''),
+      + ''/api/v1/users/'' + params.userId + ''/lifecycle/unsuspend''}}'
+  is_connection_optional: ""
